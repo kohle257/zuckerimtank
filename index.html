@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="manifest.json">
-  <title>DiaBeat - T1D Simulator</title>
+  <title>Zucker im Tank - T1D Simulator</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -16,56 +16,85 @@
       --blue: #3b82f6;
     }
     * { box-sizing: border-box; user-select: none; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
 
-    /* Dynamische Sensor-Effekte */
+    /* Sensor-Effekte */
     body.hypo-mode { box-shadow: inset 0 0 25px var(--red); animation: pulse-hypo 0.8s infinite alternate; }
     @keyframes pulse-hypo { from { opacity: 0.85; } to { opacity: 1; } }
     body.hyper-mode { filter: blur(2px); }
 
     /* Header */
-    header { display: flex; justify-content: space-between; padding: 10px 14px; background: #090d16; font-size: 0.85rem; border-bottom: 1px solid #334155; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #090d16; font-size: 0.85rem; border-bottom: 1px solid #334155; }
     
-    /* CGM Display & Canvas */
+    /* CGM Display */
     .cgm-container { padding: 10px 14px; background: var(--card); }
     .cgm-stats { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
     .bg-value { font-size: 2.2rem; font-weight: 800; }
     .bg-unit { font-size: 0.85rem; color: #94a3b8; }
     .iob-pill { background: #334155; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
-    canvas { width: 100%; height: 110px; background: #090d16; border-radius: 6px; }
+    canvas { width: 100%; height: 100px; background: #090d16; border-radius: 6px; }
 
     /* Timeline */
     .timeline-bar { display: flex; gap: 8px; overflow-x: auto; padding: 8px 14px; background: #131d2e; font-size: 0.75rem; border-bottom: 1px solid #334155; white-space: nowrap; }
     .event-chip { background: #1e293b; padding: 4px 8px; border-radius: 4px; border-left: 3px solid var(--blue); }
-    .event-chip.active { border-color: var(--yellow); font-weight: bold; }
 
     /* Event Area */
     .event-area { flex: 1; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; }
-    .event-card { background: var(--card); border-radius: 8px; padding: 12px; border: 1px solid #3b82f6; }
-    .event-card h3 { font-size: 1rem; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-    .event-card p { font-size: 0.8rem; color: #cbd5e1; margin-bottom: 10px; }
-    .stepper { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
-    .stepper button { width: 40px; height: 36px; border-radius: 6px; background: #334155; color: #fff; font-size: 1.1rem; border: none; }
-    .stepper span { font-size: 1.2rem; font-weight: bold; min-width: 60px; text-align: center; }
-    .btn-eat { width: 100%; padding: 10px; background: var(--green); border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
+    .event-card { background: var(--card); border-radius: 8px; padding: 14px; border: 1.5px solid var(--blue); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .event-card h3 { font-size: 1.1rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .event-card p { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px; }
+    .carb-info { background: #090d16; padding: 8px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; color: var(--yellow); margin-bottom: 12px; text-align: center; }
+    .event-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-eat { padding: 12px; background: var(--green); border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
+    .btn-skip { padding: 12px; background: #475569; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
 
     /* Action Dock */
     .action-dock { background: #090d16; padding: 12px 14px 16px; border-top: 1px solid #334155; }
-    .pen-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .pen-btn { width: 45px; height: 38px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #fff; font-weight: bold; }
-    .pen-display { font-size: 1.4rem; font-weight: bold; color: var(--blue); min-width: 70px; text-align: center; }
-    .btn-inject { width: 100%; padding: 12px; background: var(--blue); border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1rem; margin-bottom: 10px; }
+    .pen-controls { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 10px; }
+    .pen-btn { width: 55px; height: 42px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+    .pen-display { font-size: 1.6rem; font-weight: bold; color: var(--blue); min-width: 90px; text-align: center; }
+    .btn-inject { width: 100%; padding: 12px; background: var(--blue); border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1rem; margin-bottom: 10px; cursor: pointer; }
     
     .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .btn-rescue { padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; color: #fff; cursor: pointer; }
     .btn-tz { background: #d97706; }
     .btn-juice { background: #ea580c; }
+
+    /* Vollbild-Overlays (Start, Pause, Game Over, Ranking) */
+    .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 50; text-align: center; }
+    .overlay h1 { font-size: 1.8rem; margin-bottom: 8px; color: #38bdf8; }
+    .overlay p { font-size: 0.9rem; color: #94a3b8; margin-bottom: 20px; max-width: 320px; line-height: 1.4; }
+    .btn-primary { padding: 14px 28px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+    
+    .ranking-table { width: 100%; max-width: 320px; margin-top: 14px; border-collapse: collapse; font-size: 0.85rem; }
+    .ranking-table th, .ranking-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #334155; }
+    .ranking-table th { color: #94a3b8; }
   </style>
 </head>
 <body>
 
+  <!-- Start-Screen Modal -->
+  <div class="overlay" id="start-overlay">
+    <h1>⛽ Zucker im Tank</h1>
+    <p>Meistere 24 Stunden als Typ-1-Diabetiker. Bei Ereignissen pausiert das Spiel, damit du passend spritzen oder gegensteuern kannst.</p>
+    <button class="btn-primary" onclick="startGame()">Tag starten (07:00)</button>
+    <div id="start-ranking-container" style="width: 100%; max-width: 320px;"></div>
+  </div>
+
+  <!-- End-Screen Modal -->
+  <div class="overlay" id="end-overlay" style="display: none;">
+    <h1 id="end-title">Tag beendet!</h1>
+    <p id="end-stats"></p>
+    <div style="width: 100%; max-width: 320px; margin-bottom: 16px;">
+      <h3 style="font-size: 0.95rem; margin-bottom: 8px;">🏆 Bestenliste</h3>
+      <table class="ranking-table" id="ranking-list"></table>
+    </div>
+    <button class="btn-primary" onclick="location.reload()">Nochmal spielen</button>
+  </div>
+
   <header>
     <span id="time-display">07:00 Uhr</span>
+    <span style="font-weight: 700; color: #38bdf8;">⛽ Zucker im Tank</span>
     <span>Score: <b id="score-display">0</b></span>
     <span>TiTR: <b id="titr-display">100%</b></span>
   </header>
@@ -79,26 +108,24 @@
       </div>
       <div class="iob-pill">IOB: <span id="iob-value">0.0</span> IE</div>
     </div>
-    <canvas id="cgmChart" width="350" height="110"></canvas>
+    <canvas id="cgmChart" width="350" height="100"></canvas>
   </div>
 
   <div class="timeline-bar" id="timeline">
-    <div class="event-chip" data-time="450">07:30 Frühstück</div>
-    <div class="event-chip" data-time="600">10:00 Kuchen</div>
-    <div class="event-chip" data-time="750">12:30 Mittagessen</div>
-    <div class="event-chip" data-time="1110">18:30 Abendbrot</div>
+    <div class="event-chip">07:30 Frühstück</div>
+    <div class="event-chip">10:00 Kuchenrunde</div>
+    <div class="event-chip">12:30 Mittagessen</div>
+    <div class="event-chip">18:30 Abendbrot</div>
   </div>
 
   <div class="event-area" id="event-area">
-    <!-- Inline-Event wird dynamisch gerendert -->
+    <!-- Inline-Event wird hier eingefügt -->
   </div>
 
   <div class="action-dock">
     <div class="pen-controls">
       <button class="pen-btn" onclick="adjustBolus(-1)">-1</button>
-      <button class="pen-btn" onclick="adjustBolus(-0.5)">-0.5</button>
-      <span class="pen-display" id="pen-value">0.0 IE</span>
-      <button class="pen-btn" onclick="adjustBolus(0.5)">+0.5</button>
+      <span class="pen-display" id="pen-value">0 IE</span>
       <button class="pen-btn" onclick="adjustBolus(1)">+1</button>
     </div>
     <button class="btn-inject" onclick="injectBolus()">💉 JETZT INJIZIEREN</button>
@@ -110,59 +137,58 @@
   </div>
 
   <script>
-    // --- Spielstatus & Parameter ---
+    let isPaused = true;
+    let gameLoopInterval = null;
+
     let state = {
-      gameTimeMinutes: 420, // Start 07:00
+      gameTimeMinutes: 420, // 07:00 Uhr
       bg: 110,
       score: 0,
       inRangeSeconds: 0,
       totalSeconds: 0,
-      penDose: 0.0,
-      activeEvents: [],
+      penDose: 0,
       bgHistory: Array(50).fill(110)
     };
 
-    // Aktive Simulationselemente
-    let activeInsulin = []; // { remainingSeconds, totalEffect, appliedEffect }
-    let activeCarbs = [];   // { delaySeconds, remainingSeconds, carbAmount }
+    let activeInsulin = [];
+    let activeCarbs = [];
 
     const SCHEDULED_EVENTS = [
-      { time: 450, icon: '🍞', title: 'Frühstück', desc: '1 Scheibe Vollkornbrot mit Gouda & 1 kleiner Apfel', trueCarbs: 35 },
-      { time: 600, icon: '🍩', title: 'Kuchenrunde', desc: 'Ein Kollege gibt Mini-Donuts aus', trueCarbs: 20 },
-      { time: 750, icon: '🍝', title: 'Kantine', desc: 'Ein tiefer Teller Pasta mit Tomatensauce', trueCarbs: 70 },
-      { time: 1110, icon: '🥗', title: 'Abendessen', desc: 'Großer Salat mit Putenstreifen & 1 Scheibe Baguette', trueCarbs: 25 }
+      { time: 450, icon: '🍞', title: 'Frühstück', desc: '1 Scheibe Vollkornbrot mit Gouda & 1 Apfel', carbs: 35 },
+      { time: 600, icon: '🍩', title: 'Kuchenrunde', desc: 'Ein Kollege bringt Mini-Donuts ins Büro', carbs: 20 },
+      { time: 750, icon: '🍝', title: 'Kantine', desc: 'Großer Teller Pasta mit Bolognese', carbs: 70 },
+      { time: 1110, icon: '🥗', title: 'Abendessen', desc: 'Salat mit Putenbrust & 1 Scheibe Baguette', carbs: 25 }
     ];
 
-    let currentEventGuess = 30;
+    function startGame() {
+      document.getElementById('start-overlay').style.display = 'none';
+      isPaused = false;
+      gameLoopInterval = setInterval(gameStep, 1000);
+      drawChart();
+    }
 
-    // --- Core Game Loop (1 Sekunde Realzeit = 4,8 In-Game-Minuten) ---
-    setInterval(() => {
+    function gameStep() {
+      if (isPaused) return;
+
       state.totalSeconds++;
-      state.gameTimeMinutes += 4.8;
-      
-      // Berechne Insulin & KH-Absorption
+      state.gameTimeMinutes += 4.8; // 1 Sekunde Realzeit = ~4,8 In-Game-Minuten (5 Min = 24h)
+
       processMetabolism();
-
-      // Blutzucker-Grenzwerte prüfen & Sensorik
       handleSensoryFeedback();
-
-      // UI-Updates
       updateUI();
       drawChart();
       checkScheduledEvents();
 
-      // Levelende nach 24 In-Game-Stunden (1440 min)
       if (state.gameTimeMinutes >= 1440) {
-        alert(`Tag beendet! TiTR: ${Math.round((state.inRangeSeconds / state.totalSeconds) * 100)}% | Score: ${Math.round(state.score)}`);
-        location.reload();
+        endGame(false);
       }
-    }, 1000);
+    }
 
     function processMetabolism() {
       let deltaBG = 0;
 
-      // 1g KH hebt BZ um ca. 4 mg/dl (gestreckt über 15 Sek ~ 70 Spielminuten)
-      activeCarbs.forEach((c, idx) => {
+      // KH-Resorption
+      activeCarbs.forEach((c) => {
         if (c.delaySeconds > 0) {
           c.delaySeconds--;
         } else if (c.remainingSeconds > 0) {
@@ -173,7 +199,7 @@
       });
       activeCarbs = activeCarbs.filter(c => c.remainingSeconds > 0);
 
-      // 1 IE Insulin senkt BZ um ca. 40 mg/dl (gestreckt über 30 Sek ~ 140 Spielminuten)
+      // Insulinabbau (1 IE ~ 40 mg/dl Senkung)
       activeInsulin.forEach((ins) => {
         if (ins.remainingSeconds > 0) {
           let step = (ins.units * 40) / 30;
@@ -195,7 +221,7 @@
         state.score += 5;
         state.inRangeSeconds++;
       } else if (state.bg < 70) {
-        state.score -= 20;
+        state.score -= 25;
       }
     }
 
@@ -203,8 +229,7 @@
       const body = document.body;
       if (state.bg <= 40) {
         if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-        alert("Bewusstlosigkeit (Hypo < 40 mg/dl)! Notarzt gerufen. Game Over.");
-        location.reload();
+        endGame(true);
       } else if (state.bg < 70) {
         body.classList.add('hypo-mode');
         body.classList.remove('hyper-mode');
@@ -217,86 +242,134 @@
       }
     }
 
-    // --- Spieler-Aktionen ---
+    // --- Spieler-Aktionen (auch während Pause aktiv) ---
     function adjustBolus(amount) {
-      state.penDose = Math.max(0, Math.round((state.penDose + amount) * 10) / 10);
-      document.getElementById('pen-value').innerText = `${state.penDose.toFixed(1)} IE`;
+      state.penDose = Math.max(0, state.penDose + amount);
+      document.getElementById('pen-value').innerText = `${state.penDose} IE`;
     }
 
     function injectBolus() {
       if (state.penDose <= 0) return;
       activeInsulin.push({ units: state.penDose, remainingSeconds: 30 });
-      state.penDose = 0.0;
-      document.getElementById('pen-value').innerText = "0.0 IE";
+      state.penDose = 0;
+      document.getElementById('pen-value').innerText = "0 IE";
+      updateUI();
     }
 
     function rescueCarbs(grams) {
-      // Hypo-Helfer wirken fast sofort (nach ca. 2 Sek)
       activeCarbs.push({ delaySeconds: 2, remainingSeconds: 6, carbAmount: grams });
+      updateUI();
     }
 
+    // --- Ereignisse mit Pausen-Mechanik ---
     function checkScheduledEvents() {
       SCHEDULED_EVENTS.forEach((ev) => {
         if (state.gameTimeMinutes >= ev.time && !ev.triggered) {
           ev.triggered = true;
-          triggerMealEvent(ev);
+          pauseForMealEvent(ev);
         }
       });
     }
 
-    function triggerMealEvent(ev) {
-      currentEventGuess = 30;
+    function pauseForMealEvent(ev) {
+      isPaused = true; // Spiel pausieren
       const area = document.getElementById('event-area');
       area.innerHTML = `
         <div class="event-card">
-          <h3>${ev.icon} ${ev.title}</h3>
+          <h3>⏸️ ${ev.icon} ${ev.title} (Pausiert)</h3>
           <p>${ev.desc}</p>
-          <div class="stepper">
-            <button onclick="adjustGuess(-5)">-5</button>
-            <span id="guess-display">${currentEventGuess}g</span>
-            <button onclick="adjustGuess(5)">+5</button>
+          <div class="carb-info">Kohlenhydrate: ${ev.carbs}g (~${Math.round(ev.carbs / 10)} KHE)</div>
+          <p style="font-size:0.75rem; color:#94a3b8; margin-bottom:10px;">
+            Nutze unten Pen oder Traubenzucker/Saft, bevor du fortfährst.
+          </p>
+          <div class="event-actions">
+            <button class="btn-eat" onclick="resumeAfterMeal(${ev.carbs}, true)">Essen & Weiter</button>
+            <button class="btn-skip" onclick="resumeAfterMeal(${ev.carbs}, false)">Ausfallen lassen (-250 Pkt)</button>
           </div>
-          <button class="btn-eat" onclick="submitMeal(${ev.trueCarbs})">Mahlzeit essen</button>
         </div>
       `;
     }
 
-    function adjustGuess(amount) {
-      currentEventGuess = Math.max(5, currentEventGuess + amount);
-      document.getElementById('guess-display').innerText = `${currentEventGuess}g`;
-    }
-
-    function submitMeal(trueCarbs) {
-      // Mahlzeit wird verdaut (leicht verzögerter Wirkeintritt)
-      activeCarbs.push({ delaySeconds: 4, remainingSeconds: 15, carbAmount: trueCarbs });
-      
+    function resumeAfterMeal(carbs, didEat) {
       const area = document.getElementById('event-area');
-      area.innerHTML = `<div style="text-align:center; font-size:0.8rem; color:#94a3b8;">
-        Tatsächlich: <b>${trueCarbs}g KH</b> (Geschätzt: ${currentEventGuess}g).
-      </div>`;
-      setTimeout(() => { area.innerHTML = ''; }, 3500);
+      area.innerHTML = '';
+
+      if (didEat) {
+        activeCarbs.push({ delaySeconds: 4, remainingSeconds: 15, carbAmount: carbs });
+      } else {
+        state.score = Math.max(0, state.score - 250); // Abzug für Hunger
+      }
+
+      isPaused = false; // Spiel fortsetzen
     }
 
-    // --- Rendering Helpers ---
+    // --- End-Screen & LocalStorage Ranking ---
+    function endGame(isHypoCrash) {
+      clearInterval(gameLoopInterval);
+      const endOverlay = document.getElementById('end-overlay');
+      const endTitle = document.getElementById('end-title');
+      const endStats = document.getElementById('end-stats');
+
+      let titr = state.totalSeconds > 0 ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 0;
+      let finalScore = Math.max(0, Math.round(state.score));
+
+      if (isHypoCrash) {
+        endTitle.innerText = "🚨 Notarzt gerufen!";
+        endStats.innerText = `Schwere Hypo (< 40 mg/dl). Der Tag wurde abgebrochen. Endstand: ${finalScore} Punkte.`;
+      } else {
+        endTitle.innerText = "🏁 Tag geschafft!";
+        endStats.innerText = `Score: ${finalScore} Punkte | TiTR (70-140): ${titr}%`;
+      }
+
+      saveRanking(finalScore, titr, isHypoCrash);
+      renderRankingList('ranking-list');
+      endOverlay.style.display = 'flex';
+    }
+
+    function saveRanking(score, titr, crashed) {
+      let rankings = JSON.parse(localStorage.getItem('diabeat_rankings') || '[]');
+      const dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      rankings.push({ score, titr, crashed, date: dateStr });
+      rankings.sort((a, b) => b.score - a.score);
+      rankings = rankings.slice(0, 5); // Behalte Top 5
+      localStorage.setItem('diabeat_rankings', JSON.stringify(rankings));
+    }
+
+    function renderRankingList(elementId) {
+      let rankings = JSON.parse(localStorage.getItem('diabeat_rankings') || '[]');
+      const table = document.getElementById(elementId);
+      if (rankings.length === 0) {
+        table.innerHTML = '<tr><td style="color:#64748b;">Noch keine Runden gespielt.</td></tr>';
+        return;
+      }
+      let html = '<tr><th>Platz</th><th>Score</th><th>TiTR</th><th>Datum</th></tr>';
+      rankings.forEach((r, idx) => {
+        html += `<tr>
+          <td>#${idx + 1}</td>
+          <td><b>${r.score}</b></td>
+          <td>${r.crashed ? 'Hypo' : r.titr + '%'}</td>
+          <td>${r.date}</td>
+        </tr>`;
+      });
+      table.innerHTML = html;
+    }
+
+    // --- UI & Charts ---
     function updateUI() {
-      // Uhrzeit
       let hours = Math.floor(state.gameTimeMinutes / 60) % 24;
       let mins = Math.floor(state.gameTimeMinutes % 60);
       document.getElementById('time-display').innerText = 
         `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')} Uhr`;
 
-      // Status
       document.getElementById('bg-value').innerText = state.bg;
       document.getElementById('score-display').innerText = Math.max(0, Math.round(state.score));
       
       let titr = state.totalSeconds > 0 ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 100;
       document.getElementById('titr-display').innerText = `${titr}%`;
 
-      // IOB
       let totalIOB = activeInsulin.reduce((acc, i) => acc + (i.units * (i.remainingSeconds / 30)), 0);
       document.getElementById('iob-value').innerText = totalIOB.toFixed(1);
 
-      // Trendpfeil
       let diff = state.bgHistory[state.bgHistory.length - 1] - state.bgHistory[state.bgHistory.length - 4];
       let arrow = "→";
       if (diff > 8) arrow = "↑";
@@ -311,13 +384,11 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Zielkorridor 70-140 hervorheben
       let y140 = canvas.height - ((140 - 40) / 260) * canvas.height;
       let y70 = canvas.height - ((70 - 40) / 260) * canvas.height;
       ctx.fillStyle = "rgba(16, 185, 129, 0.15)";
       ctx.fillRect(0, y140, canvas.width, y70 - y140);
 
-      // Kurve zeichnen
       ctx.beginPath();
       ctx.lineWidth = 2;
       ctx.strokeStyle = state.bg < 70 ? "#ef4444" : (state.bg > 140 ? "#f59e0b" : "#10b981");
@@ -332,7 +403,6 @@
       ctx.stroke();
     }
 
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
     }
