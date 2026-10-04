@@ -42,150 +42,156 @@
 
     .app-shell {
       width: 100%; max-width: 540px; min-height: 100vh;
-      margin: 0 auto; padding: 8px 14px 146px;
+      margin: 0 auto; padding: 6px 14px 142px;
     }
     .topbar {
       position: sticky; top: 0; z-index: 10;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 3px 11px; background: rgba(232, 238, 240, .91);
+      padding: 8px 2px 7px; background: rgba(232, 238, 240, .91);
       backdrop-filter: blur(15px);
     }
-    .brand-lockup { display: flex; align-items: center; gap: 9px; }
+    .brand-lockup { display: flex; align-items: center; gap: 8px; }
     .drop-logo {
       position: relative; display: grid; place-items: center;
-      width: 38px; height: 38px; overflow: hidden;
+      width: 34px; height: 34px; overflow: hidden;
       border-radius: 50%; background: linear-gradient(145deg, #8ac89c, #4b7d64);
-      color: white; font-size: 13px; font-weight: 800; letter-spacing: -.07em;
+      color: white; font-size: 12px; font-weight: 800; letter-spacing: -.07em;
     }
     .drop-logo::before {
-      content: ""; position: absolute; top: 7px; width: 2px; height: 13px;
+      content: ""; position: absolute; top: 6px; width: 2px; height: 11px;
       border-radius: 10px; background: rgba(255,255,255,.92);
     }
-    .drop-logo span { margin-top: 10px; font-size: 10px; }
-    .brand-name { font-size: 15px; font-weight: 800; letter-spacing: -.04em; }
+    .drop-logo span { margin-top: 9px; font-size: 9px; }
+    .brand-name { font-size: 14px; font-weight: 800; letter-spacing: -.04em; }
     .sim-time { color: var(--muted); font-size: 11px; font-weight: 700; }
     .score-stack { display: flex; gap: 6px; }
     .metric-pill {
-      min-width: 54px; padding: 6px 8px; text-align: center;
+      min-width: 50px; padding: 4px 6px; text-align: center;
       background: rgba(255,255,255,.84); border: 1px solid rgba(255,255,255,.9);
-      border-radius: 12px; box-shadow: 0 3px 10px rgba(45,70,76,.07);
+      border-radius: 10px; box-shadow: 0 2px 8px rgba(45,70,76,.06);
     }
-    .metric-pill b { display: block; font-size: 13px; line-height: 1.05; }
-    .metric-pill span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; font-weight: 800; }
+    .metric-pill b { display: block; font-size: 12px; line-height: 1.05; }
+    .metric-pill span { display: block; margin-top: 1px; color: var(--muted); font-size: 8.5px; font-weight: 800; }
 
     .glass-card {
-      border: 1px solid rgba(255,255,255,.94); border-radius: 26px;
-      box-shadow: 0 13px 29px rgba(43,67,73,.10);
+      border: 1px solid rgba(255,255,255,.94); border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(43,67,73,.08);
       background: rgba(255,255,255,.78); backdrop-filter: blur(14px);
     }
-    .cgm-card { position: relative; overflow: hidden; padding: 18px 18px 16px; margin-top: 6px; }
+    
+    /* Kompakterer CGM-Bereich */
+    .cgm-card { position: relative; overflow: hidden; padding: 12px 14px 10px; margin-top: 4px; }
     .cgm-card::after {
-      content: ""; position: absolute; right: -54px; top: -72px;
-      width: 172px; height: 172px; border: 24px solid rgba(111,174,133,.13);
+      content: ""; position: absolute; right: -40px; top: -50px;
+      width: 130px; height: 130px; border: 20px solid rgba(111,174,133,.10);
       border-radius: 50%;
     }
-    .cgm-main { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; }
-    .eyebrow { margin: 0; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-    .glucose-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-    .glucose-number { font-size: 58px; font-weight: 800; line-height: .9; letter-spacing: -.085em; }
-    .unit { align-self: flex-end; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
-    .trend { padding-top: 6px; color: var(--sage-deep); font-size: 32px; font-weight: 700; }
-    .status-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
-    .status-label { padding: 6px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+    .cgm-main { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
+    .eyebrow { margin: 0; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    
+    .glucose-row { display: flex; align-items: baseline; gap: 6px; }
+    .glucose-number { font-size: 42px; font-weight: 800; line-height: .95; letter-spacing: -.07em; }
+    .unit { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .trend { color: var(--sage-deep); font-size: 26px; font-weight: 800; line-height: 1; margin-left: 2px; }
+    
+    .status-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .status-label { padding: 4px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; }
     .status-good { color: #35684d; background: #dff0e5; }
     .status-warn { color: #945b16; background: #f8ebd6; }
     .status-bad { color: #a73442; background: #f9dfe3; }
-    .iob-chip { padding: 6px 10px; border-radius: 99px; color: #51636b; background: #edf2f2; font-size: 10px; font-weight: 800; }
-    .chart-wrap { position: relative; height: 165px; margin-top: 10px; padding-right: 24px; }
+    .iob-chip { padding: 4px 8px; border-radius: 99px; color: #51636b; background: #edf2f2; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 3px; }
+    
+    .chart-wrap { position: relative; height: 100px; margin-top: 6px; padding-right: 22px; }
     #cgmChart { width: 100%; height: 100%; display: block; }
-    .range-label { position: absolute; right: 0; padding: 2px 0; color: #85949a; font-size: 9px; font-weight: 800; line-height: 1; }
-    .range-top { top: 38px; }
-    .range-bottom { bottom: 38px; }
+    .range-label { position: absolute; right: 0; padding: 1px 0; color: #85949a; font-size: 8.5px; font-weight: 800; line-height: 1; }
+    .range-top { top: 20px; }
+    .range-bottom { bottom: 20px; }
 
-    .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin: 16px 3px 8px; }
-    .section-head h2 { margin: 0; font-size: 15px; letter-spacing: -.025em; }
-    .section-head p { margin: 0; color: var(--muted); font-size: 10px; font-weight: 700; }
-    .timeline-card { padding: 12px 14px; }
-    .timeline-track { position: relative; height: 64px; margin: 0 7px; }
-    .track-base, .track-fill { position: absolute; top: 27px; left: 2%; right: 2%; height: 5px; border-radius: 12px; }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin: 10px 2px 6px; }
+    .section-head h2 { margin: 0; font-size: 13.5px; letter-spacing: -.02em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 9.5px; font-weight: 700; }
+    
+    .timeline-card { padding: 8px 12px; }
+    .timeline-track { position: relative; height: 52px; margin: 0 4px; }
+    .track-base, .track-fill { position: absolute; top: 22px; left: 2%; right: 2%; height: 4px; border-radius: 10px; }
     .track-base { background: #dfe7e8; }
     .track-fill { right: auto; width: 0%; background: var(--sage); transition: width .4s ease; }
     .time-marker {
-      position: absolute; top: 18px; left: 2%; z-index: 3;
-      width: 23px; height: 23px; border: 4px solid white; border-radius: 50%;
-      background: var(--sage-deep); box-shadow: 0 2px 8px rgba(49,88,69,.24);
+      position: absolute; top: 15px; left: 2%; z-index: 3;
+      width: 19px; height: 19px; border: 3px solid white; border-radius: 50%;
+      background: var(--sage-deep); box-shadow: 0 2px 6px rgba(49,88,69,.24);
       transform: translateX(-50%); transition: left .4s ease;
     }
     .event-dot {
-      position: absolute; top: 15px; z-index: 2; display: grid; place-items: center;
-      width: 28px; height: 28px; border: 2px solid white; border-radius: 50%;
+      position: absolute; top: 12px; z-index: 2; display: grid; place-items: center;
+      width: 25px; height: 25px; border: 2px solid white; border-radius: 50%;
       background: #eef2f2; filter: grayscale(.9); opacity: .52; transform: translateX(-50%); transition: .3s;
-      font-size: 13px;
+      font-size: 11px;
     }
     .event-dot.done { background: #dbeee1; filter: none; opacity: 1; }
-    .event-dot.current { background: #f7ead5; box-shadow: 0 0 0 4px rgba(185,120,37,.14); filter: none; opacity: 1; }
-    .event-name { position: absolute; top: 47px; color: #78888e; font-size: 8px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); }
+    .event-dot.current { background: #f7ead5; box-shadow: 0 0 0 3px rgba(185,120,37,.15); filter: none; opacity: 1; }
+    .event-name { position: absolute; top: 38px; color: #78888e; font-size: 8px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); }
     .event-name.current { color: #95601e; }
 
     .situation-card {
-      padding: 16px; border-radius: 23px; color: white;
+      padding: 12px 14px; border-radius: 18px; color: white;
       background: linear-gradient(135deg, #4d7e65, #375f4e);
-      box-shadow: 0 12px 25px rgba(49,85,68,.20);
+      box-shadow: 0 8px 18px rgba(49,85,68,.18);
     }
-    .situation-top { display: flex; gap: 11px; }
-    .situation-icon { display: grid; flex: 0 0 auto; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: rgba(255,255,255,.16); font-size: 20px; }
-    .situation-card h3 { margin: 0 0 3px; color: white; font-size: 15px; font-weight: 800; }
-    .situation-card p { margin: 0; color: rgba(255,255,255,.86); font-size: 12px; line-height: 1.35; }
-    .carb-tag { display: inline-block; margin-top: 8px; color: #f3fff6; font-size: 11px; font-weight: 800; background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 8px; }
-    .event-actions { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-top: 13px; }
-    .event-actions button, .quick-actions button, .inject-button { min-height: 44px; border: 0; border-radius: 14px; cursor: pointer; font-size: 12px; font-weight: 800; }
+    .situation-top { display: flex; gap: 10px; align-items: center; }
+    .situation-icon { display: grid; flex: 0 0 auto; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: rgba(255,255,255,.16); font-size: 18px; }
+    .situation-card h3 { margin: 0 0 2px; color: white; font-size: 14px; font-weight: 800; }
+    .situation-card p { margin: 0; color: rgba(255,255,255,.88); font-size: 11.5px; line-height: 1.3; }
+    .carb-tag { display: inline-block; margin-top: 6px; color: #f3fff6; font-size: 10.5px; font-weight: 800; background: rgba(255,255,255,0.18); padding: 2px 7px; border-radius: 7px; }
+    .event-actions { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-top: 10px; }
+    .event-actions button, .quick-actions button, .inject-button { min-height: 42px; border: 0; border-radius: 12px; cursor: pointer; font-size: 11.5px; font-weight: 800; }
     .eat-button { color: #355e4a; background: #f1faef; }
     .skip-button { color: white; background: rgba(23,50,40,.45); border: 1px solid rgba(255,255,255,.2) !important; }
-    .no-event { padding: 14px; border: 1px dashed #c6d4d5; border-radius: 18px; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
+    .no-event { padding: 12px; border: 1px dashed #c6d4d5; border-radius: 16px; color: var(--muted); font-size: 11.5px; font-weight: 700; text-align: center; }
 
     .action-dock {
       position: fixed; z-index: 15; bottom: 0; left: 50%; width: min(100%,540px);
-      padding: 9px 14px 12px; border-top: 1px solid rgba(201,214,215,.9);
+      padding: 8px 12px 10px; border-top: 1px solid rgba(201,214,215,.9);
       background: rgba(232,238,240,.96); backdrop-filter: blur(16px); transform: translateX(-50%);
     }
-    .dose-row { display: flex; align-items: center; gap: 9px; }
+    .dose-row { display: flex; align-items: center; gap: 8px; }
     .pen-control {
-      display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 130px;
-      padding: 6px 8px; border-radius: 16px; background: white; box-shadow: 0 4px 13px rgba(41,65,71,.08);
+      display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 120px;
+      padding: 5px 6px; border-radius: 14px; background: white; box-shadow: 0 3px 10px rgba(41,65,71,.08);
     }
-    .round-button { width: 34px; height: 34px; border: 0; border-radius: 11px; color: #345747; background: #e4efe7; cursor: pointer; font-size: 20px; font-weight: 700; }
-    .dose-value { min-width: 36px; text-align: center; }
-    .dose-value b { display: block; font-size: 16px; line-height: 1; }
-    .dose-value span { color: var(--muted); font-size: 9px; font-weight: 800; }
-    .inject-button { flex: 1; color: white; background: var(--sage-deep); box-shadow: 0 7px 14px rgba(55,95,78,.20); letter-spacing: .015em; }
-    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-    .quick-actions button { color: #385149; background: white; box-shadow: 0 3px 10px rgba(41,65,71,.06); }
-    .active-effects { display: flex; flex-wrap: wrap; gap: 5px; min-height: 20px; margin-top: 7px; padding: 0 2px; }
-    .effect-chip { padding: 3px 8px; border-radius: 99px; color: #587068; background: #dce8e1; font-size: 9px; font-weight: 700; }
+    .round-button { width: 32px; height: 32px; border: 0; border-radius: 9px; color: #345747; background: #e4efe7; cursor: pointer; font-size: 18px; font-weight: 700; }
+    .dose-value { min-width: 32px; text-align: center; }
+    .dose-value b { display: block; font-size: 15px; line-height: 1; }
+    .dose-value span { color: var(--muted); font-size: 8px; font-weight: 800; }
+    .inject-button { flex: 1; color: white; background: var(--sage-deep); box-shadow: 0 5px 12px rgba(55,95,78,.18); letter-spacing: .015em; }
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+    .quick-actions button { color: #385149; background: white; box-shadow: 0 2px 8px rgba(41,65,71,.06); }
+    .active-effects { display: flex; flex-wrap: wrap; gap: 4px; min-height: 18px; margin-top: 5px; padding: 0 2px; }
+    .effect-chip { padding: 2px 7px; border-radius: 99px; color: #587068; background: #dce8e1; font-size: 8.5px; font-weight: 700; }
 
     .toast {
-      position: fixed; z-index: 30; bottom: 144px; left: 50%; width: max-content; max-width: calc(100% - 34px);
-      padding: 9px 14px; border-radius: 14px; color: white; background: #345747;
-      box-shadow: 0 8px 24px rgba(39,70,57,.25); font-size: 12px; font-weight: 700;
-      opacity: 0; pointer-events: none; transform: translate(-50%,15px); transition: .25s ease;
+      position: fixed; z-index: 30; bottom: 136px; left: 50%; width: max-content; max-width: calc(100% - 32px);
+      padding: 8px 12px; border-radius: 12px; color: white; background: #345747;
+      box-shadow: 0 6px 20px rgba(39,70,57,.25); font-size: 11.5px; font-weight: 700;
+      opacity: 0; pointer-events: none; transform: translate(-50%,12px); transition: .25s ease;
     }
     .toast.show { opacity: 1; transform: translate(-50%,0); }
     
     .sheet-layer { position: fixed; z-index: 40; inset: 0; display: flex; align-items: flex-end; padding: 12px; background: rgba(35,59,50,.4); }
-    .sheet { width: 100%; max-width: 516px; margin: 0 auto; padding: 24px 20px 20px; border-radius: 29px; background: #fff; box-shadow: 0 22px 55px rgba(31,55,46,.25); animation: rise .35s ease both; max-height: 90vh; overflow-y: auto; }
-    @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
-    .sheet-kicker { margin: 0 0 6px; color: var(--sage-deep); font-size: 11px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
-    .sheet h1 { margin: 0 0 6px; font-size: 28px; line-height: 1.05; letter-spacing: -.05em; }
-    .sheet p { color: #61747b; font-size: 13px; line-height: 1.45; margin: 0 0 14px; }
-    .notice { padding: 10px 12px; border-radius: 14px; color: #805817; background: #f8efd9; font-size: 11px; font-weight: 700; }
-    .start-button, .restart-button { width: 100%; min-height: 50px; margin-top: 14px; border: 0; border-radius: 16px; color: white; background: var(--sage-deep); cursor: pointer; font-weight: 800; font-size: 15px; }
-    .end-score { display: flex; gap: 9px; margin: 14px 0; }
-    .end-score div { flex: 1; padding: 12px; border-radius: 16px; background: #eaf3ed; text-align: center; }
-    .end-score b { display: block; font-size: 22px; letter-spacing: -.04em; color: var(--sage-deep); }
-    .end-score span { color: #61747b; font-size: 10px; font-weight: 800; }
-    .leaderboard { margin-top: 14px; }
-    .leaderboard h2 { margin: 0 0 8px; font-size: 13px; font-weight: 800; }
-    .leader-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-top: 1px solid #edf1f1; font-size: 12px; }
+    .sheet { width: 100%; max-width: 516px; margin: 0 auto; padding: 22px 18px 18px; border-radius: 26px; background: #fff; box-shadow: 0 20px 50px rgba(31,55,46,.25); animation: rise .35s ease both; max-height: 90vh; overflow-y: auto; }
+    @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+    .sheet-kicker { margin: 0 0 5px; color: var(--sage-deep); font-size: 10px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+    .sheet h1 { margin: 0 0 5px; font-size: 26px; line-height: 1.05; letter-spacing: -.05em; }
+    .sheet p { color: #61747b; font-size: 12.5px; line-height: 1.4; margin: 0 0 12px; }
+    .notice { padding: 9px 11px; border-radius: 12px; color: #805817; background: #f8efd9; font-size: 10.5px; font-weight: 700; }
+    .start-button, .restart-button { width: 100%; min-height: 48px; margin-top: 12px; border: 0; border-radius: 14px; color: white; background: var(--sage-deep); cursor: pointer; font-weight: 800; font-size: 14px; }
+    .end-score { display: flex; gap: 8px; margin: 12px 0; }
+    .end-score div { flex: 1; padding: 10px; border-radius: 14px; background: #eaf3ed; text-align: center; }
+    .end-score b { display: block; font-size: 20px; letter-spacing: -.04em; color: var(--sage-deep); }
+    .end-score span { color: #61747b; font-size: 9.5px; font-weight: 800; }
+    .leaderboard { margin-top: 12px; }
+    .leaderboard h2 { margin: 0 0 6px; font-size: 12.5px; font-weight: 800; }
+    .leader-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-top: 1px solid #edf1f1; font-size: 11.5px; }
     .leader-row b { color: var(--sage-deep); }
     .hidden { display: none !important; }
   </style>
@@ -222,18 +228,18 @@
             <div class="glucose-row">
               <div id="glucoseValue" class="glucose-number">110</div>
               <div class="unit">mg/dl</div>
+              <div id="trendArrow" class="trend" aria-label="Trend">→</div>
             </div>
           </div>
-          <div id="trendArrow" class="trend" aria-label="Trend">→</div>
-        </div>
-        <div class="status-row">
-          <span id="statusLabel" class="status-label status-good">Im Zielbereich</span>
-          <span id="iobValue" class="iob-chip">IOB 0,0 IE</span>
+          <div class="status-row">
+            <span id="statusLabel" class="status-label status-good">Im Zielbereich</span>
+            <span id="iobValue" class="iob-chip">💉 0,0 IE</span>
+          </div>
         </div>
         <div class="chart-wrap">
           <span class="range-label range-top">140</span>
           <span class="range-label range-bottom">70</span>
-          <canvas id="cgmChart" width="350" height="165"></canvas>
+          <canvas id="cgmChart" width="350" height="100"></canvas>
         </div>
       </section>
 
@@ -247,14 +253,12 @@
             <div class="track-base"></div>
             <div id="trackFill" class="track-fill"></div>
             <div id="timeMarker" class="time-marker"></div>
-            <div class="event-dot" id="dot-breakfast" style="left:4%;">🥣</div>
-            <span class="event-name" id="name-breakfast" style="left:4%;">07:30</span>
-            <div class="event-dot" id="dot-cake" style="left:20%;">🍩</div>
-            <span class="event-name" id="name-cake" style="left:20%;">10:00</span>
-            <div class="event-dot" id="dot-lunch" style="left:41%;">🍝</div>
-            <span class="event-name" id="name-lunch" style="left:41%;">12:30</span>
-            <div class="event-dot" id="dot-dinner" style="left:76%;">🥗</div>
-            <span class="event-name" id="name-dinner" style="left:76%;">18:30</span>
+            <div class="event-dot" id="dot-breakfast" style="left:5%;">🥣</div>
+            <span class="event-name" id="name-breakfast" style="left:5%;">07:30</span>
+            <div class="event-dot" id="dot-lunch" style="left:42%;">🍝</div>
+            <span class="event-name" id="name-lunch" style="left:42%;">12:30</span>
+            <div class="event-dot" id="dot-dinner" style="left:78%;">🥗</div>
+            <span class="event-name" id="name-dinner" style="left:78%;">18:30</span>
           </div>
         </div>
       </section>
@@ -272,7 +276,7 @@
               <span id="eventCarbs" class="carb-tag"></span>
             </div>
           </div>
-          <p style="font-size: 11px; margin-top: 8px; opacity: 0.9;">
+          <p style="font-size: 10.5px; margin-top: 6px; opacity: 0.9;">
             ⏸️ <b>Spiel pausiert.</b> Spritze unten passend Insulin oder nimm Saft/Traubenzucker.
           </p>
           <div class="event-actions">
@@ -311,9 +315,9 @@
     <section class="sheet">
       <p class="sheet-kicker">Zucker im Tank</p>
       <h1>Tag starten · 07:00</h1>
-      <p>Meistere 24 Stunden als Typ-1-Diabetiker. Bei jeder Mahlzeit pausiert das Spiel, damit du in Ruhe reagieren kannst.</p>
+      <p>Meistere 24 Stunden als Typ-1-Diabetiker mit 3 Hauptmahlzeiten. Bei jedem Essen pausiert das Spiel, damit du in Ruhe reagieren kannst.</p>
       <div class="notice">Stark vereinfachte Simulation zur Sensibilisierung – keine medizinische Dosierhilfe.</div>
-      <div class="leaderboard" style="margin-top: 14px;">
+      <div class="leaderboard" style="margin-top: 12px;">
         <h2>🏆 Bisherige Bestleistungen</h2>
         <div id="startLeaderboardRows"></div>
       </div>
@@ -349,9 +353,9 @@
     const DAY_START = 7 * 60; // 07:00 Uhr
     const DAY_END = DAY_START + 1440; // 24 Stunden später
 
+    // Nur Frühstück, Mittagessen und Abendessen
     const SCHEDULED_EVENTS = [
       { id: "breakfast", minute: 7 * 60 + 30, icon: "🥣", title: "Frühstück", description: "1 Scheibe Vollkornbrot mit Gouda & 1 Apfel", carbs: 35, done: false },
-      { id: "cake", minute: 10 * 60, icon: "🍩", title: "Kuchenrunde", description: "Ein Kollege bringt Mini-Donuts ins Büro", carbs: 20, done: false },
       { id: "lunch", minute: 12 * 60 + 30, icon: "🍝", title: "Mittagessen", description: "Ein tiefer Teller Pasta mit Bolognese", carbs: 70, done: false },
       { id: "dinner", minute: 18 * 60 + 30, icon: "🥗", title: "Abendessen", description: "Salat mit Putenbrust & 1 Scheibe Baguette", carbs: 25, done: false }
     ];
@@ -404,7 +408,7 @@
       statusEl.textContent = status.label;
       statusEl.className = "status-label " + status.cls;
 
-      // Trendpfeil
+      // Trendpfeil direkt neben dem Zuckerwert
       const diff = state.history[state.history.length - 1] - state.history[state.history.length - 4];
       let arrow = "→";
       if (diff > 8) arrow = "↑";
@@ -415,9 +419,9 @@
       trend.textContent = arrow;
       trend.style.color = status.color;
 
-      // IOB
+      // IOB mit Spritzen-Icon
       const iob = activeInsulin.reduce((sum, item) => sum + (item.units * (item.remainingSeconds / 30)), 0);
-      document.getElementById("iobValue").textContent = "IOB " + iob.toFixed(1).replace(".", ",") + " IE";
+      document.getElementById("iobValue").textContent = "💉 " + iob.toFixed(1).replace(".", ",") + " IE";
       
       document.getElementById("scoreValue").textContent = Math.max(0, Math.round(state.score));
 
@@ -499,7 +503,7 @@
       const w = rect.width;
       const h = rect.height;
       const min = 35, max = 250;
-      const chartTop = 14, chartBottom = h - 14;
+      const chartTop = 10, chartBottom = h - 10;
       const plotHeight = chartBottom - chartTop;
       const y = val => chartBottom - ((clamp(val, min, max) - min) / (max - min)) * plotHeight;
 
@@ -527,14 +531,14 @@
         i ? ctx.lineTo(x, y(v)) : ctx.moveTo(x, y(v));
       });
       ctx.strokeStyle = color;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       ctx.stroke();
 
       // Endpunkt
       ctx.beginPath();
-      ctx.arc(w, y(vals[vals.length - 1]), 4.5, 0, Math.PI * 2);
+      ctx.arc(w, y(vals[vals.length - 1]), 4, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       ctx.strokeStyle = "#fff";
@@ -560,7 +564,6 @@
     }
 
     function rescueCarbs(grams, label) {
-      // Hypo-Helfer wirken nach 2 Sek. schnell für 6 Spielsekunden
       activeCarbs.push({ delaySeconds: 2, remainingSeconds: 6, carbAmount: grams, label: label });
       showToast(`${label} (+${grams}g) eingenommen`);
       updateUI();
@@ -586,7 +589,6 @@
     function metabolize() {
       let deltaBG = 0;
 
-      // Resorption Kohlenhydrate
       activeCarbs.forEach(c => {
         if (c.delaySeconds > 0) {
           c.delaySeconds--;
@@ -598,7 +600,6 @@
       });
       activeCarbs = activeCarbs.filter(c => c.remainingSeconds > 0);
 
-      // Wirkung Insulin (1 IE senkt um 40 mg/dl über 30s)
       activeInsulin.forEach(ins => {
         if (ins.remainingSeconds > 0) {
           let step = (ins.units * 40) / 30;
@@ -608,12 +609,10 @@
       });
       activeInsulin = activeInsulin.filter(i => i.remainingSeconds > 0);
 
-      // Leichte physiologische Basaldrift
       state.glucose = Math.max(30, Math.round(state.glucose + deltaBG + (110 - state.glucose) * 0.01));
       state.history.push(state.glucose);
       state.history.shift();
 
-      // Scoring
       if (state.glucose >= 70 && state.glucose <= 140) {
         state.score += 10;
         state.inRangeSeconds++;
@@ -646,16 +645,15 @@
       if (state.isPaused || !state.running) return;
 
       state.totalSeconds++;
-      state.simMinute += 4.8; // 1 Sekunde = 4.8 Spielminuten
+      state.simMinute += 4.8;
 
       metabolize();
       handleSensory();
 
-      // Ereignisse prüfen
       const pending = SCHEDULED_EVENTS.find(ev => !ev.done && state.simMinute >= ev.minute);
       if (pending && !currentEvent) {
         currentEvent = pending;
-        state.isPaused = true; // Auto-Pause für Entscheidung
+        state.isPaused = true;
       }
 
       if (state.simMinute >= DAY_END) {
