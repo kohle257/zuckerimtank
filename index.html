@@ -1,194 +1,593 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="manifest.json">
-  <title>Zucker im Tank - T1D Simulator</title>
+  <title>Zucker im Tank</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f8fafc;
-      --green: #10b981;
-      --yellow: #f59e0b;
-      --red: #ef4444;
-      --blue: #3b82f6;
+      --ink: #20313a;
+      --muted: #6f8088;
+      --mist: #e8eef0;
+      --sage: #6fae85;
+      --sage-deep: #477761;
+      --sage-soft: #dcebe1;
+      --white: #ffffff;
+      --line: #d7e0e1;
+      --danger: #c94a57;
+      --warn: #b97825;
+      --night: #254239;
     }
-    * { box-sizing: border-box; user-select: none; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
-
-    /* Sensor-Effekte */
-    body.hypo-mode { box-shadow: inset 0 0 25px var(--red); animation: pulse-hypo 0.8s infinite alternate; }
-    @keyframes pulse-hypo { from { opacity: 0.85; } to { opacity: 1; } }
+    * { box-sizing: border-box; user-select: none; }
+    html { background: #e8eef0; }
+    body {
+      width: 100%; min-height: 100vh; margin: 0;
+      color: var(--ink); font-family: "DM Sans", sans-serif;
+      background:
+        radial-gradient(circle at 10% -12%, rgba(126, 184, 146, .42), transparent 32%),
+        linear-gradient(155deg, #edf3f4 0%, #dce6e8 100%);
+      transition: filter 0.3s ease;
+    }
+    
+    /* Sensorisches Feedback */
+    body.hypo-mode { box-shadow: inset 0 0 28px rgba(201, 74, 87, 0.45); animation: pulse-hypo 0.8s infinite alternate; }
+    @keyframes pulse-hypo { from { opacity: 0.88; } to { opacity: 1; } }
     body.hyper-mode { filter: blur(2px); }
 
-    /* Header */
-    header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #090d16; font-size: 0.85rem; border-bottom: 1px solid #334155; }
+    button, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible { outline: 3px solid #477761; outline-offset: 3px; }
+
+    .app-shell {
+      width: 100%; max-width: 540px; min-height: 100vh;
+      margin: 0 auto; padding: 8px 14px 146px;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 3px 11px; background: rgba(232, 238, 240, .91);
+      backdrop-filter: blur(15px);
+    }
+    .brand-lockup { display: flex; align-items: center; gap: 9px; }
+    .drop-logo {
+      position: relative; display: grid; place-items: center;
+      width: 38px; height: 38px; overflow: hidden;
+      border-radius: 50%; background: linear-gradient(145deg, #8ac89c, #4b7d64);
+      color: white; font-size: 13px; font-weight: 800; letter-spacing: -.07em;
+    }
+    .drop-logo::before {
+      content: ""; position: absolute; top: 7px; width: 2px; height: 13px;
+      border-radius: 10px; background: rgba(255,255,255,.92);
+    }
+    .drop-logo span { margin-top: 10px; font-size: 10px; }
+    .brand-name { font-size: 15px; font-weight: 800; letter-spacing: -.04em; }
+    .sim-time { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .score-stack { display: flex; gap: 6px; }
+    .metric-pill {
+      min-width: 54px; padding: 6px 8px; text-align: center;
+      background: rgba(255,255,255,.84); border: 1px solid rgba(255,255,255,.9);
+      border-radius: 12px; box-shadow: 0 3px 10px rgba(45,70,76,.07);
+    }
+    .metric-pill b { display: block; font-size: 13px; line-height: 1.05; }
+    .metric-pill span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; font-weight: 800; }
+
+    .glass-card {
+      border: 1px solid rgba(255,255,255,.94); border-radius: 26px;
+      box-shadow: 0 13px 29px rgba(43,67,73,.10);
+      background: rgba(255,255,255,.78); backdrop-filter: blur(14px);
+    }
+    .cgm-card { position: relative; overflow: hidden; padding: 18px 18px 16px; margin-top: 6px; }
+    .cgm-card::after {
+      content: ""; position: absolute; right: -54px; top: -72px;
+      width: 172px; height: 172px; border: 24px solid rgba(111,174,133,.13);
+      border-radius: 50%;
+    }
+    .cgm-main { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; }
+    .eyebrow { margin: 0; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .glucose-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .glucose-number { font-size: 58px; font-weight: 800; line-height: .9; letter-spacing: -.085em; }
+    .unit { align-self: flex-end; margin-bottom: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .trend { padding-top: 6px; color: var(--sage-deep); font-size: 32px; font-weight: 700; }
+    .status-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
+    .status-label { padding: 6px 10px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+    .status-good { color: #35684d; background: #dff0e5; }
+    .status-warn { color: #945b16; background: #f8ebd6; }
+    .status-bad { color: #a73442; background: #f9dfe3; }
+    .iob-chip { padding: 6px 10px; border-radius: 99px; color: #51636b; background: #edf2f2; font-size: 10px; font-weight: 800; }
+    .chart-wrap { position: relative; height: 165px; margin-top: 10px; padding-right: 24px; }
+    #cgmChart { width: 100%; height: 100%; display: block; }
+    .range-label { position: absolute; right: 0; padding: 2px 0; color: #85949a; font-size: 9px; font-weight: 800; line-height: 1; }
+    .range-top { top: 38px; }
+    .range-bottom { bottom: 38px; }
+
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin: 16px 3px 8px; }
+    .section-head h2 { margin: 0; font-size: 15px; letter-spacing: -.025em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 10px; font-weight: 700; }
+    .timeline-card { padding: 12px 14px; }
+    .timeline-track { position: relative; height: 64px; margin: 0 7px; }
+    .track-base, .track-fill { position: absolute; top: 27px; left: 2%; right: 2%; height: 5px; border-radius: 12px; }
+    .track-base { background: #dfe7e8; }
+    .track-fill { right: auto; width: 0%; background: var(--sage); transition: width .4s ease; }
+    .time-marker {
+      position: absolute; top: 18px; left: 2%; z-index: 3;
+      width: 23px; height: 23px; border: 4px solid white; border-radius: 50%;
+      background: var(--sage-deep); box-shadow: 0 2px 8px rgba(49,88,69,.24);
+      transform: translateX(-50%); transition: left .4s ease;
+    }
+    .event-dot {
+      position: absolute; top: 15px; z-index: 2; display: grid; place-items: center;
+      width: 28px; height: 28px; border: 2px solid white; border-radius: 50%;
+      background: #eef2f2; filter: grayscale(.9); opacity: .52; transform: translateX(-50%); transition: .3s;
+      font-size: 13px;
+    }
+    .event-dot.done { background: #dbeee1; filter: none; opacity: 1; }
+    .event-dot.current { background: #f7ead5; box-shadow: 0 0 0 4px rgba(185,120,37,.14); filter: none; opacity: 1; }
+    .event-name { position: absolute; top: 47px; color: #78888e; font-size: 8px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); }
+    .event-name.current { color: #95601e; }
+
+    .situation-card {
+      padding: 16px; border-radius: 23px; color: white;
+      background: linear-gradient(135deg, #4d7e65, #375f4e);
+      box-shadow: 0 12px 25px rgba(49,85,68,.20);
+    }
+    .situation-top { display: flex; gap: 11px; }
+    .situation-icon { display: grid; flex: 0 0 auto; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: rgba(255,255,255,.16); font-size: 20px; }
+    .situation-card h3 { margin: 0 0 3px; color: white; font-size: 15px; font-weight: 800; }
+    .situation-card p { margin: 0; color: rgba(255,255,255,.86); font-size: 12px; line-height: 1.35; }
+    .carb-tag { display: inline-block; margin-top: 8px; color: #f3fff6; font-size: 11px; font-weight: 800; background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 8px; }
+    .event-actions { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-top: 13px; }
+    .event-actions button, .quick-actions button, .inject-button { min-height: 44px; border: 0; border-radius: 14px; cursor: pointer; font-size: 12px; font-weight: 800; }
+    .eat-button { color: #355e4a; background: #f1faef; }
+    .skip-button { color: white; background: rgba(23,50,40,.45); border: 1px solid rgba(255,255,255,.2) !important; }
+    .no-event { padding: 14px; border: 1px dashed #c6d4d5; border-radius: 18px; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
+
+    .action-dock {
+      position: fixed; z-index: 15; bottom: 0; left: 50%; width: min(100%,540px);
+      padding: 9px 14px 12px; border-top: 1px solid rgba(201,214,215,.9);
+      background: rgba(232,238,240,.96); backdrop-filter: blur(16px); transform: translateX(-50%);
+    }
+    .dose-row { display: flex; align-items: center; gap: 9px; }
+    .pen-control {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 130px;
+      padding: 6px 8px; border-radius: 16px; background: white; box-shadow: 0 4px 13px rgba(41,65,71,.08);
+    }
+    .round-button { width: 34px; height: 34px; border: 0; border-radius: 11px; color: #345747; background: #e4efe7; cursor: pointer; font-size: 20px; font-weight: 700; }
+    .dose-value { min-width: 36px; text-align: center; }
+    .dose-value b { display: block; font-size: 16px; line-height: 1; }
+    .dose-value span { color: var(--muted); font-size: 9px; font-weight: 800; }
+    .inject-button { flex: 1; color: white; background: var(--sage-deep); box-shadow: 0 7px 14px rgba(55,95,78,.20); letter-spacing: .015em; }
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .quick-actions button { color: #385149; background: white; box-shadow: 0 3px 10px rgba(41,65,71,.06); }
+    .active-effects { display: flex; flex-wrap: wrap; gap: 5px; min-height: 20px; margin-top: 7px; padding: 0 2px; }
+    .effect-chip { padding: 3px 8px; border-radius: 99px; color: #587068; background: #dce8e1; font-size: 9px; font-weight: 700; }
+
+    .toast {
+      position: fixed; z-index: 30; bottom: 144px; left: 50%; width: max-content; max-width: calc(100% - 34px);
+      padding: 9px 14px; border-radius: 14px; color: white; background: #345747;
+      box-shadow: 0 8px 24px rgba(39,70,57,.25); font-size: 12px; font-weight: 700;
+      opacity: 0; pointer-events: none; transform: translate(-50%,15px); transition: .25s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
     
-    /* CGM Display */
-    .cgm-container { padding: 10px 14px; background: var(--card); }
-    .cgm-stats { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-    .bg-value { font-size: 2.2rem; font-weight: 800; }
-    .bg-unit { font-size: 0.85rem; color: #94a3b8; }
-    .iob-pill { background: #334155; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
-    canvas { width: 100%; height: 100px; background: #090d16; border-radius: 6px; }
-
-    /* Timeline */
-    .timeline-bar { display: flex; gap: 8px; overflow-x: auto; padding: 8px 14px; background: #131d2e; font-size: 0.75rem; border-bottom: 1px solid #334155; white-space: nowrap; }
-    .event-chip { background: #1e293b; padding: 4px 8px; border-radius: 4px; border-left: 3px solid var(--blue); }
-
-    /* Event Area */
-    .event-area { flex: 1; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; }
-    .event-card { background: var(--card); border-radius: 8px; padding: 14px; border: 1.5px solid var(--blue); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .event-card h3 { font-size: 1.1rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    .event-card p { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px; }
-    .carb-info { background: #090d16; padding: 8px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; color: var(--yellow); margin-bottom: 12px; text-align: center; }
-    .event-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .btn-eat { padding: 12px; background: var(--green); border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
-    .btn-skip { padding: 12px; background: #475569; border: none; border-radius: 6px; color: #fff; font-weight: bold; cursor: pointer; }
-
-    /* Action Dock */
-    .action-dock { background: #090d16; padding: 12px 14px 16px; border-top: 1px solid #334155; }
-    .pen-controls { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 10px; }
-    .pen-btn { width: 55px; height: 42px; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
-    .pen-display { font-size: 1.6rem; font-weight: bold; color: var(--blue); min-width: 90px; text-align: center; }
-    .btn-inject { width: 100%; padding: 12px; background: var(--blue); border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1rem; margin-bottom: 10px; cursor: pointer; }
-    
-    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .btn-rescue { padding: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; color: #fff; cursor: pointer; }
-    .btn-tz { background: #d97706; }
-    .btn-juice { background: #ea580c; }
-
-    /* Vollbild-Overlays (Start, Pause, Game Over, Ranking) */
-    .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 50; text-align: center; }
-    .overlay h1 { font-size: 1.8rem; margin-bottom: 8px; color: #38bdf8; }
-    .overlay p { font-size: 0.9rem; color: #94a3b8; margin-bottom: 20px; max-width: 320px; line-height: 1.4; }
-    .btn-primary { padding: 14px 28px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-    
-    .ranking-table { width: 100%; max-width: 320px; margin-top: 14px; border-collapse: collapse; font-size: 0.85rem; }
-    .ranking-table th, .ranking-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #334155; }
-    .ranking-table th { color: #94a3b8; }
+    .sheet-layer { position: fixed; z-index: 40; inset: 0; display: flex; align-items: flex-end; padding: 12px; background: rgba(35,59,50,.4); }
+    .sheet { width: 100%; max-width: 516px; margin: 0 auto; padding: 24px 20px 20px; border-radius: 29px; background: #fff; box-shadow: 0 22px 55px rgba(31,55,46,.25); animation: rise .35s ease both; max-height: 90vh; overflow-y: auto; }
+    @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+    .sheet-kicker { margin: 0 0 6px; color: var(--sage-deep); font-size: 11px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+    .sheet h1 { margin: 0 0 6px; font-size: 28px; line-height: 1.05; letter-spacing: -.05em; }
+    .sheet p { color: #61747b; font-size: 13px; line-height: 1.45; margin: 0 0 14px; }
+    .notice { padding: 10px 12px; border-radius: 14px; color: #805817; background: #f8efd9; font-size: 11px; font-weight: 700; }
+    .start-button, .restart-button { width: 100%; min-height: 50px; margin-top: 14px; border: 0; border-radius: 16px; color: white; background: var(--sage-deep); cursor: pointer; font-weight: 800; font-size: 15px; }
+    .end-score { display: flex; gap: 9px; margin: 14px 0; }
+    .end-score div { flex: 1; padding: 12px; border-radius: 16px; background: #eaf3ed; text-align: center; }
+    .end-score b { display: block; font-size: 22px; letter-spacing: -.04em; color: var(--sage-deep); }
+    .end-score span { color: #61747b; font-size: 10px; font-weight: 800; }
+    .leaderboard { margin-top: 14px; }
+    .leaderboard h2 { margin: 0 0 8px; font-size: 13px; font-weight: 800; }
+    .leader-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-top: 1px solid #edf1f1; font-size: 12px; }
+    .leader-row b { color: var(--sage-deep); }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
-
-  <!-- Start-Screen Modal -->
-  <div class="overlay" id="start-overlay">
-    <h1>⛽ Zucker im Tank</h1>
-    <p>Meistere 24 Stunden als Typ-1-Diabetiker. Bei Ereignissen pausiert das Spiel, damit du passend spritzen oder gegensteuern kannst.</p>
-    <button class="btn-primary" onclick="startGame()">Tag starten (07:00)</button>
-    <div id="start-ranking-container" style="width: 100%; max-width: 320px;"></div>
-  </div>
-
-  <!-- End-Screen Modal -->
-  <div class="overlay" id="end-overlay" style="display: none;">
-    <h1 id="end-title">Tag beendet!</h1>
-    <p id="end-stats"></p>
-    <div style="width: 100%; max-width: 320px; margin-bottom: 16px;">
-      <h3 style="font-size: 0.95rem; margin-bottom: 8px;">🏆 Bestenliste</h3>
-      <table class="ranking-table" id="ranking-list"></table>
-    </div>
-    <button class="btn-primary" onclick="location.reload()">Nochmal spielen</button>
-  </div>
-
-  <header>
-    <span id="time-display">07:00 Uhr</span>
-    <span style="font-weight: 700; color: #38bdf8;">⛽ Zucker im Tank</span>
-    <span>Score: <b id="score-display">0</b></span>
-    <span>TiTR: <b id="titr-display">100%</b></span>
-  </header>
-
-  <div class="cgm-container">
-    <div class="cgm-stats">
-      <div>
-        <span class="bg-value" id="bg-value">110</span>
-        <span class="bg-unit">mg/dl</span>
-        <span id="trend-arrow">→</span>
+  <div class="app-shell">
+    <header class="topbar" aria-label="Statusleiste">
+      <div class="brand-lockup">
+        <div class="drop-logo" aria-hidden="true">
+          <span>Z</span>
+        </div>
+        <div>
+          <div class="brand-name">Zucker im Tank</div>
+          <div id="currentTime" class="sim-time">07:00 Uhr</div>
+        </div>
       </div>
-      <div class="iob-pill">IOB: <span id="iob-value">0.0</span> IE</div>
+      <div class="score-stack" aria-label="Tageswerte">
+        <div class="metric-pill">
+          <b id="scoreValue">0</b>
+          <span>SCORE</span>
+        </div>
+        <div class="metric-pill">
+          <b id="titrValue">100%</b>
+          <span>TiTR</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="glass-card cgm-card" aria-labelledby="cgm-heading">
+        <div class="cgm-main">
+          <div>
+            <p class="eyebrow">Dein CGM</p>
+            <div class="glucose-row">
+              <div id="glucoseValue" class="glucose-number">110</div>
+              <div class="unit">mg/dl</div>
+            </div>
+          </div>
+          <div id="trendArrow" class="trend" aria-label="Trend">→</div>
+        </div>
+        <div class="status-row">
+          <span id="statusLabel" class="status-label status-good">Im Zielbereich</span>
+          <span id="iobValue" class="iob-chip">IOB 0,0 IE</span>
+        </div>
+        <div class="chart-wrap">
+          <span class="range-label range-top">140</span>
+          <span class="range-label range-bottom">70</span>
+          <canvas id="cgmChart" width="350" height="165"></canvas>
+        </div>
+      </section>
+
+      <section aria-labelledby="timeline-heading">
+        <div class="section-head">
+          <h2>Tagesverlauf</h2>
+          <p id="dayProgress">07:00 von 24 Stunden</p>
+        </div>
+        <div class="glass-card timeline-card">
+          <div class="timeline-track">
+            <div class="track-base"></div>
+            <div id="trackFill" class="track-fill"></div>
+            <div id="timeMarker" class="time-marker"></div>
+            <div class="event-dot" id="dot-breakfast" style="left:4%;">🥣</div>
+            <span class="event-name" id="name-breakfast" style="left:4%;">07:30</span>
+            <div class="event-dot" id="dot-cake" style="left:20%;">🍩</div>
+            <span class="event-name" id="name-cake" style="left:20%;">10:00</span>
+            <div class="event-dot" id="dot-lunch" style="left:41%;">🍝</div>
+            <span class="event-name" id="name-lunch" style="left:41%;">12:30</span>
+            <div class="event-dot" id="dot-dinner" style="left:76%;">🥗</div>
+            <span class="event-name" id="name-dinner" style="left:76%;">18:30</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="event-heading">
+        <div class="section-head">
+          <h2>Aktuelle Situation</h2>
+        </div>
+        <article id="eventCard" class="situation-card hidden">
+          <div class="situation-top">
+            <div id="eventIcon" class="situation-icon">🥣</div>
+            <div>
+              <h3 id="eventTitle">Mahlzeit</h3>
+              <p id="eventDescription"></p>
+              <span id="eventCarbs" class="carb-tag"></span>
+            </div>
+          </div>
+          <p style="font-size: 11px; margin-top: 8px; opacity: 0.9;">
+            ⏸️ <b>Spiel pausiert.</b> Spritze unten passend Insulin oder nimm Saft/Traubenzucker.
+          </p>
+          <div class="event-actions">
+            <button class="eat-button" type="button" onclick="handleMeal(true)">Essen &amp; weiter</button>
+            <button class="skip-button" type="button" onclick="handleMeal(false)">Ausfallen lassen (-250 Pkt)</button>
+          </div>
+        </article>
+        <div id="noEventCard" class="no-event">Gerade keine Mahlzeit offen. Behalte den Verlauf im Blick.</div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="action-dock" aria-label="Schnellaktionen">
+    <div class="dose-row">
+      <div class="pen-control" aria-label="Insulindosis">
+        <button class="round-button" type="button" onclick="changeDose(-1)">−</button>
+        <div class="dose-value">
+          <b id="doseValue">0</b>
+          <span>IE</span>
+        </div>
+        <button class="round-button" type="button" onclick="changeDose(1)">+</button>
+      </div>
+      <button id="injectButton" class="inject-button" type="button" onclick="injectBolus()">💉 JETZT INJIZIEREN</button>
     </div>
-    <canvas id="cgmChart" width="350" height="100"></canvas>
-  </div>
-
-  <div class="timeline-bar" id="timeline">
-    <div class="event-chip">07:30 Frühstück</div>
-    <div class="event-chip">10:00 Kuchenrunde</div>
-    <div class="event-chip">12:30 Mittagessen</div>
-    <div class="event-chip">18:30 Abendbrot</div>
-  </div>
-
-  <div class="event-area" id="event-area">
-    <!-- Inline-Event wird hier eingefügt -->
-  </div>
-
-  <div class="action-dock">
-    <div class="pen-controls">
-      <button class="pen-btn" onclick="adjustBolus(-1)">-1</button>
-      <span class="pen-display" id="pen-value">0 IE</span>
-      <button class="pen-btn" onclick="adjustBolus(1)">+1</button>
-    </div>
-    <button class="btn-inject" onclick="injectBolus()">💉 JETZT INJIZIEREN</button>
-    
     <div class="quick-actions">
-      <button class="btn-rescue btn-tz" onclick="rescueCarbs(6)">🍬 Traubenzucker (+6g)</button>
-      <button class="btn-rescue btn-juice" onclick="rescueCarbs(15)">🧃 Saft (+15g)</button>
+      <button type="button" onclick="rescueCarbs(6, 'Traubenzucker')">🍬 Traubenzucker +6 g</button>
+      <button type="button" onclick="rescueCarbs(15, 'Apfelsaft')">🧃 Apfelsaft +15 g</button>
     </div>
+    <div id="activeEffects" class="active-effects"></div>
+  </aside>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Start Modal -->
+  <div id="startSheet" class="sheet-layer">
+    <section class="sheet">
+      <p class="sheet-kicker">Zucker im Tank</p>
+      <h1>Tag starten · 07:00</h1>
+      <p>Meistere 24 Stunden als Typ-1-Diabetiker. Bei jeder Mahlzeit pausiert das Spiel, damit du in Ruhe reagieren kannst.</p>
+      <div class="notice">Stark vereinfachte Simulation zur Sensibilisierung – keine medizinische Dosierhilfe.</div>
+      <div class="leaderboard" style="margin-top: 14px;">
+        <h2>🏆 Bisherige Bestleistungen</h2>
+        <div id="startLeaderboardRows"></div>
+      </div>
+      <button class="start-button" type="button" onclick="startGame()">Simulation starten</button>
+    </section>
+  </div>
+
+  <!-- End Modal -->
+  <div id="endSheet" class="sheet-layer hidden">
+    <section class="sheet">
+      <p id="endKicker" class="sheet-kicker">Tagesabschluss</p>
+      <h1 id="endTitle">Dein Ergebnis</h1>
+      <p id="endReason"></p>
+      <div class="end-score">
+        <div>
+          <b id="endScore">0</b>
+          <span>SCORE</span>
+        </div>
+        <div>
+          <b id="endTitr">0%</b>
+          <span>TiTR</span>
+        </div>
+      </div>
+      <div class="leaderboard">
+        <h2>🏆 Bestenliste</h2>
+        <div id="endLeaderboardRows"></div>
+      </div>
+      <button class="restart-button" type="button" onclick="restartGame()">Neuen Tag starten</button>
+    </section>
   </div>
 
   <script>
-    let isPaused = true;
-    let gameLoopInterval = null;
+    const DAY_START = 7 * 60; // 07:00 Uhr
+    const DAY_END = DAY_START + 1440; // 24 Stunden später
+
+    const SCHEDULED_EVENTS = [
+      { id: "breakfast", minute: 7 * 60 + 30, icon: "🥣", title: "Frühstück", description: "1 Scheibe Vollkornbrot mit Gouda & 1 Apfel", carbs: 35, done: false },
+      { id: "cake", minute: 10 * 60, icon: "🍩", title: "Kuchenrunde", description: "Ein Kollege bringt Mini-Donuts ins Büro", carbs: 20, done: false },
+      { id: "lunch", minute: 12 * 60 + 30, icon: "🍝", title: "Mittagessen", description: "Ein tiefer Teller Pasta mit Bolognese", carbs: 70, done: false },
+      { id: "dinner", minute: 18 * 60 + 30, icon: "🥗", title: "Abendessen", description: "Salat mit Putenbrust & 1 Scheibe Baguette", carbs: 25, done: false }
+    ];
 
     let state = {
-      gameTimeMinutes: 420, // 07:00 Uhr
-      bg: 110,
+      simMinute: DAY_START,
+      glucose: 110,
       score: 0,
       inRangeSeconds: 0,
       totalSeconds: 0,
-      penDose: 0,
-      bgHistory: Array(50).fill(110)
+      selectedDose: 0,
+      history: Array(40).fill(110),
+      running: false,
+      isPaused: false
     };
 
-    let activeInsulin = [];
-    let activeCarbs = [];
+    let activeInsulin = []; // { units, remainingSeconds }
+    let activeCarbs = [];   // { carbAmount, delaySeconds, remainingSeconds, label }
+    let currentEvent = null;
+    let timer = null;
 
-    const SCHEDULED_EVENTS = [
-      { time: 450, icon: '🍞', title: 'Frühstück', desc: '1 Scheibe Vollkornbrot mit Gouda & 1 Apfel', carbs: 35 },
-      { time: 600, icon: '🍩', title: 'Kuchenrunde', desc: 'Ein Kollege bringt Mini-Donuts ins Büro', carbs: 20 },
-      { time: 750, icon: '🍝', title: 'Kantine', desc: 'Großer Teller Pasta mit Bolognese', carbs: 70 },
-      { time: 1110, icon: '🥗', title: 'Abendessen', desc: 'Salat mit Putenbrust & 1 Scheibe Baguette', carbs: 25 }
-    ];
-
-    function startGame() {
-      document.getElementById('start-overlay').style.display = 'none';
-      isPaused = false;
-      gameLoopInterval = setInterval(gameStep, 1000);
-      drawChart();
+    function formatTime(minute) {
+      const normalized = Math.floor(minute % 1440);
+      return String(Math.floor(normalized / 60)).padStart(2, "0") + ":" + String(normalized % 60).padStart(2, "0");
     }
 
-    function gameStep() {
-      if (isPaused) return;
+    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
 
-      state.totalSeconds++;
-      state.gameTimeMinutes += 4.8; // 1 Sekunde Realzeit = ~4,8 In-Game-Minuten (5 Min = 24h)
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
 
-      processMetabolism();
-      handleSensoryFeedback();
-      updateUI();
-      drawChart();
-      checkScheduledEvents();
+    function getStatus() {
+      if (state.glucose < 70) return { label: "Hypoglykämie", color: "#c94a57", cls: "status-bad" };
+      if (state.glucose > 180) return { label: "Hyperglykämie", color: "#b97825", cls: "status-warn" };
+      if (state.glucose > 140) return { label: "Erhöht", color: "#b97825", cls: "status-warn" };
+      return { label: "Im Zielbereich", color: "#477761", cls: "status-good" };
+    }
 
-      if (state.gameTimeMinutes >= 1440) {
-        endGame(false);
+    function updateUI() {
+      const status = getStatus();
+      document.getElementById("currentTime").textContent = formatTime(state.simMinute) + " Uhr";
+      document.getElementById("glucoseValue").textContent = Math.round(state.glucose);
+
+      const statusEl = document.getElementById("statusLabel");
+      statusEl.textContent = status.label;
+      statusEl.className = "status-label " + status.cls;
+
+      // Trendpfeil
+      const diff = state.history[state.history.length - 1] - state.history[state.history.length - 4];
+      let arrow = "→";
+      if (diff > 8) arrow = "↑";
+      else if (diff > 3) arrow = "↗";
+      else if (diff < -8) arrow = "↓";
+      else if (diff < -3) arrow = "↘";
+      const trend = document.getElementById("trendArrow");
+      trend.textContent = arrow;
+      trend.style.color = status.color;
+
+      // IOB
+      const iob = activeInsulin.reduce((sum, item) => sum + (item.units * (item.remainingSeconds / 30)), 0);
+      document.getElementById("iobValue").textContent = "IOB " + iob.toFixed(1).replace(".", ",") + " IE";
+      
+      document.getElementById("scoreValue").textContent = Math.max(0, Math.round(state.score));
+
+      const titr = state.totalSeconds ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 100;
+      document.getElementById("titrValue").textContent = titr + "%";
+      document.getElementById("doseValue").textContent = state.selectedDose;
+
+      // Timeline Progress
+      const progress = clamp((state.simMinute - DAY_START) / (DAY_END - DAY_START), 0, 1);
+      document.getElementById("trackFill").style.width = (2 + progress * 96) + "%";
+      document.getElementById("timeMarker").style.left = (2 + progress * 96) + "%";
+      document.getElementById("dayProgress").textContent = formatTime(state.simMinute) + " von 24 Stunden";
+
+      SCHEDULED_EVENTS.forEach(ev => {
+        const dot = document.getElementById("dot-" + ev.id);
+        const name = document.getElementById("name-" + ev.id);
+        dot.className = "event-dot" + (ev.done ? " done" : currentEvent && currentEvent.id === ev.id ? " current" : "");
+        name.className = "event-name" + (currentEvent && currentEvent.id === ev.id ? " current" : "");
+      });
+
+      renderEffects();
+      drawChart(status.color);
+      renderEventArea();
+    }
+
+    function renderEffects() {
+      const holder = document.getElementById("activeEffects");
+      holder.innerHTML = "";
+      const effects = [];
+
+      const totalInsulin = activeInsulin.reduce((s, i) => s + (i.units * (i.remainingSeconds / 30)), 0);
+      if (totalInsulin > 0.05) effects.push("Insulin " + totalInsulin.toFixed(1) + " IE aktiv");
+
+      activeCarbs.forEach(c => {
+        effects.push(`${c.label} (${c.carbAmount}g)`);
+      });
+
+      if (!effects.length) {
+        holder.innerHTML = '<span class="effect-chip">Keine aktive Resorption</span>';
+        return;
       }
+      effects.slice(0, 3).forEach(text => {
+        const span = document.createElement("span");
+        span.className = "effect-chip";
+        span.textContent = text;
+        holder.appendChild(span);
+      });
     }
 
-    function processMetabolism() {
+    function renderEventArea() {
+      const card = document.getElementById("eventCard");
+      const empty = document.getElementById("noEventCard");
+
+      if (!currentEvent) {
+        card.classList.add("hidden");
+        empty.classList.remove("hidden");
+        return;
+      }
+
+      empty.classList.add("hidden");
+      card.classList.remove("hidden");
+      document.getElementById("eventIcon").textContent = currentEvent.icon;
+      document.getElementById("eventTitle").textContent = currentEvent.title;
+      document.getElementById("eventDescription").textContent = currentEvent.description;
+      document.getElementById("eventCarbs").textContent = `${currentEvent.carbs} g Kohlenhydrate (~${Math.round(currentEvent.carbs/10)} KHE)`;
+    }
+
+    function drawChart(color) {
+      const canvas = document.getElementById("cgmChart");
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(ratio, ratio);
+
+      const w = rect.width;
+      const h = rect.height;
+      const min = 35, max = 250;
+      const chartTop = 14, chartBottom = h - 14;
+      const plotHeight = chartBottom - chartTop;
+      const y = val => chartBottom - ((clamp(val, min, max) - min) / (max - min)) * plotHeight;
+
+      // Zielbereich 70-140 hervorheben
+      ctx.fillStyle = "rgba(111,174,133,.12)";
+      ctx.fillRect(0, y(140), w, y(70) - y(140));
+
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = "rgba(102,126,132,.3)";
+      ctx.lineWidth = 1;
+      [70, 140].forEach(v => {
+        ctx.beginPath();
+        ctx.moveTo(0, y(v));
+        ctx.lineTo(w, y(v));
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      const vals = state.history.slice(-35);
+      if (vals.length < 2) return;
+
+      ctx.beginPath();
+      vals.forEach((v, i) => {
+        const x = (i / (vals.length - 1)) * w;
+        i ? ctx.lineTo(x, y(v)) : ctx.moveTo(x, y(v));
+      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+      // Endpunkt
+      ctx.beginPath();
+      ctx.arc(w, y(vals[vals.length - 1]), 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function changeDose(amt) {
+      state.selectedDose = clamp(state.selectedDose + amt, 0, 15);
+      document.getElementById("doseValue").textContent = state.selectedDose;
+    }
+
+    function injectBolus() {
+      if (state.selectedDose <= 0) {
+        showToast("Bitte mindestens 1 IE auswählen");
+        return;
+      }
+      activeInsulin.push({ units: state.selectedDose, remainingSeconds: 30 });
+      showToast(`${state.selectedDose} IE Insulin injiziert`);
+      state.selectedDose = 0;
+      document.getElementById("doseValue").textContent = 0;
+      updateUI();
+    }
+
+    function rescueCarbs(grams, label) {
+      // Hypo-Helfer wirken nach 2 Sek. schnell für 6 Spielsekunden
+      activeCarbs.push({ delaySeconds: 2, remainingSeconds: 6, carbAmount: grams, label: label });
+      showToast(`${label} (+${grams}g) eingenommen`);
+      updateUI();
+    }
+
+    function handleMeal(eat) {
+      if (!currentEvent) return;
+
+      if (eat) {
+        activeCarbs.push({ delaySeconds: 4, remainingSeconds: 15, carbAmount: currentEvent.carbs, label: currentEvent.title });
+        showToast(`${currentEvent.carbs}g Kohlenhydrate verzehrt`);
+      } else {
+        state.score = Math.max(0, state.score - 250);
+        showToast("Mahlzeit ausgelassen (-250 Hunger-Punkte)");
+      }
+
+      currentEvent.done = true;
+      currentEvent = null;
+      state.isPaused = false;
+      updateUI();
+    }
+
+    function metabolize() {
       let deltaBG = 0;
 
-      // KH-Resorption
-      activeCarbs.forEach((c) => {
+      // Resorption Kohlenhydrate
+      activeCarbs.forEach(c => {
         if (c.delaySeconds > 0) {
           c.delaySeconds--;
         } else if (c.remainingSeconds > 0) {
@@ -199,8 +598,8 @@
       });
       activeCarbs = activeCarbs.filter(c => c.remainingSeconds > 0);
 
-      // Insulinabbau (1 IE ~ 40 mg/dl Senkung)
-      activeInsulin.forEach((ins) => {
+      // Wirkung Insulin (1 IE senkt um 40 mg/dl über 30s)
+      activeInsulin.forEach(ins => {
         if (ins.remainingSeconds > 0) {
           let step = (ins.units * 40) / 30;
           deltaBG -= step;
@@ -209,199 +608,146 @@
       });
       activeInsulin = activeInsulin.filter(i => i.remainingSeconds > 0);
 
-      state.bg = Math.max(30, Math.round(state.bg + deltaBG));
-      state.bgHistory.push(state.bg);
-      state.bgHistory.shift();
+      // Leichte physiologische Basaldrift
+      state.glucose = Math.max(30, Math.round(state.glucose + deltaBG + (110 - state.glucose) * 0.01));
+      state.history.push(state.glucose);
+      state.history.shift();
 
       // Scoring
-      if (state.bg >= 70 && state.bg <= 140) {
+      if (state.glucose >= 70 && state.glucose <= 140) {
         state.score += 10;
         state.inRangeSeconds++;
-      } else if (state.bg > 140 && state.bg <= 180) {
+      } else if (state.glucose > 140 && state.glucose <= 180) {
         state.score += 5;
         state.inRangeSeconds++;
-      } else if (state.bg < 70) {
+      } else if (state.glucose < 70) {
         state.score -= 25;
       }
     }
 
-    function handleSensoryFeedback() {
+    function handleSensory() {
       const body = document.body;
-      if (state.bg <= 40) {
+      if (state.glucose <= 40) {
         if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         endGame(true);
-      } else if (state.bg < 70) {
-        body.classList.add('hypo-mode');
-        body.classList.remove('hyper-mode');
-        if (navigator.vibrate) navigator.vibrate(200);
-      } else if (state.bg > 180) {
-        body.classList.add('hyper-mode');
-        body.classList.remove('hypo-mode');
+      } else if (state.glucose < 70) {
+        body.classList.add("hypo-mode");
+        body.classList.remove("hyper-mode");
+        if (navigator.vibrate) navigator.vibrate(180);
+      } else if (state.glucose > 180) {
+        body.classList.add("hyper-mode");
+        body.classList.remove("hypo-mode");
       } else {
-        body.classList.remove('hypo-mode', 'hyper-mode');
+        body.classList.remove("hypo-mode", "hyper-mode");
       }
     }
 
-    // --- Spieler-Aktionen (auch während Pause aktiv) ---
-    function adjustBolus(amount) {
-      state.penDose = Math.max(0, state.penDose + amount);
-      document.getElementById('pen-value').innerText = `${state.penDose} IE`;
-    }
+    function simulationStep() {
+      if (state.isPaused || !state.running) return;
 
-    function injectBolus() {
-      if (state.penDose <= 0) return;
-      activeInsulin.push({ units: state.penDose, remainingSeconds: 30 });
-      state.penDose = 0;
-      document.getElementById('pen-value').innerText = "0 IE";
-      updateUI();
-    }
+      state.totalSeconds++;
+      state.simMinute += 4.8; // 1 Sekunde = 4.8 Spielminuten
 
-    function rescueCarbs(grams) {
-      activeCarbs.push({ delaySeconds: 2, remainingSeconds: 6, carbAmount: grams });
-      updateUI();
-    }
+      metabolize();
+      handleSensory();
 
-    // --- Ereignisse mit Pausen-Mechanik ---
-    function checkScheduledEvents() {
-      SCHEDULED_EVENTS.forEach((ev) => {
-        if (state.gameTimeMinutes >= ev.time && !ev.triggered) {
-          ev.triggered = true;
-          pauseForMealEvent(ev);
-        }
-      });
-    }
-
-    function pauseForMealEvent(ev) {
-      isPaused = true; // Spiel pausieren
-      const area = document.getElementById('event-area');
-      area.innerHTML = `
-        <div class="event-card">
-          <h3>⏸️ ${ev.icon} ${ev.title} (Pausiert)</h3>
-          <p>${ev.desc}</p>
-          <div class="carb-info">Kohlenhydrate: ${ev.carbs}g (~${Math.round(ev.carbs / 10)} KHE)</div>
-          <p style="font-size:0.75rem; color:#94a3b8; margin-bottom:10px;">
-            Nutze unten Pen oder Traubenzucker/Saft, bevor du fortfährst.
-          </p>
-          <div class="event-actions">
-            <button class="btn-eat" onclick="resumeAfterMeal(${ev.carbs}, true)">Essen & Weiter</button>
-            <button class="btn-skip" onclick="resumeAfterMeal(${ev.carbs}, false)">Ausfallen lassen (-250 Pkt)</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function resumeAfterMeal(carbs, didEat) {
-      const area = document.getElementById('event-area');
-      area.innerHTML = '';
-
-      if (didEat) {
-        activeCarbs.push({ delaySeconds: 4, remainingSeconds: 15, carbAmount: carbs });
-      } else {
-        state.score = Math.max(0, state.score - 250); // Abzug für Hunger
+      // Ereignisse prüfen
+      const pending = SCHEDULED_EVENTS.find(ev => !ev.done && state.simMinute >= ev.minute);
+      if (pending && !currentEvent) {
+        currentEvent = pending;
+        state.isPaused = true; // Auto-Pause für Entscheidung
       }
 
-      isPaused = false; // Spiel fortsetzen
-    }
-
-    // --- End-Screen & LocalStorage Ranking ---
-    function endGame(isHypoCrash) {
-      clearInterval(gameLoopInterval);
-      const endOverlay = document.getElementById('end-overlay');
-      const endTitle = document.getElementById('end-title');
-      const endStats = document.getElementById('end-stats');
-
-      let titr = state.totalSeconds > 0 ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 0;
-      let finalScore = Math.max(0, Math.round(state.score));
-
-      if (isHypoCrash) {
-        endTitle.innerText = "🚨 Notarzt gerufen!";
-        endStats.innerText = `Schwere Hypo (< 40 mg/dl). Der Tag wurde abgebrochen. Endstand: ${finalScore} Punkte.`;
-      } else {
-        endTitle.innerText = "🏁 Tag geschafft!";
-        endStats.innerText = `Score: ${finalScore} Punkte | TiTR (70-140): ${titr}%`;
-      }
-
-      saveRanking(finalScore, titr, isHypoCrash);
-      renderRankingList('ranking-list');
-      endOverlay.style.display = 'flex';
-    }
-
-    function saveRanking(score, titr, crashed) {
-      let rankings = JSON.parse(localStorage.getItem('diabeat_rankings') || '[]');
-      const dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      rankings.push({ score, titr, crashed, date: dateStr });
-      rankings.sort((a, b) => b.score - a.score);
-      rankings = rankings.slice(0, 5); // Behalte Top 5
-      localStorage.setItem('diabeat_rankings', JSON.stringify(rankings));
-    }
-
-    function renderRankingList(elementId) {
-      let rankings = JSON.parse(localStorage.getItem('diabeat_rankings') || '[]');
-      const table = document.getElementById(elementId);
-      if (rankings.length === 0) {
-        table.innerHTML = '<tr><td style="color:#64748b;">Noch keine Runden gespielt.</td></tr>';
+      if (state.simMinute >= DAY_END) {
+        endGame(false);
         return;
       }
-      let html = '<tr><th>Platz</th><th>Score</th><th>TiTR</th><th>Datum</th></tr>';
-      rankings.forEach((r, idx) => {
-        html += `<tr>
-          <td>#${idx + 1}</td>
-          <td><b>${r.score}</b></td>
-          <td>${r.crashed ? 'Hypo' : r.titr + '%'}</td>
-          <td>${r.date}</td>
-        </tr>`;
+
+      updateUI();
+    }
+
+    function startGame() {
+      document.getElementById("startSheet").classList.add("hidden");
+      state.running = true;
+      state.isPaused = false;
+      timer = setInterval(simulationStep, 1000);
+      updateUI();
+      showToast("Simulation gestartet");
+    }
+
+    function endGame(crashed) {
+      state.running = false;
+      state.isPaused = false;
+      clearInterval(timer);
+      document.body.classList.remove("hypo-mode", "hyper-mode");
+
+      const titr = state.totalSeconds ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 0;
+      const finalScore = Math.max(0, Math.round(state.score));
+
+      document.getElementById("endScore").textContent = finalScore;
+      document.getElementById("endTitr").textContent = titr + "%";
+      document.getElementById("endKicker").textContent = crashed ? "Sicherheitsstopp" : "Tagesabschluss";
+      document.getElementById("endTitle").textContent = crashed ? "🚨 Notarzt gerufen!" : "🏁 Tag geschafft!";
+      document.getElementById("endReason").textContent = crashed
+        ? "Schwere Unterzuckerung (< 40 mg/dl). Die Runde wurde sicher beendet."
+        : "Du hast die 24 Stunden erfolgreich gemeistert.";
+
+      saveLocalScore(finalScore, titr, crashed);
+      renderLeaderboards();
+      document.getElementById("endSheet").classList.remove("hidden");
+    }
+
+    function restartGame() {
+      state.simMinute = DAY_START;
+      state.glucose = 110;
+      state.score = 0;
+      state.inRangeSeconds = 0;
+      state.totalSeconds = 0;
+      state.selectedDose = 0;
+      state.history = Array(40).fill(110);
+      activeInsulin = [];
+      activeCarbs = [];
+      currentEvent = null;
+      SCHEDULED_EVENTS.forEach(e => e.done = false);
+
+      document.getElementById("endSheet").classList.add("hidden");
+      document.getElementById("startSheet").classList.remove("hidden");
+      updateUI();
+    }
+
+    function saveLocalScore(score, titr, crashed) {
+      let scores = JSON.parse(localStorage.getItem("diabeat_scores") || "[]");
+      const dateStr = new Date().toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+      scores.push({ score, titr, crashed, date: dateStr });
+      scores.sort((a, b) => b.score - a.score);
+      scores = scores.slice(0, 5);
+      localStorage.setItem("diabeat_scores", JSON.stringify(scores));
+    }
+
+    function renderLeaderboards() {
+      const scores = JSON.parse(localStorage.getItem("diabeat_scores") || "[]");
+      ["startLeaderboardRows", "endLeaderboardRows"].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = "";
+        if (!scores.length) {
+          el.innerHTML = '<div class="leader-row" style="color:#6f8088;">Noch keine Runden gespielt.</div>';
+          return;
+        }
+        scores.forEach((s, idx) => {
+          const row = document.createElement("div");
+          row.className = "leader-row";
+          row.innerHTML = `<span>#${idx + 1} · ${s.crashed ? 'Stopp' : 'Geschafft'} (${s.date})</span><b>${s.score} P · ${s.titr}%</b>`;
+          el.appendChild(row);
+        });
       });
-      table.innerHTML = html;
     }
 
-    // --- UI & Charts ---
-    function updateUI() {
-      let hours = Math.floor(state.gameTimeMinutes / 60) % 24;
-      let mins = Math.floor(state.gameTimeMinutes % 60);
-      document.getElementById('time-display').innerText = 
-        `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')} Uhr`;
-
-      document.getElementById('bg-value').innerText = state.bg;
-      document.getElementById('score-display').innerText = Math.max(0, Math.round(state.score));
-      
-      let titr = state.totalSeconds > 0 ? Math.round((state.inRangeSeconds / state.totalSeconds) * 100) : 100;
-      document.getElementById('titr-display').innerText = `${titr}%`;
-
-      let totalIOB = activeInsulin.reduce((acc, i) => acc + (i.units * (i.remainingSeconds / 30)), 0);
-      document.getElementById('iob-value').innerText = totalIOB.toFixed(1);
-
-      let diff = state.bgHistory[state.bgHistory.length - 1] - state.bgHistory[state.bgHistory.length - 4];
-      let arrow = "→";
-      if (diff > 8) arrow = "↑";
-      else if (diff > 3) arrow = "↗";
-      else if (diff < -8) arrow = "↓";
-      else if (diff < -3) arrow = "↘";
-      document.getElementById('trend-arrow').innerText = arrow;
-    }
-
-    function drawChart() {
-      const canvas = document.getElementById('cgmChart');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      let y140 = canvas.height - ((140 - 40) / 260) * canvas.height;
-      let y70 = canvas.height - ((70 - 40) / 260) * canvas.height;
-      ctx.fillStyle = "rgba(16, 185, 129, 0.15)";
-      ctx.fillRect(0, y140, canvas.width, y70 - y140);
-
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = state.bg < 70 ? "#ef4444" : (state.bg > 140 ? "#f59e0b" : "#10b981");
-
-      state.bgHistory.forEach((val, idx) => {
-        let x = (idx / (state.bgHistory.length - 1)) * canvas.width;
-        let clamped = Math.max(40, Math.min(300, val));
-        let y = canvas.height - ((clamped - 40) / 260) * canvas.height;
-        if (idx === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-    }
+    window.addEventListener("resize", () => drawChart(getStatus().color));
+    document.addEventListener("DOMContentLoaded", () => {
+      updateUI();
+      renderLeaderboards();
+    });
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
