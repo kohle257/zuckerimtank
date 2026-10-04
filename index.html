@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="manifest.json">
   <title>Zucker im Tank</title>
+
+  <!-- iOS / Safari PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Zucker im Tank">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
     :root {
@@ -96,7 +103,7 @@
     .status-bad { color: #a73442; background: #f9dfe3; }
     .iob-chip { padding: 4px 8px; border-radius: 99px; color: #51636b; background: #edf2f2; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 3px; }
     
-    /* Doppelt so viel Platz in der Höhe (200px) */
+    /* 200px Höhe für die Kurve */
     .chart-wrap { position: relative; height: 200px; margin-top: 8px; padding-right: 22px; }
     #cgmChart { width: 100%; height: 100%; display: block; }
     .range-label { position: absolute; right: 0; padding: 1px 0; color: #85949a; font-size: 8.5px; font-weight: 800; line-height: 1; }
@@ -107,7 +114,7 @@
     .section-head h2 { margin: 0; font-size: 13.5px; letter-spacing: -.02em; }
     .section-head p { margin: 0; color: var(--muted); font-size: 9.5px; font-weight: 700; }
     
-    /* Größere Icons & Track für Tagesverlauf */
+    /* Tagesverlauf mit größeren Markern */
     .timeline-card { padding: 10px 12px; }
     .timeline-track { position: relative; height: 64px; margin: 0 4px; }
     .track-base, .track-fill { position: absolute; top: 26px; left: 2%; right: 2%; height: 5px; border-radius: 10px; }
@@ -120,7 +127,7 @@
       transform: translateX(-50%); transition: left .4s ease;
     }
     .event-dot {
-      position: absolute; top: 12px; z-index: 2; display: grid; place-items: center;
+      position: absolute; top: 11px; z-index: 2; display: grid; place-items: center;
       width: 34px; height: 34px; border: 2.5px solid white; border-radius: 50%;
       background: #eef2f2; filter: grayscale(.9); opacity: .55; transform: translateX(-50%); transition: .3s;
       font-size: 16px;
@@ -130,9 +137,9 @@
     .event-name { position: absolute; top: 48px; color: #78888e; font-size: 9px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); }
     .event-name.current { color: #95601e; }
 
-    /* Dynamische Aktions-Marker auf der Zeitleiste */
+    /* Dynamische Aktions-Marker */
     .action-marker {
-      position: absolute; top: 2px; z-index: 4; display: grid; place-items: center;
+      position: absolute; top: 3px; z-index: 4; display: grid; place-items: center;
       width: 20px; height: 20px; border-radius: 50%; background: white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15); transform: translateX(-50%);
       font-size: 11px;
@@ -241,7 +248,7 @@
             <span id="iobValue" class="iob-chip">💉 0,0 IE</span>
           </div>
         </div>
-        <!-- Höhe auf 200px verdoppelt -->
+        <!-- 200px Höhe für die Kurve -->
         <div class="chart-wrap">
           <span class="range-label range-top">140</span>
           <span class="range-label range-bottom">70</span>
@@ -260,13 +267,18 @@
             <div id="trackFill" class="track-fill"></div>
             <div id="timeMarker" class="time-marker"></div>
             
-            <!-- Größere Mahlzeiten-Marker -->
-            <div class="event-dot" id="dot-breakfast" style="left:5%;">🥣</div>
-            <span class="event-name" id="name-breakfast" style="left:5%;">07:30</span>
-            <div class="event-dot" id="dot-lunch" style="left:42%;">🍝</div>
-            <span class="event-name" id="name-lunch" style="left:42%;">12:30</span>
-            <div class="event-dot" id="dot-dinner" style="left:78%;">🥗</div>
-            <span class="event-name" id="name-dinner" style="left:78%;">18:30</span>
+            <!-- Mathematisch korrekte Positionen auf der 24h-Achse ab 07:00 Uhr -->
+            <!-- 07:30 Uhr (+30 Min) = 4% -->
+            <div class="event-dot" id="dot-breakfast" style="left:4%;">🥣</div>
+            <span class="event-name" id="name-breakfast" style="left:4%;">07:30</span>
+
+            <!-- 12:30 Uhr (+330 Min) = 24% -->
+            <div class="event-dot" id="dot-lunch" style="left:24%;">🍝</div>
+            <span class="event-name" id="name-lunch" style="left:24%;">12:30</span>
+
+            <!-- 18:30 Uhr (+690 Min) = 48% -->
+            <div class="event-dot" id="dot-dinner" style="left:48%;">🥗</div>
+            <span class="event-name" id="name-dinner" style="left:48%;">18:30</span>
 
             <!-- Container für dynamische Spritzen & Bonbon/Saft-Marker -->
             <div id="actionMarkersContainer"></div>
@@ -361,13 +373,14 @@
   </div>
 
   <script>
-    const DAY_START = 7 * 60; // 07:00 Uhr
-    const DAY_END = DAY_START + 1440; // 24 Stunden später
+    const DAY_START = 7 * 60; // 420 Min (07:00 Uhr Tag 1)
+    const DAY_END = DAY_START + 1440; // 1860 Min (07:00 Uhr Folgetag)
 
+    // Ereignisse absolut in Minuten ab 00:00 Uhr Tag 1
     const SCHEDULED_EVENTS = [
-      { id: "breakfast", minute: 7 * 60 + 30, icon: "🥣", title: "Frühstück", description: "1 Scheibe Vollkornbrot mit Gouda & 1 Apfel", carbs: 35, done: false },
-      { id: "lunch", minute: 12 * 60 + 30, icon: "🍝", title: "Mittagessen", description: "Ein tiefer Teller Pasta mit Bolognese", carbs: 70, done: false },
-      { id: "dinner", minute: 18 * 60 + 30, icon: "🥗", title: "Abendessen", description: "Salat mit Putenbrust & 1 Scheibe Baguette", carbs: 25, done: false }
+      { id: "breakfast", minute: 7 * 60 + 30, icon: "🥣", title: "Frühstück", description: "1 Scheibe Vollkornbrot mit Gouda & 1 Apfel", carbs: 35, done: false }, // 450 min
+      { id: "lunch", minute: 12 * 60 + 30, icon: "🍝", title: "Mittagessen", description: "Ein tiefer Teller Pasta mit Bolognese", carbs: 70, done: false },       // 750 min
+      { id: "dinner", minute: 18 * 60 + 30, icon: "🥗", title: "Abendessen", description: "Salat mit Putenbrust & 1 Scheibe Baguette", carbs: 25, done: false }    // 1110 min
     ];
 
     let state = {
@@ -384,13 +397,16 @@
 
     let activeInsulin = [];
     let activeCarbs = [];
-    let timelineActions = []; // { leftPercent, icon }
+    let timelineActions = [];
     let currentEvent = null;
     let timer = null;
 
+    // Sauberes 24-Stunden-Format (00:00 bis 23:59)
     function formatTime(minute) {
-      const normalized = Math.floor(minute % 1440);
-      return String(Math.floor(normalized / 60)).padStart(2, "0") + ":" + String(normalized % 60).padStart(2, "0");
+      const normalized = Math.floor(minute) % 1440;
+      const hours = Math.floor(normalized / 60);
+      const mins = Math.floor(normalized % 60);
+      return String(hours).padStart(2, "0") + ":" + String(mins).padStart(2, "0");
     }
 
     function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
@@ -451,9 +467,11 @@
       document.getElementById("titrValue").textContent = titr + "%";
       document.getElementById("doseValue").textContent = state.selectedDose;
 
+      // Mathematisch exakte Positionierung von Zeitzeiger & Füllung (0% bis 100%)
       const progress = clamp((state.simMinute - DAY_START) / (DAY_END - DAY_START), 0, 1);
-      document.getElementById("trackFill").style.width = (2 + progress * 96) + "%";
-      document.getElementById("timeMarker").style.left = (2 + progress * 96) + "%";
+      const leftPercent = (2 + progress * 96).toFixed(1);
+      document.getElementById("trackFill").style.width = leftPercent + "%";
+      document.getElementById("timeMarker").style.left = leftPercent + "%";
       document.getElementById("dayProgress").textContent = formatTime(state.simMinute) + " von 24 Stunden";
 
       SCHEDULED_EVENTS.forEach(ev => {
@@ -671,6 +689,7 @@
       metabolize();
       handleSensory();
 
+      // Prüfen, ob eine Mahlzeit erreicht wurde
       const pending = SCHEDULED_EVENTS.find(ev => !ev.done && state.simMinute >= ev.minute);
       if (pending && !currentEvent) {
         currentEvent = pending;
