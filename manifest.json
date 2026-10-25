@@ -1,15 +1,23 @@
 {
-  "name": "Zucker im Tank - T1D Simulator",
+  "name": "Zucker im Tank - Das T1D Diabetes Game",
   "short_name": "Zucker im Tank",
+  "description": "Erlebe und meistere das Leben mit Typ-1-Diabetes in einer spannenden Spiel-Simulation.",
+  "id": "zucker-im-tank-game-pwa",
   "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#090d16",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0a0f1d",
+  "categories": ["games", "health", "education"],
+  "lang": "de",
   "icons": [
     {
       "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "./icon-512.png",

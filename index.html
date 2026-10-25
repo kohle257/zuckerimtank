@@ -2,15 +2,18 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="manifest" href="manifest.json">
   <title>Zucker im Tank - Das T1D Diabetes Game</title>
 
-  <!-- iOS / Safari PWA Support -->
+  <!-- PWA & Vollbild-Support (iOS, Android, Desktop) -->
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Zucker im Tank">
+  <meta name="theme-color" content="#0a0f1d">
   <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png">
 
   <!-- Google Fonts: Outfit (Gaming & Digits) & DM Sans (UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,12 +57,15 @@
 
     html, body {
       width: 100%;
+      height: 100%;
       min-height: 100vh;
+      min-height: 100dvh;
       background: var(--bg-dark);
       color: var(--text-main);
       font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
       overflow-x: hidden;
       touch-action: manipulation;
+      overscroll-behavior: none;
     }
 
     body {
@@ -145,13 +151,15 @@
 
     .app-shell {
       width: 100%;
-      max-width: 520px;
+      max-width: 500px;
       margin: 0 auto;
-      padding: 10px 14px 148px;
+      padding: 6px 12px 138px;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      box-sizing: border-box;
     }
 
     /* === TOP BAR & GAME CONTROLS === */
@@ -320,16 +328,17 @@
       margin-top: 1px;
     }
 
-    /* === CGM HERO CARD === */
+    /* === CGM HERO CARD (RESPONSIV SKALIERBAR) === */
     .cgm-card {
       background: var(--bg-card);
       border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-xl);
-      padding: 16px 16px 12px;
+      border-radius: var(--radius-lg);
+      padding: 10px 14px 8px;
       backdrop-filter: blur(16px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
       position: relative;
       overflow: hidden;
+      flex-shrink: 0;
     }
     .cgm-card::before {
       content: "";
@@ -369,12 +378,12 @@
     .glucose-display-row {
       display: flex;
       align-items: baseline;
-      gap: 8px;
-      margin-top: 4px;
+      gap: 6px;
+      margin-top: 2px;
     }
     .glucose-number {
       font-family: "Outfit", sans-serif;
-      font-size: 48px;
+      font-size: clamp(32px, 5vh, 44px);
       font-weight: 900;
       line-height: 0.95;
       letter-spacing: -0.04em;
@@ -383,12 +392,12 @@
       transition: color 0.3s;
     }
     .glucose-unit {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
     }
     .trend-arrow-box {
-      font-size: 32px;
+      font-size: clamp(22px, 3.5vh, 28px);
       font-weight: 900;
       line-height: 1;
       margin-left: 2px;
@@ -445,12 +454,12 @@
       color: var(--text-muted);
     }
 
-    /* === CHART WRAPPER === */
+    /* === CHART WRAPPER (KOMPAKT & RESPONSIV SKALIEREND) === */
     .chart-container {
       position: relative;
-      height: 180px;
-      margin-top: 12px;
-      padding-right: 28px;
+      height: clamp(85px, 15vh, 145px);
+      margin-top: 4px;
+      padding-right: 26px;
     }
     #cgmCanvas {
       width: 100%;
@@ -472,15 +481,110 @@
     .timeline-card {
       background: var(--bg-card);
       border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      padding: 12px 14px 14px;
+      border-radius: var(--radius-md);
+      padding: 8px 12px 10px;
       backdrop-filter: blur(14px);
+      flex-shrink: 0;
     }
     .timeline-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
+    }
+    .track-wrapper {
+      position: relative;
+      height: 48px;
+      margin: 0 4px;
+    }
+    .track-rail-bg {
+      position: absolute;
+      top: 18px;
+      left: 1%;
+      right: 1%;
+      height: 5px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .track-rail-progress {
+      position: absolute;
+      top: 18px;
+      left: 1%;
+      width: 0%;
+      height: 5px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--emerald), var(--cyan));
+      box-shadow: 0 0 10px var(--cyan-glow);
+      transition: width 0.3s ease;
+    }
+    .track-cursor {
+      position: absolute;
+      top: 12px;
+      left: 1%;
+      z-index: 10;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2.5px solid var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+    }
+    .event-pin {
+      position: absolute;
+      top: 5px;
+      z-index: 4;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(30, 41, 59, 0.95);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .event-pin.done {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald-glow);
+    }
+    .event-pin.active-event {
+      background: rgba(245, 158, 11, 0.35);
+      border-color: var(--amber);
+      transform: translateX(-50%) scale(1.15);
+      box-shadow: 0 0 14px var(--amber-glow);
+      animation: bounce-pin 0.8s infinite alternate ease-in-out;
+    }
+    .event-pin-time {
+      position: absolute;
+      top: 35px;
+      font-family: "Outfit", sans-serif;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--text-dim);
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+    .action-marker-dot {
+      position: absolute;
+      top: 0px;
+      z-index: 8;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
     .timeline-header h3 {
       font-family: "Outfit", sans-serif;
@@ -700,47 +804,46 @@
       border-radius: var(--radius-md);
     }
 
-    /* === BOTTOM ACTION DOCK (PEN & RESCUE ITEMS) === */
     .action-dock {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: min(100%, 520px);
-      background: rgba(10, 15, 29, 0.94);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
+      width: min(100%, 500px);
+      background: rgba(10, 15, 29, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 14px 16px;
+      padding: 6px 12px calc(8px + env(safe-area-inset-bottom, 0px));
       z-index: 60;
-      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.5);
     }
 
     .dock-row-pen {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .insulin-pen-dial {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-md);
-      padding: 4px 6px;
-      min-width: 130px;
+      padding: 3px 5px;
+      min-width: 115px;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
     }
     .dial-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
       font-family: "Outfit", sans-serif;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -756,33 +859,33 @@
     .dial-value b {
       display: block;
       font-family: "Outfit", sans-serif;
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
     }
     .dial-value span {
       display: block;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 700;
       color: var(--text-dim);
     }
 
     .btn-inject {
       flex: 1;
-      height: 42px;
+      height: 38px;
       background: linear-gradient(135deg, #0ea5e9, #0284c7);
       border-radius: var(--radius-md);
       color: #ffffff;
       font-family: "Outfit", sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.02em;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.35);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
     }
     .btn-inject:hover {
       background: linear-gradient(135deg, #38bdf8, #0284c7);
@@ -792,14 +895,14 @@
     .rescue-tray {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 8px;
+      gap: 5px;
+      margin-top: 6px;
     }
     .rescue-btn {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 11px;
-      padding: 6px 4px;
+      border-radius: 9px;
+      padding: 5px 3px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -809,7 +912,7 @@
       background: rgba(255, 255, 255, 0.12);
     }
     .rescue-btn span.icon-text {
-      font-size: 11.5px;
+      font-size: 10.5px;
       font-weight: 800;
       color: #ffffff;
       display: flex;
@@ -817,7 +920,7 @@
       gap: 3px;
     }
     .rescue-btn span.speed-tag {
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 700;
       color: var(--text-dim);
     }
@@ -825,21 +928,194 @@
     /* Active Absorption Status Strip */
     .active-metabolics {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       flex-wrap: wrap;
-      margin-top: 6px;
-      min-height: 18px;
+      margin-top: 4px;
+      min-height: 16px;
     }
     .metabolic-tag {
       background: rgba(255, 255, 255, 0.08);
       border-radius: 6px;
-      padding: 2px 7px;
-      font-size: 9px;
+      padding: 1.5px 6px;
+      font-size: 8.5px;
       font-weight: 700;
       color: var(--text-muted);
       display: inline-flex;
       align-items: center;
       gap: 4px;
+    }
+
+    /* PWA Banner Styles */
+    .pwa-banner {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.15));
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .pwa-banner span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .btn-install-quick {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      color: #ffffff;
+      font-family: "Outfit", sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 7px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+    }
+
+    /* RESPONSIVE MEDIA QUERIES FÜR KEIN-SCROLL-LAYOUT AUF SMARTPHONES */
+    @media (max-height: 750px) {
+      .app-shell {
+        gap: 6px;
+        padding-top: 4px;
+        padding-bottom: 124px;
+      }
+      .topbar {
+        padding: 5px 12px;
+        margin-bottom: 0;
+      }
+      .hud-bar {
+        gap: 4px;
+      }
+      .hud-stat {
+        padding: 4px 4px;
+      }
+      .hud-stat span.label {
+        font-size: 8px;
+      }
+      .hud-stat span.val {
+        font-size: 13px;
+      }
+      .cgm-card {
+        padding: 6px 10px 4px;
+      }
+      .chart-container {
+        height: 95px;
+        margin-top: 2px;
+      }
+      .glucose-number {
+        font-size: 32px;
+      }
+      .trend-arrow-box {
+        font-size: 20px;
+      }
+      .timeline-card {
+        padding: 6px 10px 6px;
+      }
+      .track-wrapper {
+        height: 42px;
+      }
+      .event-pin {
+        width: 25px;
+        height: 25px;
+        font-size: 11.5px;
+        top: 5px;
+      }
+      .event-pin-time {
+        top: 31px;
+        font-size: 8px;
+      }
+      .event-box {
+        padding: 8px 10px;
+      }
+      .event-content-top {
+        gap: 8px;
+      }
+      .event-icon-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+      .event-details h3 {
+        font-size: 13px;
+      }
+      .event-details p {
+        font-size: 10.5px;
+      }
+      .event-action-buttons {
+        margin-top: 6px;
+        gap: 6px;
+      }
+      .btn-action-primary, .btn-action-secondary {
+        min-height: 34px;
+        padding: 6px;
+        font-size: 11px;
+      }
+      .action-dock {
+        padding: 4px 10px calc(6px + env(safe-area-inset-bottom, 0px));
+      }
+      .insulin-pen-dial {
+        padding: 2px 4px;
+        min-width: 108px;
+      }
+      .dial-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 15px;
+      }
+      .dial-value b {
+        font-size: 14px;
+      }
+      .btn-inject {
+        height: 34px;
+        font-size: 11.5px;
+      }
+      .rescue-tray {
+        margin-top: 4px;
+        gap: 4px;
+      }
+      .rescue-btn {
+        padding: 4px 2px;
+      }
+      .rescue-btn span.icon-text {
+        font-size: 9.5px;
+      }
+      .rescue-btn span.speed-tag {
+        font-size: 7.5px;
+      }
+    }
+
+    @media (max-height: 650px) {
+      .chart-container {
+        height: 75px;
+      }
+      .glucose-number {
+        font-size: 26px;
+      }
+      .cgm-card {
+        padding: 4px 8px 2px;
+      }
+      .timeline-card {
+        padding: 4px 8px 4px;
+      }
+      .track-wrapper {
+        height: 36px;
+      }
+      .event-pin {
+        width: 22px;
+        height: 22px;
+        font-size: 10px;
+        top: 4px;
+      }
+      .event-pin-time {
+        top: 26px;
+        font-size: 7.5px;
+      }
+      .app-shell {
+        gap: 4px;
+        padding-bottom: 116px;
+      }
     }
     .metabolic-tag.ins {
       border-left: 2px solid var(--cyan);
@@ -1201,8 +1477,14 @@
         </div>
       </div>
 
-      <!-- Quick Controls: Pause, Speed & Sound -->
+      <!-- Quick Controls: Pause, Speed, Fullscreen, PWA Install & Sound -->
       <div class="top-controls">
+        <button id="btnFullscreen" class="ctrl-btn" type="button" title="Vollbild umschalten" onclick="toggleFullscreen()">
+          <span>⛶</span>
+        </button>
+        <button id="btnPwaInstall" class="ctrl-btn hidden" type="button" title="App installieren" onclick="installPwa()">
+          <span>📲</span>
+        </button>
         <button id="btnPause" class="ctrl-btn" type="button" title="Pausieren (Leertaste)" onclick="togglePause()">
           <span id="pauseIcon">⏸️</span>
         </button>
@@ -1356,6 +1638,12 @@
       <p class="modal-desc">
         Erlebe das Leben mit Typ-1-Diabetes. Berechne Mahlzeiten, meistere spontane Snacks, reagiere auf Sport und halte deinen Glukosewert im grünen Bereich!
       </p>
+
+      <!-- PWA Install-Banner falls im Browser geöffnet -->
+      <div id="modalInstallBanner" class="pwa-banner hidden">
+        <span>📲 Als Vollbild-App auf dem Smartphone installieren?</span>
+        <button class="btn-install-quick" type="button" onclick="installPwa()">Jetzt installieren</button>
+      </div>
 
       <div class="config-segment-label">Spieldauer / Modus:</div>
       <div class="segmented-control" id="modeSelector">
@@ -2541,6 +2829,62 @@
         togglePause();
       }
     });
+
+    /* =========================================================================
+       PWA INSTALLATION & FULLSCREEN ENGINE
+       ========================================================================= */
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const topBtn = document.getElementById('btnPwaInstall');
+      if (topBtn) topBtn.classList.remove('hidden');
+      const banner = document.getElementById('modalInstallBanner');
+      if (banner) banner.classList.remove('hidden');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      const topBtn = document.getElementById('btnPwaInstall');
+      if (topBtn) topBtn.classList.add('hidden');
+      const banner = document.getElementById('modalInstallBanner');
+      if (banner) banner.classList.add('hidden');
+      showToast('🎉 Zucker im Tank als App installiert!');
+    });
+
+    function installPwa() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast('App-Installation gestartet...');
+          }
+          deferredInstallPrompt = null;
+        });
+      } else {
+        showToast('ℹ️ Tippe im Browser-Menü auf "Zum Startbildschirm hinzufügen"');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const el = document.documentElement;
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        }
+        showToast('⛶ Vollbildmodus aktiviert');
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        showToast('⛶ Vollbild beendet');
+      }
+    }
 
     /* =========================================================================
        SESSION LIFECYCLE: START, TAGESBERICHT, ENDE & BESTENLISTE
