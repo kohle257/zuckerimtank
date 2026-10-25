@@ -851,6 +851,11 @@
       border-left: 2px solid var(--emerald);
       color: #6ee7b7;
     }
+    .metabolic-tag.dawn {
+      border-left: 2px solid #f97316;
+      background: rgba(249, 115, 22, 0.14);
+      color: #fdba74;
+    }
 
     /* === TOAST NOTIFICATION === */
     .toast {
@@ -1032,6 +1037,41 @@
       transform: translateX(16px);
     }
 
+    .disclaimer-agreement {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      margin: 14px 0 12px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .disclaimer-agreement:hover {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+    .disclaimer-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .disclaimer-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 1.5px;
+      accent-color: var(--emerald);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .disclaimer-label span {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+    .disclaimer-label span b {
+      color: #fbbf24;
+    }
+
     .btn-start-game {
       width: 100%;
       height: 48px;
@@ -1043,6 +1083,12 @@
       font-weight: 800;
       letter-spacing: 0.02em;
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+    .btn-start-game:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: grayscale(0.6);
     }
 
     /* Summary Scores in End Sheet */
@@ -1356,7 +1402,17 @@
         <div id="startLeaderboard" class="leaderboard-list"></div>
       </div>
 
-      <button class="btn-start-game" type="button" onclick="startGameSession()">
+      <!-- Bestätigungs-Checkbox für Simulations-Charakter -->
+      <div class="disclaimer-agreement">
+        <label class="disclaimer-label">
+          <input type="checkbox" id="disclaimerCheckbox" onchange="handleDisclaimerChange()">
+          <span>
+            Ich bestätige, dass dies ein <b>Lernspiel &amp; eine stark vereinfachte Simulation</b> ist – keine medizinische App oder Dosierhilfe für Behandlungsentscheidungen.
+          </span>
+        </label>
+      </div>
+
+      <button id="btnStartGame" class="btn-start-game" type="button" disabled onclick="startGameSession()">
         🚀 SPIEL STARTEN
       </button>
     </div>
@@ -1554,11 +1610,32 @@
     const DAY_END_MIN = 24 * 60;  // 00:00 Uhr Mitternacht / Bettruhe (1440 Min)
     const DAY_LENGTH_MIN = DAY_END_MIN - DAY_START_MIN; // 1020 Min (17 Stunden)
 
-    // Standard-Mahlzeiten pro Tag (mit realistischen Uhrzeiten)
-    const BASE_MEALS = [
-      { id: "breakfast", minute: 7 * 60 + 30, icon: "🥣", title: "Frühstück", desc: "Vollkornbrot mit Gouda & ein frischer Apfel", carbs: 36, isSport: false },
-      { id: "lunch", minute: 12 * 60 + 30, icon: "🍝", title: "Mittagessen", desc: "Großer Teller Pasta mit herzhafter Bolognese", carbs: 70, isSport: false },
-      { id: "dinner", minute: 18 * 60 + 30, icon: "🥗", title: "Abendessen", desc: "Bunter Salat mit Putenbrust & 2 Scheiben Baguette", carbs: 28, isSport: false }
+    // Vielfältige Frühstücks-Optionen (Variabel pro Tag)
+    const BREAKFAST_POOL = [
+      { id: "breakfast_porridge", icon: "🥣", title: "Beeren-Haferbrei", desc: "Warmer Haferflocken-Porridge mit frischen Blaubeeren & Chiasamen.", carbs: 42, isSport: false },
+      { id: "breakfast_cheese_bread", icon: "🧀", title: "Vollkornbrot mit Gouda", desc: "2 Scheiben Dinkelbrot mit Käse, Butter & 1 frischer Apfel.", carbs: 38, isSport: false },
+      { id: "breakfast_eggs", icon: "🍳", title: "Rührei & Vollkorntoast", desc: "Zweierlei Rührei mit Schnittlauch, Avocado & 1 Scheibe Vollkorntoast.", carbs: 16, isSport: false },
+      { id: "breakfast_croissant", icon: "🥐", title: "Süßes Sonntagsfrühstück", desc: "Frisches Croissant mit Erdbeermarmelade & ein kleiner O-Saft.", carbs: 54, isSport: false },
+      { id: "breakfast_pancakes", icon: "🥞", title: "Fluffige Pancakes", desc: "Drei Buttermilch-Pancakes mit etwas Ahornsirup & Himbeeren.", carbs: 62, isSport: false }
+    ];
+
+    // Vielfältige Mittagessen-Optionen (Nicht immer nur Bolognese!)
+    const LUNCH_POOL = [
+      { id: "lunch_bolognese", icon: "🍝", title: "Pasta Bolognese", desc: "Ein tiefer Teller Spaghetti mit herzhafter Rinderbolognese & Parmesan.", carbs: 72, isSport: false },
+      { id: "lunch_curry", icon: "🍛", title: "Hähnchen-Curry mit Reis", desc: "Cremiges Kokos-Curry mit zartem Hähnchen, Gemüse & Duftreis.", carbs: 64, isSport: false },
+      { id: "lunch_pizza", icon: "🍕", title: "Steinofen-Pizza Salami", desc: "Zwei große Stücke knusprige Pizza (fettreich, verzögerte Resorption).", carbs: 58, isSport: false },
+      { id: "lunch_doener", icon: "🌯", title: "Döner Kebab im Fladenbrot", desc: "Frischer Döner mit Salat, Tomaten, Kräutersoße und Fladenbrot.", carbs: 55, isSport: false },
+      { id: "lunch_bowl", icon: "🥗", title: "Quinoa-Bowl mit Feta", desc: "Bunte Bowl mit Quinoa, Kichererbsen, Gurke, Avocado & Feta.", carbs: 38, isSport: false },
+      { id: "lunch_burger", icon: "🍔", title: "Burger & Süßkartoffelpommes", desc: "Saftiger Cheeseburger mit einer kleinen Portion Pommes.", carbs: 78, isSport: false }
+    ];
+
+    // Vielfältige Abendessen-Optionen
+    const DINNER_POOL = [
+      { id: "dinner_salad", icon: "🥗", title: "Großer Salatteller", desc: "Bunter Blattsalat mit gebratenen Putenstreifen & 2 Scheiben Baguette.", carbs: 26, isSport: false },
+      { id: "dinner_casserole", icon: "🥘", title: "Kartoffel-Gemüse-Auflauf", desc: "Frisch gebackener Auflauf mit Kartoffeln, Brokkoli und goldgelbem Käse.", carbs: 46, isSport: false },
+      { id: "dinner_sushi", icon: "🍣", title: "Sushi-Auswahl", desc: "8 Maki & 4 Lachs-Nigiri mit Sojasauce und eingelegtem Ingwer.", carbs: 60, isSport: false },
+      { id: "dinner_bread", icon: "🥖", title: "Deutsches Abendbrot", desc: "Zwei Scheiben Sauerteigbrot mit Frischkäse, Pute & Essiggurken.", carbs: 35, isSport: false },
+      { id: "dinner_stew", icon: "🍲", title: "Linseneintopf mit Würstchen", desc: "Herzhafter Linseneintopf mit Gemüseeinlage und 1 Vollkornbrötchen.", carbs: 42, isSport: false }
     ];
 
     // Strukturierte, tageszeitlich realistische Spontan-Events
@@ -1657,7 +1734,10 @@
 
       // Zufällige Schwankungen (Biologisches Rauschen +-5)
       noiseOffset: 0,
-      noiseTimer: 0
+      noiseTimer: 0,
+
+      // Dawn-Phänomen (Morgendlicher Glukoseanstieg im Profi-Modus)
+      dawnEffect: null
     };
 
     let simInterval = null;
@@ -1668,14 +1748,33 @@
        ========================================================================= */
     function buildDayEvents(dayNum) {
       const events = [];
-      // 1. Die 3 Hauptmahlzeiten
-      BASE_MEALS.forEach(m => {
-        events.push({
-          ...m,
-          id: `${m.id}_d${dayNum}`,
-          minute: m.minute,
-          done: false
-        });
+      // 1. Die 3 Hauptmahlzeiten dynamisch aus den variablen Pools auswählen
+      const pickedBreakfast = BREAKFAST_POOL[Math.floor(Math.random() * BREAKFAST_POOL.length)];
+      const pickedLunch = LUNCH_POOL[Math.floor(Math.random() * LUNCH_POOL.length)];
+      const pickedDinner = DINNER_POOL[Math.floor(Math.random() * DINNER_POOL.length)];
+
+      events.push({
+        ...pickedBreakfast,
+        id: `breakfast_d${dayNum}`,
+        mealType: "breakfast",
+        minute: 7 * 60 + 30, // 07:30 Uhr
+        done: false
+      });
+
+      events.push({
+        ...pickedLunch,
+        id: `lunch_d${dayNum}`,
+        mealType: "lunch",
+        minute: 12 * 60 + 30, // 12:30 Uhr
+        done: false
+      });
+
+      events.push({
+        ...pickedDinner,
+        id: `dinner_d${dayNum}`,
+        mealType: "dinner",
+        minute: 18 * 60 + 30, // 18:30 Uhr
+        done: false
       });
 
       // 2. Realistische Spontan-Events: Wähle 1 bis 2 verschiedene Zeitslots pro Tag
@@ -1697,12 +1796,53 @@
       });
 
       events.sort((a, b) => a.minute - b.minute);
+
+      // 3. Dawn-Effekt im Profi-Modus (60% Chance morgens zwischen 07:00 und 09:00 Uhr)
+      if (game.difficulty === "PRO" && Math.random() < 0.6) {
+        game.dawnEffect = {
+          active: true,
+          announced: false,
+          totalRise: 34 + Math.floor(Math.random() * 12), // +34 bis +46 mg/dl Glukoseausschüttung der Leber
+          durationTicks: 26, // über ca. 26 Ticks morgens
+          remainingTicks: 26
+        };
+      } else {
+        game.dawnEffect = null;
+      }
+
       return events;
     }
 
     function renderDynamicPins() {
       const container = document.getElementById("dynamicPinsContainer");
       container.innerHTML = "";
+
+      // Icons der 3 Hauptmahlzeiten dynamisch auf der Timeline anpassen
+      const bMeal = game.dayEvents.find(e => e.mealType === "breakfast");
+      const lMeal = game.dayEvents.find(e => e.mealType === "lunch");
+      const dMeal = game.dayEvents.find(e => e.mealType === "dinner");
+
+      if (bMeal) {
+        const pin = document.getElementById("pin-breakfast");
+        if (pin) {
+          pin.textContent = bMeal.icon;
+          pin.title = `${bMeal.title} (07:30)`;
+        }
+      }
+      if (lMeal) {
+        const pin = document.getElementById("pin-lunch");
+        if (pin) {
+          pin.textContent = lMeal.icon;
+          pin.title = `${lMeal.title} (12:30)`;
+        }
+      }
+      if (dMeal) {
+        const pin = document.getElementById("pin-dinner");
+        if (pin) {
+          pin.textContent = dMeal.icon;
+          pin.title = `${dMeal.title} (18:30)`;
+        }
+      }
 
       game.dayEvents.forEach(ev => {
         if (!ev.isSpontaneous) return;
@@ -1762,6 +1902,10 @@
         // Sport verdoppelt Insulinsensitivität!
         insulinSensitivity *= 1.6;
       }
+      if (game.dawnEffect && game.dawnEffect.active) {
+        // Dawn-Effekt erhöht kurzzeitig Insulinresistenz um 25%
+        insulinSensitivity *= 0.75;
+      }
 
       game.activeInsulin.forEach(item => {
         if (item.remainingSeconds > 0) {
@@ -1786,7 +1930,24 @@
         }
       }
 
-      // 4. Biologische Grund-Schwankung (Nutzerwunsch: unregelmäßig +-5 auch in Ruhe)
+      // 4. Dawn-Effekt (Morgendliche Hormon-Glukoseausschüttung im Profi-Modus)
+      if (game.dawnEffect && game.dawnEffect.active && game.dawnEffect.remainingTicks > 0) {
+        const stepRise = game.dawnEffect.totalRise / game.dawnEffect.durationTicks;
+        deltaBG += stepRise;
+        game.dawnEffect.remainingTicks--;
+
+        if (!game.dawnEffect.announced && game.simMinute >= 7 * 60 + 5) {
+          game.dawnEffect.announced = true;
+          showToast("🌅 Dawn-Phänomen aktiv! Morgendliche Glukoseausschüttung der Leber.");
+          audio.playCgmAlarm(false);
+        }
+
+        if (game.dawnEffect.remainingTicks <= 0) {
+          game.dawnEffect.active = false;
+        }
+      }
+
+      // 5. Biologische Grund-Schwankung (Nutzerwunsch: unregelmäßig +-5 auch in Ruhe)
       game.noiseTimer--;
       if (game.noiseTimer <= 0) {
         // Neuer unregelmäßiger Schwankungswert zwischen -5 und +5 mg/dl
@@ -2013,7 +2174,7 @@
 
       // Event Pins Highlight
       game.dayEvents.forEach(ev => {
-        const pin = document.getElementById("pin-" + ev.id);
+        const pin = (ev.mealType ? document.getElementById("pin-" + ev.mealType) : null) || document.getElementById("pin-" + ev.id);
         if (pin) {
           pin.className = "event-pin" + 
             (ev.done ? " done" : "") + 
@@ -2043,6 +2204,10 @@
 
       if (game.activeExercise && game.activeExercise.remainingSeconds > 0) {
         chips.push({ text: `🏃 ${game.activeExercise.title} aktiv`, type: "sport" });
+      }
+
+      if (game.dawnEffect && game.dawnEffect.active) {
+        chips.push({ text: "🌅 Dawn-Effekt aktiv", type: "dawn" });
       }
 
       if (!chips.length) {
@@ -2380,7 +2545,21 @@
     /* =========================================================================
        SESSION LIFECYCLE: START, TAGESBERICHT, ENDE & BESTENLISTE
        ========================================================================= */
+    function handleDisclaimerChange() {
+      const checkbox = document.getElementById("disclaimerCheckbox");
+      const btn = document.getElementById("btnStartGame");
+      if (checkbox && btn) {
+        btn.disabled = !checkbox.checked;
+      }
+    }
+
     function startGameSession() {
+      const checkbox = document.getElementById("disclaimerCheckbox");
+      if (checkbox && !checkbox.checked) {
+        showToast("⚠️ Bitte bestätige zuerst den Simulations-Hinweis");
+        return;
+      }
+
       document.getElementById("startSheet").classList.add("hidden");
       audio.init();
 
@@ -2555,6 +2734,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
+      handleDisclaimerChange();
       renderLeaderboards();
       updateUI();
     });
