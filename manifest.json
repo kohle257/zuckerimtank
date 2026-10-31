@@ -12,6 +12,15 @@
   "theme_color": "#0a0f1d",
   "categories": ["games", "health", "education"],
   "lang": "de",
+  "shortcuts": [
+    {
+      "name": "KIDS Edition mit Zucki",
+      "short_name": "Zucki KIDS",
+      "description": "Kinderleichte Variante mit Blutzucker-Ampel & Drache Zucki",
+      "url": "./kids.html",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "./icon-192.png",

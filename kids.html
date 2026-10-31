@@ -1,0 +1,2612 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <title>Zucker im Tank KIDS - Das Diabetes-Lernspiel für Kinder</title>
+
+  <!-- PWA & Mobile Support -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Zucki KIDS">
+  <meta name="theme-color" content="#38bdf8">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
+  <!-- Google Fonts: Fredoka (super warm, kinderfreundlich & rund) & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-sky: #e0f2fe;
+      --bg-card: #ffffff;
+      --bg-card-soft: #f8fafc;
+      
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-fun: #0f172a;
+
+      /* Freundliche kindgerechte Ampelfarben */
+      --green-target: #10b981;
+      --green-light: #ecfdf5;
+      --green-border: #6ee7b7;
+
+      --yellow-high: #f59e0b;
+      --yellow-light: #fef3c7;
+      --yellow-border: #fcd34d;
+
+      --red-low: #ef4444;
+      --red-light: #fee2e2;
+      --red-border: #fca5a5;
+
+      --purple-veryhigh: #8b5cf6;
+      --purple-light: #ede9fe;
+
+      --sky-blue: #0284c7;
+      --sky-light: #f0f9ff;
+      --sky-border: #7dd3fc;
+
+      --orange-accent: #f97316;
+      --pink-accent: #ec4899;
+
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 26px;
+      --radius-xl: 34px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 4px 12px rgba(2, 132, 199, 0.08);
+      --shadow-md: 0 8px 24px rgba(2, 132, 199, 0.12);
+      --shadow-lg: 0 16px 36px rgba(2, 132, 199, 0.16);
+      --shadow-fun: 0 8px 0px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: 'Fredoka', 'DM Sans', -apple-system, sans-serif;
+      color: var(--text-main);
+      background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 35%, #f0fdf4 75%, #fef3c7 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Floating Clouds Background Animation */
+    .bg-clouds {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.45;
+    }
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 999px;
+      filter: blur(1px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.8);
+      animation: floatCloud linear infinite;
+    }
+    .cloud-1 {
+      width: 160px;
+      height: 48px;
+      top: 6%;
+      left: -180px;
+      animation-duration: 42s;
+    }
+    .cloud-2 {
+      width: 220px;
+      height: 64px;
+      top: 24%;
+      left: -240px;
+      animation-duration: 58s;
+      animation-delay: 12s;
+    }
+    .cloud-3 {
+      width: 140px;
+      height: 42px;
+      top: 65%;
+      left: -160px;
+      animation-duration: 38s;
+      animation-delay: 6s;
+    }
+    @keyframes floatCloud {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(100vw + 350px)); }
+    }
+
+    /* Vignette Alert for Kids (Sanfter, nicht beängstigend) */
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .vignette-overlay.low-alarm {
+      opacity: 1;
+      background: radial-gradient(circle at center, transparent 45%, rgba(239, 68, 68, 0.15) 75%, rgba(239, 68, 68, 0.4) 100%);
+      box-shadow: inset 0 0 60px 18px rgba(239, 68, 68, 0.45);
+      animation: pulseLowKids 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes pulseLowKids {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    /* App Shell */
+    .app-shell {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 10px 14px 140px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* === TOP BAR === */
+    .kids-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 8px 14px;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .mascot-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .mascot-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #38bdf8;
+      box-shadow: 0 4px 10px rgba(56, 189, 248, 0.35);
+      background: #bae6fd;
+      flex-shrink: 0;
+      animation: bounceMascot 4s infinite ease-in-out;
+    }
+    .mascot-icon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    @keyframes bounceMascot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .brand-titles h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1.1;
+    }
+    .brand-titles .tag-kids {
+      background: linear-gradient(135deg, #f97316, #ec4899);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.05em;
+    }
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .time-badge b {
+      color: #0284c7;
+      font-weight: 700;
+    }
+
+    /* Top Controls: Stern-Badge & Drei-Punkte-Menü */
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .star-badge-pill {
+      background: linear-gradient(135deg, #fef08a, #fde047);
+      border: 2px solid #eab308;
+      border-radius: var(--radius-pill);
+      padding: 5px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #854d0e;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 0 #ca8a04;
+    }
+    .kids-menu-wrapper {
+      position: relative;
+    }
+    .btn-kid-menu {
+      background: #f1f5f9;
+      border: 2px solid #e2e8f0;
+      color: #334155;
+      font-size: 18px;
+      font-weight: 900;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #cbd5e1;
+      transition: all 0.15s ease;
+    }
+    .btn-kid-menu:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #cbd5e1;
+    }
+    .btn-kid-menu.is-paused {
+      background: #fef08a;
+      border-color: #eab308;
+      color: #854d0e;
+    }
+    .kids-menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 190px;
+      background: #ffffff;
+      border: 3px solid #7dd3fc;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.25), 0 4px 0 #38bdf8;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 999;
+      animation: menuPop 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes menuPop {
+      from { transform: translateY(-6px) scale(0.94); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .kids-menu-header {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      padding: 6px 8px 3px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 2px;
+    }
+    .kids-menu-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #1e293b;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .kids-menu-item:hover {
+      background: #e0f2fe;
+    }
+
+    /* Hero Card Metabolics */
+    .kid-metabolics-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .kid-meta-chip {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kid-meta-chip.ins {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+      color: #0369a1;
+    }
+    .kid-meta-chip.carb {
+      background: #fef3c7;
+      border-color: #fde047;
+      color: #92400e;
+    }
+    .kid-meta-chip.walk {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #047857;
+      animation: pulseWalkTag 1.4s infinite alternate;
+    }
+    @keyframes pulseWalkTag {
+      from { opacity: 0.8; }
+      to { opacity: 1; }
+    }
+
+    /* Stations Header Row */
+    .stations-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .stations-time-badge {
+      background: #e0f2fe;
+      border: 2px solid #7dd3fc;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0369a1;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* === HERO: ZUCKI DER DRACHE & BLUTZUCKER-AMPEL === */
+    .zucki-hero-card {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 16px 16px 14px;
+      border: 3px solid #e0f2fe;
+      box-shadow: var(--shadow-md), var(--shadow-fun);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Mascot Speech Bubble & Avatar */
+    .mascot-speech-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .zucki-avatar-frame {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      border: 4px solid #38bdf8;
+      background: linear-gradient(135deg, #bae6fd, #e0f2fe);
+      padding: 3px;
+      box-shadow: 0 8px 18px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .zucki-avatar-frame:hover {
+      transform: scale(1.05) rotate(4deg);
+    }
+    .zucki-avatar-frame img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .zucki-mood-emoji {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      font-size: 22px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zucki-bubble {
+      flex: 1;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px 20px 20px 4px;
+      padding: 10px 14px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+    .zucki-bubble b {
+      display: block;
+      font-size: 12px;
+      color: #0284c7;
+      margin-bottom: 2px;
+    }
+    .zucki-bubble p {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.35;
+    }
+
+    /* Die Blutzucker-Anzeige (Groß, Bunt, Klar) */
+    .sugar-display-center {
+      background: var(--green-light);
+      border: 3px solid var(--green-border);
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: inset 0 2px 6px rgba(16, 185, 129, 0.1);
+      transition: all 0.3s ease;
+    }
+    .sugar-display-center.status-low {
+      background: var(--red-light);
+      border-color: var(--red-border);
+      animation: wobbleAlarm 0.8s infinite alternate ease-in-out;
+    }
+    .sugar-display-center.status-high {
+      background: var(--yellow-light);
+      border-color: var(--yellow-border);
+    }
+    .sugar-display-center.status-veryhigh {
+      background: var(--purple-light);
+      border-color: #c4b5fd;
+    }
+    @keyframes wobbleAlarm {
+      from { transform: scale(0.99); }
+      to { transform: scale(1.02); }
+    }
+
+    .sugar-number-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .sugar-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1;
+      color: #065f46;
+      letter-spacing: -0.02em;
+    }
+    .sugar-unit {
+      font-size: 14px;
+      font-weight: 700;
+      color: #047857;
+    }
+    .trend-arrow-box {
+      font-size: 32px;
+      font-weight: 900;
+      color: #059669;
+      line-height: 1;
+      margin-left: 4px;
+    }
+
+    .sugar-badge-status {
+      text-align: right;
+    }
+    .badge-status-pill {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 3px 0 #059669;
+    }
+    .trend-text-hint {
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    /* Die Blutzucker-Ampel Leiste (Visual Gauge Bar) */
+    .ampel-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ampel-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      padding: 0 4px;
+    }
+    .ampel-track {
+      position: relative;
+      height: 22px;
+      background: linear-gradient(to right, 
+        #ef4444 0%, #ef4444 22%, 
+        #10b981 22%, #10b981 65%, 
+        #f59e0b 65%, #f59e0b 88%,
+        #8b5cf6 88%, #8b5cf6 100%
+      );
+      border-radius: var(--radius-pill);
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+    .ampel-needle {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      width: 26px;
+      height: 34px;
+      background: #ffffff;
+      border: 3px solid #0f172a;
+      border-radius: 8px;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: left 0.3s ease;
+    }
+
+    /* Kindgerechter vereinfachter CGM Chart */
+    .kids-chart-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+      border: 2px solid #e2e8f0;
+      box-shadow: var(--shadow-sm);
+    }
+    .kids-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .canvas-wrap {
+      width: 100%;
+      height: 90px;
+      position: relative;
+    }
+    #kidsCgmCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* === TAGES-STATIONEN / TIMELINE (SCHULWEG & SPIEL) === */
+    .stations-card {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 14px;
+      border: 3px solid #e0f2fe;
+      box-shadow: var(--shadow-sm), var(--shadow-fun);
+    }
+    .stations-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .stations-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      padding: 0 6px;
+    }
+    .stations-rail-bg {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      right: 14px;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    .stations-rail-fill {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      height: 6px;
+      background: #38bdf8;
+      border-radius: 999px;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .station-node {
+      position: relative;
+      z-index: 3;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 3px 0 #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .station-node.done {
+      background: #dcfce7;
+      border-color: #22c55e;
+      box-shadow: 0 3px 0 #16a34a;
+    }
+    .station-node.current {
+      background: #fef08a;
+      border-color: #eab308;
+      transform: scale(1.18);
+      box-shadow: 0 4px 10px rgba(234, 179, 8, 0.45), 0 3px 0 #ca8a04;
+      animation: bounceStation 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes bounceStation {
+      from { transform: scale(1.12); }
+      to { transform: scale(1.22); }
+    }
+    .station-time {
+      position: absolute;
+      bottom: -18px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    /* === AKTUELLES EREIGNIS (MAHLZEIT ODER SPORT) === */
+    .event-banner-card {
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
+      border: 3px solid #86efac;
+      border-radius: var(--radius-xl);
+      padding: 16px;
+      box-shadow: var(--shadow-md), var(--shadow-fun);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .event-banner-card.is-sport {
+      background: linear-gradient(135deg, #ffffff, #f0f9ff);
+      border-color: #7dd3fc;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .event-header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .event-big-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius-lg);
+      background: #ecfdf5;
+      border: 3px solid #6ee7b7;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #34d399;
+      flex-shrink: 0;
+    }
+    .event-banner-card.is-sport .event-big-icon {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      box-shadow: 0 4px 0 #0284c7;
+    }
+    .event-text-meta h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .event-text-meta p {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .carbs-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      border: 2px solid #fde047;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #92400e;
+      margin-top: 4px;
+    }
+
+    /* Schlaue Eule Tipp (Doc Owl Advice) */
+    .owl-hint-box {
+      background: #fdf4ff;
+      border: 2px dashed #f0abfc;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .owl-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+    .owl-hint-box div b {
+      display: block;
+      font-size: 12px;
+      color: #a21caf;
+    }
+    .owl-hint-box div p {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a044e;
+      line-height: 1.3;
+      margin-top: 1px;
+    }
+
+    /* Event Action Buttons */
+    .event-buttons-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 8px;
+    }
+    .btn-eat-now {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 0 #047857;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-eat-now:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #047857;
+    }
+    .btn-skip-event {
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      color: #64748b;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 8px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 0 #94a3b8;
+      cursor: pointer;
+    }
+    .btn-skip-event:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #94a3b8;
+    }
+
+    /* Empty state */
+    .empty-event-card {
+      background: rgba(255, 255, 255, 0.7);
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-xl);
+      padding: 14px 16px;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* === FIXED BOTTOM ACTION DOCK (KIDS FRIENDLY) === */
+    .kids-action-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 3px solid #bae6fd;
+      padding: 10px 14px 14px;
+      box-shadow: 0 -8px 24px rgba(2, 132, 199, 0.15);
+    }
+    .dock-inner {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Der Zauber-Pen (Insulin Dosis) */
+    .pen-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pen-dial-card {
+      flex: 1;
+      background: #e0f2fe;
+      border: 3px solid #7dd3fc;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      box-shadow: 0 3px 0 #38bdf8;
+    }
+    .dial-btn-kid {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #38bdf8;
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #0284c7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #0284c7;
+      transition: all 0.1s ease;
+    }
+    .dial-btn-kid:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #0284c7;
+    }
+    .dial-center {
+      text-align: center;
+      line-height: 1;
+      padding: 0 6px;
+    }
+    .dial-center b {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: #0369a1;
+      display: block;
+    }
+    .dial-center span {
+      font-size: 10px;
+      font-weight: 700;
+      color: #0284c7;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-inject-kid {
+      flex: 1.1;
+      height: 48px;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border: none;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0 12px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 0 #075985;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .btn-inject-kid:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #075985;
+    }
+    .btn-walk-kid {
+      flex: 1;
+      height: 48px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0 12px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 0 #047857;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .btn-walk-kid:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #047857;
+    }
+    .btn-walk-kid:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.6);
+      box-shadow: none;
+    }
+    .btn-walk-kid.is-walking {
+      background: linear-gradient(135deg, #047857, #065f46);
+      box-shadow: 0 2px 0 #022c22;
+      animation: pulseWalkKid 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes pulseWalkKid {
+      from { transform: scale(0.98); }
+      to { transform: scale(1.02); }
+    }
+
+    /* Die Notfall-Kiste (Schnelle KH bei Unterzucker) */
+    .rescue-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .btn-rescue-kid {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #94a3b8;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+    .btn-rescue-kid:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #94a3b8;
+    }
+    .btn-rescue-kid.glow-alarm {
+      border-color: #ef4444;
+      background: #fef2f2;
+      box-shadow: 0 3px 0 #dc2626, 0 0 12px rgba(239, 68, 68, 0.4);
+      animation: pulseRescue 1s infinite alternate ease-in-out;
+    }
+    @keyframes pulseRescue {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+    .btn-rescue-kid .icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .btn-rescue-kid .name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .btn-rescue-kid .boost {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #059669;
+    }
+
+    /* === TOAST POPUP === */
+    .kid-toast {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translate(-50%, -20px);
+      opacity: 0;
+      pointer-events: none;
+      background: #0f172a;
+      border: 3px solid #38bdf8;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      z-index: 1000;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 90%;
+      text-align: center;
+    }
+    .kid-toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* === MODAL SHEETS === */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      transition: opacity 0.2s ease;
+    }
+    .sheet-backdrop.hidden {
+      display: none !important;
+    }
+
+    .kid-modal-box {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 4px solid #38bdf8;
+      border-radius: var(--radius-xl);
+      padding: 24px 20px 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 8px 0 #0284c7;
+      text-align: center;
+      max-height: 92vh;
+      overflow-y: auto;
+      animation: kidModalSlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes kidModalSlide {
+      from { transform: translateY(30px) scale(0.92); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-mascot-pic {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      border: 4px solid #38bdf8;
+      background: #e0f2fe;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+      overflow: hidden;
+    }
+    .modal-mascot-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .kid-modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 6px;
+    }
+    .kid-modal-subtitle {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .rule-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .rule-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .rule-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .rule-card div b {
+      display: block;
+      font-size: 13.5px;
+      color: #0f172a;
+    }
+    .rule-card div p {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .btn-big-kid {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 5px 0 #047857;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .btn-big-kid:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #047857;
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Badges Modal */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .badge-item {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
+    .badge-item.unlocked {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      box-shadow: 0 3px 0 #34d399;
+    }
+    .badge-item .badge-icon {
+      font-size: 32px;
+    }
+    .badge-item b {
+      font-size: 12.5px;
+      color: #0f172a;
+    }
+    .badge-item span {
+      font-size: 10px;
+      color: #64748b;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Clouds Background -->
+  <div class="bg-clouds" aria-hidden="true">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+  </div>
+
+  <!-- Sanfter Unterzucker-Alarm am Bildschirmrand -->
+  <div id="vignetteOverlay" class="vignette-overlay" aria-hidden="true"></div>
+
+  <!-- Confetti Canvas für Feiern & Sterne -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="app-shell">
+
+    <!-- TOP STATUSLEISTE (SCHLANK MIT STERN-BADGE & 3-PUNKTE-MENÜ) -->
+    <header class="kids-topbar">
+      <div class="mascot-brand">
+        <div class="mascot-icon-wrap" onclick="tickleZucki()" title="Tippe auf Zucki!">
+          <img src="zucki.png" alt="Zucki Maskottchen">
+        </div>
+        <div class="brand-titles">
+          <h1>
+            Zucki
+            <span class="tag-kids">KIDS</span>
+          </h1>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <div class="star-badge-pill" title="Gesammelte Sterne">
+          <span>⭐</span>
+          <b id="starsCount">0</b>
+        </div>
+        <div class="kids-menu-wrapper">
+          <button id="btnKidsMenuToggle" class="btn-kid-menu" type="button" title="Menü &amp; Einstellungen" onclick="toggleKidsMenu(event)">
+            <span>⋮</span>
+          </button>
+          <div id="kidsMenuDropdown" class="kids-menu-dropdown hidden" onclick="event.stopPropagation()">
+            <div class="kids-menu-header">Einstellungen &amp; Spiel</div>
+            <button class="kids-menu-item" type="button" onclick="togglePause(); closeKidsMenu();">
+              <span id="kidsMenuPauseIcon">⏸️</span>
+              <span id="kidsMenuPauseLabel">Pause</span>
+            </button>
+            <button class="kids-menu-item" type="button" onclick="cycleSpeed();">
+              <span>⏩</span>
+              <span>Tempo: <b id="kidsMenuSpeedLabel">1x</b></span>
+            </button>
+            <button class="kids-menu-item" type="button" onclick="toggleSound();">
+              <span id="kidsMenuSoundIcon">🔊</span>
+              <span id="kidsMenuSoundLabel">Ton: An</span>
+            </button>
+            <a href="index.html" class="kids-menu-item" style="text-decoration:none; color:inherit;">
+              <span>👔</span>
+              <span>Profi-Version</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO: ZUCKI & DIE BLUTZUCKER-AMPEL -->
+    <section class="zucki-hero-card" aria-label="Zuckis Blutzucker">
+      
+      <!-- Sprechblase & Avatar -->
+      <div class="mascot-speech-row">
+        <div class="zucki-avatar-frame" onclick="tickleZucki()" title="Tippe auf Zucki!">
+          <img src="zucki.png" alt="Zucki Drache">
+          <div id="zuckiMoodEmoji" class="zucki-mood-emoji">😊</div>
+        </div>
+        <div class="zucki-bubble">
+          <b id="zuckiMoodName">Zucki fühlt sich prima!</b>
+          <p id="zuckiSpeech">"Hallo! Lass uns heute zusammen auf meinen Zucker-Tank aufpassen!"</p>
+        </div>
+      </div>
+
+      <!-- Die große Blutzucker-Anzeige -->
+      <div id="sugarDisplayBox" class="sugar-display-center">
+        <div class="sugar-number-wrap">
+          <span id="glucoseNum" class="sugar-val">115</span>
+          <span class="sugar-unit">mg/dl</span>
+          <span id="trendArrow" class="trend-arrow-box">➡️</span>
+        </div>
+        <div class="sugar-badge-status">
+          <span id="sugarBadgeText" class="badge-status-pill">Im grünen Bereich</span>
+          <div id="trendTextHint" class="trend-text-hint">Bleibt stabil</div>
+        </div>
+      </div>
+
+      <!-- Aktive Resorptionen (Insulin & Essen) -->
+      <div class="kid-metabolics-row">
+        <span id="kidIobChip" class="kid-meta-chip ins">💉 0.0 IE</span>
+        <span id="kidCobChip" class="kid-meta-chip carb">🍞 0g aktiv</span>
+        <span id="kidWalkChip" class="kid-meta-chip walk hidden">🚶 Spaziergang</span>
+      </div>
+
+      <!-- Die Blutzucker-Ampel (Visual Slider Bar) -->
+      <div class="ampel-container" aria-label="Blutzucker Ampel">
+        <div class="ampel-labels">
+          <span style="color: #ef4444;">🔴 Zu niedrig</span>
+          <span style="color: #10b981;">🟢 Super (80-150)</span>
+          <span style="color: #f59e0b;">🟡 Etwas hoch</span>
+        </div>
+        <div class="ampel-track">
+          <div id="ampelNeedle" class="ampel-needle" style="left: 45%;">
+            <span id="needleEmoji">😊</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kindgerechte Verlaufskurve -->
+      <div class="kids-chart-card">
+        <div class="kids-chart-header">
+          <span>📈 Verlauf der letzten Stunden</span>
+          <span style="color: #10b981;">🟢 Grünes Zielband</span>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="kidsCgmCanvas" width="460" height="90"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAGES-STATIONEN / TIMELINE (MIT UHRZEIT) -->
+    <section class="stations-card" aria-label="Tagesverlauf">
+      <div class="stations-header-row">
+        <div class="stations-title">
+          <span>🗺️</span>
+          <span>Zuckis Tag: Vom Aufstehen bis zur Bettgehzeit</span>
+        </div>
+        <div class="stations-time-badge">
+          <span>🌅</span>
+          <b id="clockText">07:30</b>
+          <span>Uhr</span>
+        </div>
+      </div>
+      <div class="stations-row" id="stationsRow">
+        <div class="stations-rail-bg"></div>
+        <div id="stationsRailFill" class="stations-rail-fill"></div>
+
+        <!-- 7 Stationen -->
+        <div class="station-node current" id="station-0" title="07:30 Frühstück">
+          🥣
+          <span class="station-time">07:30</span>
+        </div>
+        <div class="station-node" id="station-1" title="10:00 Große Pause">
+          🍎
+          <span class="station-time">10:00</span>
+        </div>
+        <div class="station-node" id="station-2" title="13:00 Mittagessen">
+          🍝
+          <span class="station-time">13:00</span>
+        </div>
+        <div class="station-node" id="station-3" title="15:30 Sport & Toben">
+          ⚽
+          <span class="station-time">15:30</span>
+        </div>
+        <div class="station-node" id="station-4" title="17:15 Nachmittags-Eis">
+          🍦
+          <span class="station-time">17:15</span>
+        </div>
+        <div class="station-node" id="station-5" title="19:15 Abendessen">
+          🥪
+          <span class="station-time">19:15</span>
+        </div>
+        <div class="station-node" id="station-6" title="21:00 Bettgehzeit">
+          🌙
+          <span class="station-time">21:00</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- AKTUELLES EREIGNIS (MAHLZEIT / AKTIVITÄT) -->
+    <section id="eventSectionArea">
+      <div id="emptyEventNotice" class="empty-event-card">
+        <span>✨</span>
+        <span>Zucki ist entspannt. Der nächste Snack kommt bald!</span>
+      </div>
+
+      <div id="activeEventCard" class="event-banner-card hidden">
+        <div class="event-header-row">
+          <div id="eventBigIcon" class="event-big-icon">🥣</div>
+          <div class="event-text-meta">
+            <h3 id="eventTitle">Leckeres Frühstück</h3>
+            <p id="eventDesc">Frisches Beeren-Knuspermüsli mit Milch.</p>
+            <div id="eventCarbTag" class="carbs-pill-tag">
+              <span>🍞</span>
+              <b id="eventCarbsValue">30g Kohlenhydrate</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dr. Eules Schlaue Hilfe -->
+        <div class="owl-hint-box">
+          <span class="owl-icon">🦉</span>
+          <div>
+            <b>Dr. Eules Zauber-Tipp:</b>
+            <p id="owlAdviceText">Für dieses Essen braucht Zucki etwa 2 Einheiten Insulin am Zauber-Pen!</p>
+          </div>
+        </div>
+
+        <div class="event-buttons-row">
+          <button class="btn-eat-now" type="button" onclick="confirmCurrentEvent(true)">
+            <span id="btnEatIcon">🍽️</span>
+            <span id="btnEatLabel">Essen &amp; Weiter</span>
+          </button>
+          <button class="btn-skip-event" type="button" onclick="confirmCurrentEvent(false)">
+            Auslassen
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FIXED BOTTOM ACTION DOCK (KIDS FRIENDLY) -->
+  <aside class="kids-action-dock" aria-label="Aktionsleiste">
+    <div class="dock-inner">
+
+      <!-- Zauber-Pen für Insulin & Spaziergang -->
+      <div class="pen-row">
+        <div class="pen-dial-card" aria-label="Dosis einstellen">
+          <button class="dial-btn-kid" type="button" onclick="adjustKidDose(-1)">−</button>
+          <div class="dial-center">
+            <b id="dialKidUnits">0</b>
+            <span>EINHEITEN</span>
+          </div>
+          <button class="dial-btn-kid" type="button" onclick="adjustKidDose(1)">+</button>
+        </div>
+        <button id="btnInjectKid" class="btn-inject-kid" type="button" onclick="injectKidInsulin()">
+          <span>💉</span>
+          <span id="injectBtnLabel">Spritzen</span>
+        </button>
+        <button id="btnKidWalk" class="btn-walk-kid" type="button" title="Eine Runde spazieren gehen (Noch 2 Joker heute)" onclick="goForKidWalk()">
+          <span>🚶</span>
+          <span>Spazieren (2x)</span>
+        </button>
+      </div>
+
+      <!-- Notfall-Kiste gegen Unterzucker -->
+      <div class="rescue-row">
+        <button id="btnRescueJuice" class="btn-rescue-kid" type="button" onclick="giveRescue('juice', 15, 'Zauber-Saft', '🧃')">
+          <span class="icon">🧃</span>
+          <span class="name">Zauber-Saft</span>
+          <span class="boost">+15 Zucker</span>
+        </button>
+        <button id="btnRescueDextro" class="btn-rescue-kid" type="button" onclick="giveRescue('dextro', 6, 'Traubenzucker', '🍬')">
+          <span class="icon">🍬</span>
+          <span class="name">Traubenzucker</span>
+          <span class="boost">+6 Zucker</span>
+        </button>
+        <button id="btnRescueGummies" class="btn-rescue-kid" type="button" onclick="giveRescue('gummies', 10, 'Gummibärchen', '🐻')">
+          <span class="icon">🐻</span>
+          <span class="name">Gummibärchen</span>
+          <span class="boost">+10 Zucker</span>
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="kidToast" class="kid-toast"></div>
+
+  <!-- START MODAL -->
+  <div id="startSheet" class="sheet-backdrop">
+    <div class="kid-modal-box">
+      <div class="modal-mascot-pic">
+        <img src="zucki.png" alt="Zucki">
+      </div>
+      <h2 class="kid-modal-title">Hallo kleiner Held!</h2>
+      <p class="kid-modal-subtitle">
+        Begleite Drache <b>Zucki</b> durch einen aufregenden Tag! Hilf ihm, seinen Blutzucker im <b>grünen Bereich</b> zu halten.
+      </p>
+
+      <div class="rule-cards-grid">
+        <div class="rule-card">
+          <span class="rule-icon">🥣</span>
+          <div>
+            <b>1. Vor dem Essen: Insulin!</b>
+            <p>Essen lässt den Zucker steigen. Der Zauber-Pen 💉 hilft Zucki.</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">⚽</span>
+          <div>
+            <b>2. Beim Sport verbrennt Zucker</b>
+            <p>Toben und Rennen senkt den Wert. Schau gut auf die Ampel!</p>
+          </div>
+        </div>
+        <div class="rule-card">
+          <span class="rule-icon">🧃</span>
+          <div>
+            <b>3. Bei tiefem Zucker: Rettungs-Snack!</b>
+            <p>Wenn Zucki zittert: Schnell Zauber-Saft oder Bonbon geben!</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-big-kid" type="button" onclick="startKidsGame()">
+        <span>🚀</span>
+        <span>Spiel starten!</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- BETTRUHE / TAGESABSCHLUSS MODAL -->
+  <div id="endSheet" class="sheet-backdrop hidden">
+    <div class="kid-modal-box">
+      <div class="modal-mascot-pic">
+        <img src="zucki.png" alt="Zucki Glücklich">
+      </div>
+      <h2 class="kid-modal-title">Gute Nacht, Zucki! 🌙</h2>
+      <p id="endSummaryText" class="kid-modal-subtitle">
+        Du hast dich heute spitzenmäßig um Zucki gekümmert!
+      </p>
+
+      <!-- Sternen-Auszeichnung -->
+      <div style="font-size: 38px; margin-bottom: 12px;" id="endStarsDisplay">
+        ⭐⭐⭐
+      </div>
+
+      <div class="badges-grid" id="endBadgesGrid">
+        <div class="badge-item unlocked">
+          <span class="badge-icon">🏆</span>
+          <b>Ampel-Meister</b>
+          <span>Fast immer im Grünen</span>
+        </div>
+        <div class="badge-item unlocked">
+          <span class="badge-icon">🧃</span>
+          <b>Saft-Held</b>
+          <span>Zucki immer beschützt</span>
+        </div>
+      </div>
+
+      <button class="btn-big-kid" type="button" onclick="restartKidsGame()">
+        <span>🔄</span>
+        <span>Neuen Tag spielen</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       AUDIO ENGINE FÜR KIDS (FRÖHLICHE TÖNE MIT WEB AUDIO API)
+       ========================================================================= */
+    class KidsAudio {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playBoing() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(740, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.14);
+      }
+      playWhoosh() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.22);
+      }
+      playYum() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        [523.25, 659.25, 783.99].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          const t = this.ctx.currentTime + i * 0.08;
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.14);
+        });
+      }
+      playStarWin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.value = freq;
+          const t = this.ctx.currentTime + i * 0.09;
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.25);
+        });
+      }
+      playWarning() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        [600, 480].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          const t = this.ctx.currentTime + i * 0.15;
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.2);
+        });
+      }
+    }
+    const audio = new KidsAudio();
+
+    /* =========================================================================
+       KIDS GAME CONSTANTS & STATIONS
+       ========================================================================= */
+    // Ein strukturierter, kindgerechter Tag von 07:30 bis 21:00 Uhr
+    const STATIONS = [
+      {
+        id: "station_breakfast",
+        minute: 7 * 60 + 30, // 07:30
+        icon: "🥣",
+        title: "Knuspriges Frühstück",
+        desc: "Haferflocken-Müsli mit Erdbeeren & frischer Milch.",
+        carbs: 30,
+        suggestedDose: 2,
+        isSport: false
+      },
+      {
+        id: "station_recess",
+        minute: 10 * 60, // 10:00
+        icon: "🍏",
+        title: "Große Pause auf dem Schulhof",
+        desc: "Ein knackiger Pausen-Apfel & Fangen spielen mit Freunden!",
+        carbs: 15,
+        suggestedDose: 1,
+        isSport: false
+      },
+      {
+        id: "station_lunch",
+        minute: 13 * 60, // 13:00
+        icon: "🍝",
+        title: "Mittagessen: Lieblings-Nudeln",
+        desc: "Ein großer Teller Spaghetti mit Tomatensoße & Parmesan.",
+        carbs: 50,
+        suggestedDose: 3,
+        isSport: false
+      },
+      {
+        id: "station_sport",
+        minute: 15 * 60 + 30, // 15:30
+        icon: "⚽",
+        title: "Fußball & Trampolin springen",
+        desc: "30 Minuten herumtollen! Achtung: Bewegung senkt den Blutzucker.",
+        carbs: 0,
+        isSport: true,
+        dropBG: 45
+      },
+      {
+        id: "station_icecream",
+        minute: 17 * 60 + 15, // 17:15
+        icon: "🍦",
+        title: "Nachmittags-Eis am Spielplatz",
+        desc: "Ein fruchtiges Erdbeereis am Stiel nach dem Toben.",
+        carbs: 25,
+        suggestedDose: 1,
+        isSport: false
+      },
+      {
+        id: "station_dinner",
+        minute: 19 * 60 + 15, // 19:15
+        icon: "🥪",
+        title: "Buntes Abendbrot",
+        desc: "Vollkornbrot mit Käse, Karottensticks & Gurkenscheiben.",
+        carbs: 35,
+        suggestedDose: 2,
+        isSport: false
+      },
+      {
+        id: "station_bedtime",
+        minute: 21 * 60, // 21:00
+        icon: "🌙",
+        title: "Bettgehzeit & Gute Nacht",
+        desc: "Zucki putzt die Zähne und kuschelt sich ins gemütliche Bett.",
+        carbs: 0,
+        isSport: false,
+        isBedtime: true
+      }
+    ];
+
+    /* =========================================================================
+       GAME STATE
+       ========================================================================= */
+    let game = {
+      running: false,
+      isPaused: false,
+      speed: 1,
+      simMinute: 7 * 60 + 30, // 07:30
+      currentStationIndex: 0,
+      
+      glucose: 115,
+      history: Array(30).fill(115),
+      
+      stars: 0,
+      inTargetTicks: 0,
+      totalTicks: 0,
+      
+      selectedDose: 0,
+      
+      activeInsulin: [],
+      activeCarbs: [],
+      activeExercise: null,
+
+      walkJokersLeft: 2,
+      currentActiveEvent: null
+    };
+
+    let simInterval = null;
+    let lastAlarmTime = 0;
+
+    /* =========================================================================
+       INITIALIZATION & START
+       ========================================================================= */
+    function startKidsGame() {
+      audio.init();
+      document.getElementById("startSheet").classList.add("hidden");
+
+      game.running = true;
+      game.isPaused = false;
+      game.simMinute = 7 * 60 + 30;
+      game.glucose = 115;
+      game.history = Array(30).fill(115);
+      game.stars = 0;
+      game.inTargetTicks = 0;
+      game.totalTicks = 0;
+      game.currentStationIndex = 0;
+      game.activeInsulin = [];
+      game.activeCarbs = [];
+      game.activeExercise = null;
+      game.currentActiveEvent = null;
+      game.selectedDose = 0;
+      game.walkJokersLeft = 2;
+
+      // Reset Stations
+      STATIONS.forEach((s, idx) => {
+        s.done = false;
+        const el = document.getElementById("station-" + idx);
+        if (el) el.className = "station-node" + (idx === 0 ? " current" : "");
+      });
+
+      clearInterval(simInterval);
+      simInterval = setInterval(kidsGameTick, 1000 / game.speed);
+
+      // Trigger first event
+      checkStationEvent();
+      updateKidsUI();
+      showKidToast("🎈 Guten Morgen! Tag mit Zucki gestartet.");
+      audio.playStarWin();
+    }
+
+    function kidsGameTick() {
+      if (!game.running || game.isPaused) return;
+
+      game.totalTicks++;
+      // Jede Sekunde im Spiel = ca. 2.5 Minuten
+      game.simMinute += 2.5;
+
+      updateKidsPhysiology();
+      checkStationEvent();
+      updateKidsUI();
+
+      // Bettgehzeit erreicht? (21:00)
+      if (game.simMinute >= 21 * 60) {
+        finishKidsDay();
+      }
+    }
+
+    /* =========================================================================
+       PHYSIOLOGIE (KINDGERECHT & STABIL)
+       ========================================================================= */
+    function updateKidsPhysiology() {
+      let deltaBG = 0;
+
+      // 1. Kohlenhydrate aufnehmen
+      game.activeCarbs.forEach(item => {
+        if (item.remainingTicks > 0) {
+          const stepRise = (item.totalGrams * 3.8) / item.initialTicks;
+          deltaBG += stepRise;
+          item.remainingTicks--;
+        }
+      });
+      game.activeCarbs = game.activeCarbs.filter(c => c.remainingTicks > 0);
+
+      // 2. Insulin abbauen (1 IE senkt um ca. 38 mg/dl)
+      let insulinFactor = 38;
+      if (game.activeExercise && game.activeExercise.remainingTicks > 0) {
+        insulinFactor *= 1.4; // Sport verstärkt Insulin leicht
+      }
+
+      game.activeInsulin.forEach(item => {
+        if (item.remainingTicks > 0) {
+          const stepDrop = (item.units * insulinFactor) / item.initialTicks;
+          deltaBG -= stepDrop;
+          item.remainingTicks--;
+        }
+      });
+      game.activeInsulin = game.activeInsulin.filter(i => i.remainingTicks > 0);
+
+      // 3. Sportliche Bewegung & Spaziergang
+      if (game.activeExercise && game.activeExercise.remainingTicks > 0) {
+        const stepDrop = game.activeExercise.totalDrop / game.activeExercise.initialTicks;
+        deltaBG -= stepDrop;
+        game.activeExercise.remainingTicks--;
+        if (game.activeExercise.remainingTicks === 0) {
+          const wasWalk = game.activeExercise.isWalk;
+          game.activeExercise = null;
+          showKidToast(wasWalk ? "🚶 Zucki ist zurück vom Spaziergang!" : "⚽ Fertig ausgetobt! Zucki ruht sich aus.");
+        }
+      }
+
+      // Sanfter natürlicher Basal-Zug zum Wohlfühlwert 110
+      const drift = (110 - game.glucose) * 0.015;
+
+      // Zusammenrechnen
+      game.glucose = Math.max(45, Math.min(300, Math.round((game.glucose + deltaBG + drift) * 10) / 10));
+
+      game.history.push(game.glucose);
+      game.history.shift();
+
+      // Sterne für guten Blutzucker sammeln
+      if (game.glucose >= 80 && game.glucose <= 150) {
+        game.inTargetTicks++;
+        // Alle 12 Ticks im Zielbereich = 1 Extra-Stern!
+        if (game.inTargetTicks % 12 === 0) {
+          addStar(1);
+        }
+      }
+
+      // Sensorische Alarme prüfen
+      updateAlarms();
+    }
+
+    function updateAlarms() {
+      const vignette = document.getElementById("vignetteOverlay");
+      const rescueJuice = document.getElementById("btnRescueJuice");
+      const rescueDextro = document.getElementById("btnRescueDextro");
+
+      if (game.glucose < 80) {
+        vignette.className = "vignette-overlay low-alarm";
+        rescueJuice.classList.add("glow-alarm");
+        rescueDextro.classList.add("glow-alarm");
+
+        const now = Date.now();
+        if (now - lastAlarmTime > 4000) {
+          audio.playWarning();
+          lastAlarmTime = now;
+        }
+      } else {
+        vignette.className = "vignette-overlay";
+        rescueJuice.classList.remove("glow-alarm");
+        rescueDextro.classList.remove("glow-alarm");
+      }
+    }
+
+    function addStar(count) {
+      game.stars += count;
+      document.getElementById("starsCount").textContent = game.stars;
+      audio.playStarWin();
+      fireConfetti(15);
+    }
+
+    /* =========================================================================
+       STATIONEN & EVENTS
+       ========================================================================= */
+    function checkStationEvent() {
+      if (game.currentActiveEvent) return;
+
+      const upcoming = STATIONS.find(s => !s.done && game.simMinute >= s.minute);
+      if (upcoming) {
+        game.currentActiveEvent = upcoming;
+        openEventCard(upcoming);
+      }
+    }
+
+    function openEventCard(ev) {
+      const card = document.getElementById("activeEventCard");
+      const empty = document.getElementById("emptyEventNotice");
+
+      if (ev.isBedtime) {
+        return; // Direkt am Ende
+      }
+
+      card.className = "event-banner-card" + (ev.isSport ? " is-sport" : "");
+      document.getElementById("eventBigIcon").textContent = ev.icon;
+      document.getElementById("eventTitle").textContent = ev.title;
+      document.getElementById("eventDesc").textContent = ev.desc;
+
+      const carbTag = document.getElementById("eventCarbTag");
+      const eatBtn = document.getElementById("btnEatLabel");
+      const eatIcon = document.getElementById("btnEatIcon");
+      const owlText = document.getElementById("owlAdviceText");
+
+      if (ev.isSport) {
+        carbTag.style.display = "none";
+        eatIcon.textContent = "🏃";
+        eatBtn.textContent = "Jetzt losrennen!";
+        owlText.textContent = `Sport verbraucht Zucker (-${ev.dropBG} mg/dl). Gib jetzt kein Insulin! Wenn der Zucker tief ist, nimm vorher einen Schluck Saft 🧃.`;
+      } else {
+        carbTag.style.display = "inline-flex";
+        document.getElementById("eventCarbsValue").textContent = `${ev.carbs}g Kohlenhydrate`;
+        eatIcon.textContent = "🍽️";
+        eatBtn.textContent = "Essen & Dosis prüfen";
+        owlText.textContent = `Für dieses Essen braucht Zucki ungefähr ${ev.suggestedDose} Einheiten Insulin am Zauber-Pen 💉.`;
+      }
+
+      card.classList.remove("hidden");
+      empty.classList.add("hidden");
+
+      // Audio & Pause zur Entscheidung
+      audio.playYum();
+      game.isPaused = true;
+      const pauseIcon = document.getElementById("kidsMenuPauseIcon");
+      const pauseLabel = document.getElementById("kidsMenuPauseLabel");
+      if (pauseIcon) pauseIcon.textContent = "▶️";
+      if (pauseLabel) pauseLabel.textContent = "Weiter";
+
+      // Station Highlight
+      const sIdx = STATIONS.findIndex(s => s.id === ev.id);
+      if (sIdx !== -1) {
+        highlightStationNode(sIdx);
+      }
+    }
+
+    function confirmCurrentEvent(accepted) {
+      const ev = game.currentActiveEvent;
+      if (!ev) return;
+
+      if (accepted) {
+        if (ev.isSport) {
+          game.activeExercise = {
+            totalDrop: ev.dropBG,
+            initialTicks: 24,
+            remainingTicks: 24
+          };
+          audio.playStarWin();
+          showKidToast(`⚽ Sport frei! Zucki rennt los!`);
+          addStar(2);
+        } else {
+          game.activeCarbs.push({
+            totalGrams: ev.carbs,
+            initialTicks: 22,
+            remainingTicks: 22
+          });
+          audio.playYum();
+          showKidToast(`😋 Mjam! ${ev.title} schmeckt lecker!`);
+          addStar(2);
+        }
+      } else {
+        showKidToast("Station ausgelassen.");
+      }
+
+      ev.done = true;
+      const sIdx = STATIONS.findIndex(s => s.id === ev.id);
+      if (sIdx !== -1) {
+        const node = document.getElementById("station-" + sIdx);
+        if (node) {
+          node.classList.remove("current");
+          node.classList.add("done");
+        }
+      }
+
+      game.currentActiveEvent = null;
+      document.getElementById("activeEventCard").classList.add("hidden");
+      document.getElementById("emptyEventNotice").classList.remove("hidden");
+
+      // Pause aufheben
+      game.isPaused = false;
+      const pauseIcon = document.getElementById("kidsMenuPauseIcon");
+      const pauseLabel = document.getElementById("kidsMenuPauseLabel");
+      if (pauseIcon) pauseIcon.textContent = "⏸️";
+      if (pauseLabel) pauseLabel.textContent = "Pause";
+
+      updateKidsUI();
+    }
+
+    function highlightStationNode(idx) {
+      STATIONS.forEach((s, i) => {
+        const node = document.getElementById("station-" + i);
+        if (!node) return;
+        if (i < idx) {
+          node.className = "station-node done";
+        } else if (i === idx) {
+          node.className = "station-node current";
+        } else {
+          node.className = "station-node";
+        }
+      });
+      // Progress bar fill
+      const percent = (idx / (STATIONS.length - 1)) * 100;
+      const fill = document.getElementById("stationsRailFill");
+      if (fill) fill.style.width = percent + "%";
+    }
+
+    /* =========================================================================
+       USER ACTIONS: ZAUBER-PEN & RETTUNGS-KISTE
+       ========================================================================= */
+    function adjustKidDose(delta) {
+      game.selectedDose = Math.max(0, Math.min(10, game.selectedDose + delta));
+      document.getElementById("dialKidUnits").textContent = game.selectedDose;
+      audio.playBoing();
+    }
+
+    function injectKidInsulin() {
+      if (game.selectedDose <= 0) {
+        showKidToast("ℹ️ Stelle erst mit + eine Dosis ein!");
+        return;
+      }
+
+      game.activeInsulin.push({
+        units: game.selectedDose,
+        initialTicks: 28,
+        remainingTicks: 28
+      });
+
+      audio.playWhoosh();
+      showKidToast(`💉 ${game.selectedDose} Einheiten Insulin abgegeben!`);
+      fireConfetti(20);
+
+      game.selectedDose = 0;
+      document.getElementById("dialKidUnits").textContent = 0;
+      updateKidsUI();
+    }
+
+    function goForKidWalk() {
+      // 1. Wenn aktuell ein Spaziergang aktiv ist: Klick beendet / pausiert ihn
+      if (game.activeExercise && game.activeExercise.isWalk) {
+        game.activeExercise = null;
+        audio.playBoing();
+        showKidToast("🚶 Spaziergang beendet! Zucki ruht sich aus.");
+        updateKidsUI();
+        return;
+      }
+
+      if (game.activeExercise && !game.activeExercise.isWalk) {
+        showKidToast("⚽ Zucki ist gerade beim Schulsport & Toben!");
+        return;
+      }
+
+      if (game.walkJokersLeft <= 0) {
+        showKidToast("⚠️ Keine Spaziergang-Joker mehr für heute (max. 2x)!");
+        audio.playWarning();
+        return;
+      }
+
+      if (game.glucose < 80) {
+        showKidToast("⚠️ Blutzucker ist zu tief! Erst Zauber-Saft 🧃 trinken vor dem Spazieren.");
+        audio.playWarning();
+        return;
+      }
+
+      game.walkJokersLeft--;
+      // Spaziergang: 20 Ticks, senkt ca. 24 mg/dl Blutzucker
+      game.activeExercise = {
+        isWalk: true,
+        totalDrop: 24,
+        initialTicks: 20,
+        remainingTicks: 20
+      };
+
+      audio.playStarWin();
+      const jokerMsg = game.walkJokersLeft === 1 ? "Noch 1 Joker heute" : "Letzter Joker für heute";
+      showKidToast(`🚶 Zucki schnappt frische Luft! (${jokerMsg})`);
+      document.getElementById("zuckiSpeech").textContent = '"Ju-hu! Frische Luft tut mir so gut! 🚶🍃"';
+
+      if (game.glucose > 150) {
+        addStar(1); // Belohnung für kluge Bewegung bei hohem Zucker
+      }
+
+      updateKidsUI();
+    }
+
+    function giveRescue(type, grams, name, icon) {
+      game.activeCarbs.push({
+        totalGrams: grams,
+        initialTicks: 8, // Sehr schnelle Wirkung!
+        remainingTicks: 8
+      });
+
+      audio.playYum();
+      showKidToast(`${icon} ${name} getrunken! Blutzucker steigt schnell.`);
+
+      // Wenn Zucki tief war, belohnen!
+      if (game.glucose < 80) {
+        addStar(3);
+        showKidToast(`🌟 Super gerettet! +3 Sterne für dich!`);
+      }
+
+      updateKidsUI();
+    }
+
+    function tickleZucki() {
+      audio.playBoing();
+      const phrases = [
+        "Kitzelig! Kitzelig! 😂",
+        "Ju-hu! Du bist mein bester Freund! 💚",
+        "Mein Tank ist voller Zauberkraft! ✨",
+        "Wollen wir zusammen fliegen? 🐲",
+        "Ich passe gut auf dich auf – und du auf mich!"
+      ];
+      const pick = phrases[Math.floor(Math.random() * phrases.length)];
+      document.getElementById("zuckiSpeech").textContent = `"${pick}"`;
+      fireConfetti(10);
+    }
+
+    /* =========================================================================
+       UI UPDATES & BLUTZUCKER-AMPEL LOGIC
+       ========================================================================= */
+    function formatClock(min) {
+      const h = Math.floor(min / 60) % 24;
+      const m = Math.floor(min % 60);
+      return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    }
+
+    function updateKidsUI() {
+      const bg = game.glucose;
+
+      // Uhrzeit
+      document.getElementById("clockText").textContent = formatClock(game.simMinute);
+
+      // Blutzucker Zahl
+      document.getElementById("glucoseNum").textContent = Math.round(bg);
+
+      // Trend ermitteln
+      const l = game.history.length;
+      const diff = game.history[l - 1] - game.history[l - 4];
+      let arrow = "➡️";
+      let trendText = "Bleibt stabil";
+      if (diff > 8) { arrow = "⬆️"; trendText = "Steigt schnell"; }
+      else if (diff > 3) { arrow = "↗️"; trendText = "Steigt leicht"; }
+      else if (diff < -8) { arrow = "⬇️"; trendText = "Sinkt schnell!"; }
+      else if (diff < -3) { arrow = "↘️"; trendText = "Sinkt langsam"; }
+
+      document.getElementById("trendArrow").textContent = arrow;
+      document.getElementById("trendTextHint").textContent = trendText;
+
+      // Status Box & Ampel
+      const box = document.getElementById("sugarDisplayBox");
+      const badge = document.getElementById("sugarBadgeText");
+      const moodEmoji = document.getElementById("zuckiMoodEmoji");
+      const needleEmoji = document.getElementById("needleEmoji");
+      const moodName = document.getElementById("zuckiMoodName");
+      const speech = document.getElementById("zuckiSpeech");
+
+      if (bg < 80) {
+        // ROT: Unterzucker
+        box.className = "sugar-display-center status-low";
+        badge.textContent = "Zu niedrig! 🧃";
+        badge.style.background = "#ef4444";
+        moodEmoji.textContent = "😵";
+        needleEmoji.textContent = "🧃";
+        moodName.textContent = "Zucki zittert!";
+        if (!game.currentActiveEvent) {
+          speech.textContent = '"Oje, mir ist schwindelig! Bitte gib mir schnell Zauber-Saft oder Bonbons!"';
+        }
+      } else if (bg > 180) {
+        // VIOLETT: Sehr hoch
+        box.className = "sugar-display-center status-veryhigh";
+        badge.textContent = "Sehr hoch! 💧";
+        badge.style.background = "#8b5cf6";
+        moodEmoji.textContent = "😴";
+        needleEmoji.textContent = "💧";
+        moodName.textContent = "Zucki ist müde & durstig";
+        if (!game.currentActiveEvent) {
+          speech.textContent = '"Puh, mein Blutzucker ist recht hoch. Etwas Wasser & Insulin tun mir gut!"';
+        }
+      } else if (bg > 150) {
+        // GELB: Etwas erhöht
+        box.className = "sugar-display-center status-high";
+        badge.textContent = "Etwas hoch 🟡";
+        badge.style.background = "#f59e0b";
+        moodEmoji.textContent = "🤔";
+        needleEmoji.textContent = "🟡";
+        moodName.textContent = "Zucki beobachtet";
+        if (!game.currentActiveEvent) {
+          speech.textContent = '"Ein bisschen über dem Ziel. Behalten wir den Trend im Auge!"';
+        }
+      } else {
+        // GRÜN: PERFEKT
+        box.className = "sugar-display-center";
+        badge.textContent = "Im grünen Bereich 🌟";
+        badge.style.background = "#10b981";
+        moodEmoji.textContent = "😊";
+        needleEmoji.textContent = "🌟";
+        moodName.textContent = "Zucki fühlt sich prima!";
+        if (!game.currentActiveEvent) {
+          speech.textContent = '"Super gemacht! Mein Blutzucker-Tank leuchtet wunderschön grün!"';
+        }
+      }
+
+      // Needle Position auf der Ampel-Leiste (Bereich 40 bis 240)
+      const clamped = Math.max(40, Math.min(240, bg));
+      const needlePercent = ((clamped - 40) / (240 - 40)) * 100;
+      document.getElementById("ampelNeedle").style.left = needlePercent + "%";
+
+      // IOB berechnen (Aktives Insulin)
+      let kidIob = 0;
+      game.activeInsulin.forEach(item => {
+        kidIob += (item.units * item.remainingTicks) / item.initialTicks;
+      });
+      const iobChip = document.getElementById("kidIobChip");
+      if (iobChip) {
+        iobChip.textContent = `💉 ${kidIob.toFixed(1)} IE`;
+      }
+
+      // COB berechnen (Aktive Kohlenhydrate)
+      let kidCob = 0;
+      game.activeCarbs.forEach(item => {
+        kidCob += (item.totalGrams * item.remainingTicks) / item.initialTicks;
+      });
+      const cobChip = document.getElementById("kidCobChip");
+      if (cobChip) {
+        cobChip.textContent = `🍞 ${Math.round(kidCob)}g aktiv`;
+      }
+
+      // Spaziergang / Bewegung Chip & Button Status
+      const walkChip = document.getElementById("kidWalkChip");
+      const walkBtn = document.getElementById("btnKidWalk");
+      if (game.activeExercise && game.activeExercise.isWalk) {
+        if (walkChip) {
+          walkChip.classList.remove("hidden");
+          walkChip.textContent = `🚶 Spazieren (${game.activeExercise.remainingTicks}s)`;
+        }
+        if (walkBtn) {
+          walkBtn.classList.add("is-walking");
+          walkBtn.disabled = false;
+          walkBtn.innerHTML = `<span>⏹️</span><span>Beenden</span>`;
+          walkBtn.title = "Klicken, um den Spaziergang vorzeitig zu beenden";
+        }
+      } else if (game.activeExercise && !game.activeExercise.isWalk) {
+        if (walkChip) {
+          walkChip.classList.remove("hidden");
+          walkChip.textContent = `⚽ Sport (${game.activeExercise.remainingTicks}s)`;
+        }
+        if (walkBtn) {
+          walkBtn.classList.remove("is-walking");
+          walkBtn.disabled = false;
+          walkBtn.innerHTML = `<span>🚶</span><span>Spazieren (${game.walkJokersLeft || 0}x)</span>`;
+        }
+      } else {
+        if (walkChip) {
+          walkChip.classList.add("hidden");
+        }
+        if (walkBtn) {
+          walkBtn.classList.remove("is-walking");
+          if (game.walkJokersLeft > 0) {
+            walkBtn.disabled = false;
+            walkBtn.innerHTML = `<span>🚶</span><span>Spazieren (${game.walkJokersLeft}x)</span>`;
+            walkBtn.title = `Eine Runde spazieren gehen (Noch ${game.walkJokersLeft} Joker heute)`;
+          } else {
+            walkBtn.disabled = true;
+            walkBtn.innerHTML = `<span>🚶</span><span>Spazieren (0x)</span>`;
+            walkBtn.title = "Keine Spaziergang-Joker mehr für heute übrig (max. 2x am Tag)";
+          }
+        }
+      }
+
+      // Chart zeichnen
+      drawKidsChart();
+    }
+
+    /* =========================================================================
+       CANVAS CGM CHART FÜR KINDER (RUND, BUNT, MIT GRÜNEM WOHLFÜHLBAND)
+       ========================================================================= */
+    function drawKidsChart() {
+      const canvas = document.getElementById("kidsCgmCanvas");
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      const minVal = 40;
+      const maxVal = 240;
+
+      const getY = val => h - ((Math.max(minVal, Math.min(maxVal, val)) - minVal) / (maxVal - minVal)) * (h - 16) - 8;
+
+      // 1. Grünes Wohlfühlband (80 - 150)
+      const y150 = getY(150);
+      const y80 = getY(80);
+      ctx.fillStyle = "rgba(16, 185, 129, 0.16)";
+      ctx.fillRect(0, y150, w, y80 - y150);
+
+      // Grenzlinien
+      ctx.strokeStyle = "rgba(16, 185, 129, 0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      [80, 150].forEach(level => {
+        const y = getY(level);
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // 2. Glukose-Kurve
+      const vals = game.history;
+      if (vals.length < 2) return;
+
+      const strokeColor = game.glucose < 80 ? "#ef4444" : (game.glucose > 150 ? "#f59e0b" : "#10b981");
+
+      ctx.beginPath();
+      vals.forEach((v, idx) => {
+        const x = (idx / (vals.length - 1)) * w;
+        const y = getY(v);
+        idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.stroke();
+
+      // Neuesten Punkt zeichnen
+      const lastX = w;
+      const lastY = getY(vals[vals.length - 1]);
+      ctx.beginPath();
+      ctx.arc(lastX - 2, lastY, 6, 0, Math.PI * 2);
+      ctx.fillStyle = strokeColor;
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    /* =========================================================================
+       CONTROLS: 3-PUNKTE-MENÜ, PAUSE, SPEED, SOUND
+       ========================================================================= */
+    function toggleKidsMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById("kidsMenuDropdown");
+      if (menu) menu.classList.toggle("hidden");
+    }
+
+    function closeKidsMenu() {
+      const menu = document.getElementById("kidsMenuDropdown");
+      if (menu) menu.classList.add("hidden");
+    }
+
+    window.addEventListener("click", () => {
+      closeKidsMenu();
+    });
+
+    function togglePause() {
+      game.isPaused = !game.isPaused;
+      const pauseIcon = document.getElementById("kidsMenuPauseIcon");
+      const pauseLabel = document.getElementById("kidsMenuPauseLabel");
+      if (pauseIcon) pauseIcon.textContent = game.isPaused ? "▶️" : "⏸️";
+      if (pauseLabel) pauseLabel.textContent = game.isPaused ? "Weiter" : "Pause";
+      showKidToast(game.isPaused ? "⏸️ Pause" : "▶️ Weiter geht's!");
+    }
+
+    function cycleSpeed() {
+      const speeds = [1, 2, 4];
+      const cur = speeds.indexOf(game.speed);
+      game.speed = speeds[(cur + 1) % speeds.length];
+      const speedLabel = document.getElementById("kidsMenuSpeedLabel");
+      if (speedLabel) speedLabel.textContent = game.speed + "x";
+      showKidToast(`⏩ Tempo: ${game.speed}x`);
+
+      if (game.running) {
+        clearInterval(simInterval);
+        simInterval = setInterval(kidsGameTick, 1000 / game.speed);
+      }
+    }
+
+    function toggleSound() {
+      audio.enabled = !audio.enabled;
+      const soundIcon = document.getElementById("kidsMenuSoundIcon");
+      const soundLabel = document.getElementById("kidsMenuSoundLabel");
+      if (soundIcon) soundIcon.textContent = audio.enabled ? "🔊" : "🔇";
+      if (soundLabel) soundLabel.textContent = audio.enabled ? "Ton: An" : "Ton: Aus";
+      showKidToast(audio.enabled ? "🔊 Sound an" : "🔇 Sound aus");
+    }
+
+    /* =========================================================================
+       TAGESABSCHLUSS & CELEBRATION
+       ========================================================================= */
+    function finishKidsDay() {
+      game.running = false;
+      clearInterval(simInterval);
+
+      audio.playStarWin();
+      fireConfetti(80);
+
+      // Sterne bewerten
+      let starIcons = "⭐⭐⭐";
+      let text = "Fantastisch! Zucki hat den Tag super gemeistert und schläft selig ein!";
+      if (game.stars < 8) {
+        starIcons = "⭐";
+        text = "Gut durchgehalten! Mit etwas mehr Übung triffst du den grünen Bereich noch besser!";
+      } else if (game.stars < 16) {
+        starIcons = "⭐⭐";
+        text = "Klasse gemacht! Zucki fühlt sich pudelwohl und träumt von neuen Abenteuern.";
+      }
+
+      document.getElementById("endStarsDisplay").textContent = starIcons;
+      document.getElementById("endSummaryText").textContent = text;
+      document.getElementById("endSheet").classList.remove("hidden");
+    }
+
+    function restartKidsGame() {
+      document.getElementById("endSheet").classList.add("hidden");
+      startKidsGame();
+    }
+
+    /* =========================================================================
+       CONFETTI ENGINE (LEICHTGEWICHTIGES PARTY-CONFETTI)
+       ========================================================================= */
+    const confettiParticles = [];
+    function fireConfetti(count) {
+      const canvas = document.getElementById("confettiCanvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const colors = ["#f59e0b", "#10b981", "#3b82f6", "#ec4899", "#8b5cf6", "#f97316"];
+
+      for (let i = 0; i < count; i++) {
+        confettiParticles.push({
+          x: window.innerWidth * 0.5 + (Math.random() - 0.5) * 200,
+          y: window.innerHeight * 0.4,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -Math.random() * 10 - 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 8 + 6,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12,
+          life: 1
+        });
+      }
+
+      if (!fireConfetti.running) {
+        fireConfetti.running = true;
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      const canvas = document.getElementById("confettiCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const p = confettiParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // Schwerkraft
+        p.rot += p.vrot;
+        p.life -= 0.015;
+
+        if (p.life <= 0 || p.y > window.innerHeight) {
+          confettiParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+
+      if (confettiParticles.length > 0) {
+        requestAnimationFrame(animateConfetti);
+      } else {
+        fireConfetti.running = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function showKidToast(msg) {
+      const toast = document.getElementById("kidToast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showKidToast.timer);
+      showKidToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    /* =========================================================================
+       INITIAL LOAD
+       ========================================================================= */
+    window.addEventListener("resize", () => {
+      drawKidsChart();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateKidsUI();
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+    }
+  </script>
+</body>
+</html>

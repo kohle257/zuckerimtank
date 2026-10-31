@@ -153,7 +153,7 @@
       width: 100%;
       max-width: 500px;
       margin: 0 auto;
-      padding: 6px 12px 138px;
+      padding: 6px 12px 108px;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
@@ -162,14 +162,43 @@
       box-sizing: border-box;
     }
 
-    /* === TOP BAR & GAME CONTROLS === */
+    /* === 1. VISUELLE STILVORGABEN (SCI-FI DARK MODE & DESIGN TOKENS) === */
+    :root {
+      --bg-dark: #0a0f1d;
+      --bg-card: rgba(18, 27, 46, 0.78);
+      --bg-card-border: rgba(255, 255, 255, 0.08);
+      --bg-card-hover: rgba(26, 38, 64, 0.88);
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --cyan: #00e5ff;
+      --cyan-dim: #00b4d8;
+      --cyan-glow: rgba(0, 229, 255, 0.4);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.35);
+      --orange-accent: #f97316;
+      --rose: #ef4444;
+      --rose-glow: rgba(239, 68, 68, 0.45);
+      --purple: #8b5cf6;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+    }
+
+    /* === TOP BAR (HEADER BAR MIT ORB-LOGO, TITEL & SPEED-PILL) === */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 50;
       margin: -10px -14px 4px;
-      padding: 10px 16px;
-      background: rgba(10, 15, 29, 0.88);
+      padding: 10px 14px;
+      background: rgba(11, 16, 29, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -181,285 +210,345 @@
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
-    .app-icon-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #10b981, #06b6d4);
-      padding: 1.5px;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    /* Mehrfarbig leuchtendes Orb-Icon */
+    .brand-orb-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: conic-gradient(from 180deg at 50% 50%, #00e5ff 0deg, #8b5cf6 90deg, #ec4899 180deg, #f59e0b 270deg, #00e5ff 360deg);
+      padding: 2.5px;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.45);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
-    .app-icon-badge img {
+    .orb-inner-glow {
       width: 100%;
       height: 100%;
-      border-radius: 10.5px;
-      object-fit: cover;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1e293b 0%, #0b101d 85%);
+      box-shadow: inset 0 0 4px rgba(0, 229, 255, 0.6);
     }
 
-    .brand-meta h1 {
+    .brand-meta {
+      display: flex;
+      align-items: center;
+    }
+    .brand-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .brand-name {
       font-family: "Outfit", sans-serif;
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #ffffff, #94a3b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .difficulty-badge {
-      font-size: 9px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      -webkit-text-fill-color: initial;
-    }
-    .diff-easy {
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-    }
-    .diff-pro {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-
-    .time-day-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .time-day-meta span.active-time {
-      font-family: "Outfit", sans-serif;
-      font-size: 13px;
-      font-weight: 700;
       color: #ffffff;
     }
-    .day-pill {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 1px 7px;
-      border-radius: 6px;
-      font-size: 10px;
-      color: #cbd5e1;
+
+    /* Badge "EINSTEIGER 👾" */
+    .badge-einsteiger {
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      color: #38bdf8;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+    .badge-alien-icon {
+      font-size: 10.5px;
+      line-height: 1;
     }
 
-    /* Quick Game Controls: Pause, Speed & Sound */
+    /* Header Controls rechts (Speed Capsule & Menü) */
     .top-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
-    .ctrl-btn {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-main);
+
+    .speed-pill-capsule {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 3px 6px 3px 8px;
       height: 32px;
-      padding: 0 9px;
-      border-radius: 9px;
-      font-family: "Outfit", sans-serif;
-      font-size: 11.5px;
-      font-weight: 700;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    .stopwatch-icon {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    .ctrl-btn-pause {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: 1px solid #f87171;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+      cursor: pointer;
+    }
+    .ctrl-btn-pause.is-paused {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-color: #fbbf24;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+      animation: pulse-pause-btn 1.1s infinite alternate;
+    }
+    .speed-controls-group {
+      display: flex;
+      align-items: center;
       gap: 3px;
-    }
-    .ctrl-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
-    }
-    .ctrl-btn.active-speed {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3));
-      border-color: var(--emerald);
-      color: #ffffff;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
-    }
-    .ctrl-btn.is-paused {
-      background: rgba(245, 158, 11, 0.25);
-      border-color: var(--amber);
-      color: #fbbf24;
-      animation: pulse-pause-btn 1.2s infinite alternate ease-in-out;
-    }
-    @keyframes pulse-pause-btn {
-      from { opacity: 0.75; }
-      to { opacity: 1; }
-    }
-
-    /* === STATS HUD === */
-    .hud-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .hud-stat {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-md);
-      padding: 7px 8px;
-      text-align: center;
-      backdrop-filter: blur(12px);
-    }
-    .hud-stat span.label {
-      display: block;
-      font-size: 9.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-dim);
-    }
-    .hud-stat span.val {
-      display: block;
       font-family: "Outfit", sans-serif;
-      font-size: 15px;
+      font-size: 11px;
       font-weight: 800;
+      color: #38bdf8;
+    }
+    .speed-stepper-btn {
+      background: transparent;
+      border: none;
+      color: #38bdf8;
+      font-size: 9px;
+      cursor: pointer;
+      padding: 2px 3px;
+      line-height: 1;
+      opacity: 0.8;
+    }
+    .speed-stepper-btn:hover {
+      opacity: 1;
       color: #ffffff;
-      margin-top: 1px;
+    }
+    .speed-label-text {
+      min-width: 17px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
     }
 
-    /* === CGM HERO CARD (RESPONSIV SKALIERBAR) === */
+    .menu-toggle-btn-glow {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+      font-size: 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+    }
+    .menu-toggle-btn-glow:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #fbbf24;
+    }
+
+    .menu-dropdown-wrapper {
+      position: relative;
+    }
+    .menu-dropdown-sheet {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 210px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      z-index: 999;
+      animation: menuFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes menuFadeIn {
+      from { transform: translateY(-6px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .menu-dropdown-header {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 6px 8px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 2px;
+    }
+    .menu-item-btn {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .menu-item-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .menu-item-btn b {
+      color: var(--cyan);
+    }
+
+    /* === 2. CGM HERO CARD (CONTINUOUS GLUCOSE MONITOR MIT SCI-FI GRAPH) === */
     .cgm-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      padding: 10px 14px 8px;
+      background: linear-gradient(180deg, rgba(16, 23, 39, 0.95), rgba(11, 16, 28, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-xl);
+      padding: 10px 14px 10px;
       backdrop-filter: blur(16px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
       position: relative;
       overflow: hidden;
       flex-shrink: 0;
     }
-    .cgm-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--emerald), var(--cyan), transparent);
-    }
-
-    .cgm-header {
+    .cgm-header-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      margin-bottom: 2px;
     }
-    .cgm-heading-tag {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--emerald);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .cgm-heading-tag::before {
-      content: "";
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
-      animation: pulse-dot 1.5s infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.4; }
-    }
-
-    .glucose-display-row {
+    .glucose-main-stat {
       display: flex;
       align-items: baseline;
       gap: 6px;
-      margin-top: 2px;
     }
     .glucose-number {
       font-family: "Outfit", sans-serif;
-      font-size: clamp(32px, 5vh, 44px);
+      font-size: 42px;
       font-weight: 900;
       line-height: 0.95;
       letter-spacing: -0.04em;
       color: #ffffff;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
-      transition: color 0.3s;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
     .glucose-unit {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--text-muted);
+      color: #94a3b8;
     }
-    .trend-arrow-box {
-      font-size: clamp(22px, 3.5vh, 28px);
+    .trend-arrow-sci {
+      font-size: 26px;
       font-weight: 900;
       line-height: 1;
       margin-left: 2px;
-      transition: transform 0.3s ease, color 0.3s ease;
       display: inline-block;
+      transition: transform 0.3s ease, color 0.3s ease;
+      color: var(--emerald);
     }
 
-    .cgm-badges {
+    .cgm-badge-top-row {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      gap: 5px;
     }
-    .status-badge {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      letter-spacing: 0.02em;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-    .status-in-target {
-      background: rgba(16, 185, 129, 0.18);
+    .pill-target {
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.45);
       color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
     }
-    .status-warning {
-      background: rgba(245, 158, 11, 0.18);
+    .pill-target.status-warning {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(245, 158, 11, 0.45);
       color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
     }
-    .status-danger {
-      background: rgba(239, 68, 68, 0.22);
+    .pill-target.status-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
       color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
       animation: pulse-danger-badge 1s infinite alternate;
     }
-    @keyframes pulse-danger-badge {
-      from { transform: scale(1); }
-      to { transform: scale(1.04); }
+    .pill-emoji {
+      font-size: 11px;
+      line-height: 1;
     }
-
     .iob-cob-pills {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
-    .meta-chip {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 3px 8px;
+    .pill-iob {
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      color: #67e8f9;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
       border-radius: 999px;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
+    }
+    .pill-cob {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fcd34d;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+    .pill-walk {
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      animation: pulse-walking 1.4s infinite alternate;
     }
 
-    /* === CHART WRAPPER (KOMPAKT & RESPONSIV SKALIEREND) === */
+    /* Sci-Fi Canvas Graph */
     .chart-container {
       position: relative;
-      height: clamp(85px, 15vh, 145px);
+      height: 165px;
       margin-top: 4px;
-      padding-right: 26px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #080d19;
     }
     #cgmCanvas {
       width: 100%;
@@ -468,21 +557,23 @@
     }
     .chart-axis-label {
       position: absolute;
-      right: 0;
+      right: 8px;
       font-family: "Outfit", sans-serif;
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 700;
-      color: var(--text-dim);
+      color: rgba(255, 255, 255, 0.38);
       line-height: 1;
       transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 5;
     }
 
-    /* === TIMELINE TRACK === */
+    /* === 3. TIMELINE SECTION (TAGESVERLAUF) === */
     .timeline-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-md);
-      padding: 8px 12px 10px;
+      background: linear-gradient(180deg, rgba(16, 23, 39, 0.85), rgba(12, 17, 30, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 9px 12px 10px;
       backdrop-filter: blur(14px);
       flex-shrink: 0;
     }
@@ -492,54 +583,80 @@
       align-items: center;
       margin-bottom: 6px;
     }
+    .timeline-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .timeline-title-label {
+      font-family: "Outfit", sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+    .day-cyan-tag {
+      font-family: "Outfit", sans-serif;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #00e5ff;
+    }
+    .timeline-clock-display {
+      font-family: "Outfit", sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
     .track-wrapper {
       position: relative;
-      height: 48px;
+      height: 52px;
       margin: 0 4px;
     }
     .track-rail-bg {
       position: absolute;
       top: 18px;
-      left: 1%;
-      right: 1%;
-      height: 5px;
+      left: 2%;
+      right: 2%;
+      height: 4px;
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.08);
     }
     .track-rail-progress {
       position: absolute;
       top: 18px;
-      left: 1%;
+      left: 2%;
       width: 0%;
-      height: 5px;
+      height: 4px;
       border-radius: 10px;
-      background: linear-gradient(90deg, var(--emerald), var(--cyan));
-      box-shadow: 0 0 10px var(--cyan-glow);
+      background: linear-gradient(90deg, #00e5ff, #00c2cb);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
       transition: width 0.3s ease;
     }
     .track-cursor {
       position: absolute;
       top: 12px;
-      left: 1%;
+      left: 2%;
       z-index: 10;
-      width: 17px;
-      height: 17px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: #ffffff;
-      border: 2.5px solid var(--cyan);
-      box-shadow: 0 0 10px var(--cyan);
+      border: 2.5px solid #00e5ff;
+      box-shadow: 0 0 10px #00e5ff;
       transform: translateX(-50%);
       transition: left 0.3s ease;
     }
+
     .event-pin {
       position: absolute;
-      top: 5px;
-      z-index: 4;
+      top: 4px;
+      z-index: 6;
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: rgba(30, 41, 59, 0.95);
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(24, 33, 52, 0.95);
+      border: 2px solid rgba(255, 255, 255, 0.22);
       transform: translateX(-50%);
       display: flex;
       align-items: center;
@@ -555,14 +672,26 @@
     }
     .event-pin.active-event {
       background: rgba(245, 158, 11, 0.35);
-      border-color: var(--amber);
+      border: 2px solid #fbbf24;
       transform: translateX(-50%) scale(1.15);
-      box-shadow: 0 0 14px var(--amber-glow);
-      animation: bounce-pin 0.8s infinite alternate ease-in-out;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.7);
+    }
+    .pin-halo-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid #00e5ff;
+      box-shadow: 0 0 12px #00e5ff, inset 0 0 6px #f59e0b;
+      animation: pulse-halo-ring 1.2s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes pulse-halo-ring {
+      from { transform: scale(0.95); opacity: 0.7; }
+      to { transform: scale(1.15); opacity: 1; }
     }
     .event-pin-time {
       position: absolute;
-      top: 35px;
+      top: 36px;
       font-family: "Outfit", sans-serif;
       font-size: 8.5px;
       font-weight: 700;
@@ -570,6 +699,7 @@
       white-space: nowrap;
       transform: translateX(-50%);
     }
+
     .action-marker-dot {
       position: absolute;
       top: 0px;
@@ -586,366 +716,481 @@
       font-size: 9px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
-    .timeline-header h3 {
-      font-family: "Outfit", sans-serif;
-      font-size: 12.5px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      color: #cbd5e1;
-    }
-    .timeline-header span {
-      font-size: 10.5px;
-      color: var(--text-dim);
-      font-weight: 600;
-    }
 
-    .track-wrapper {
+    /* === 4. MAHLZEITEN-CARD (SPRECHBLASEN-LOOK MIT COUNTDOWN & PLATE) === */
+    .speech-bubble-event-card {
       position: relative;
-      height: 60px;
-      margin: 0 6px;
+      background: linear-gradient(135deg, rgba(160, 48, 36, 0.65) 0%, rgba(68, 26, 26, 0.85) 45%, rgba(18, 24, 42, 0.95) 100%);
+      border: 1.5px solid rgba(249, 115, 22, 0.45);
+      border-radius: var(--radius-xl);
+      padding: 12px 14px 10px;
+      box-shadow: 0 10px 30px rgba(180, 50, 40, 0.22);
+      margin-top: 6px;
+      transition: all 0.3s ease;
     }
-    .track-rail-bg {
+    .speech-bubble-arrow {
       position: absolute;
-      top: 24px;
-      left: 1%;
-      right: 1%;
-      height: 6px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .track-rail-progress {
-      position: absolute;
-      top: 24px;
-      left: 1%;
-      width: 0%;
-      height: 6px;
-      border-radius: 10px;
-      background: linear-gradient(90deg, var(--emerald), var(--cyan));
-      box-shadow: 0 0 10px var(--cyan-glow);
-      transition: width 0.3s ease;
-    }
-    .track-cursor {
-      position: absolute;
-      top: 17px;
-      left: 1%;
-      z-index: 10;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 3px solid var(--cyan);
-      box-shadow: 0 0 12px var(--cyan);
+      top: -9px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-bottom: 9px solid rgba(249, 115, 22, 0.65);
       transform: translateX(-50%);
+      filter: drop-shadow(0 -2px 4px rgba(249, 115, 22, 0.4));
       transition: left 0.3s ease;
     }
-    .event-pin {
-      position: absolute;
-      top: 9px;
-      z-index: 4;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(30, 41, 59, 0.95);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      transform: translateX(-50%);
+    .event-card-layout {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      transition: all 0.25s ease;
-      cursor: pointer;
-    }
-    .event-pin.done {
-      background: rgba(16, 185, 129, 0.25);
-      border-color: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald-glow);
-    }
-    .event-pin.active-event {
-      background: rgba(245, 158, 11, 0.35);
-      border-color: var(--amber);
-      transform: translateX(-50%) scale(1.18);
-      box-shadow: 0 0 14px var(--amber-glow);
-      animation: bounce-pin 0.8s infinite alternate ease-in-out;
-    }
-    @keyframes bounce-pin {
-      from { transform: translateX(-50%) scale(1.12); }
-      to { transform: translateX(-50%) scale(1.24); }
-    }
-    .event-pin-time {
-      position: absolute;
-      top: 45px;
-      font-family: "Outfit", sans-serif;
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--text-dim);
-      white-space: nowrap;
-      transform: translateX(-50%);
-    }
-
-    .action-marker-dot {
-      position: absolute;
-      top: 2px;
-      z-index: 8;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    }
-
-    /* === CURRENT SITUATION / EVENT CARD === */
-    .event-box {
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .event-box.has-event {
-      background: linear-gradient(135deg, rgba(23, 37, 84, 0.9), rgba(15, 23, 42, 0.95));
-      border: 1.5px solid rgba(96, 165, 250, 0.35);
-      box-shadow: 0 10px 28px rgba(30, 58, 138, 0.25);
-      padding: 14px;
-    }
-    .event-box.is-sport {
-      background: linear-gradient(135deg, rgba(20, 83, 45, 0.9), rgba(15, 23, 42, 0.95));
-      border: 1.5px solid rgba(74, 222, 128, 0.4);
-    }
-    .event-box.empty {
-      background: rgba(15, 23, 42, 0.45);
-      border: 1px dashed rgba(255, 255, 255, 0.12);
-      padding: 12px;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 11.5px;
-      font-weight: 600;
-      border-radius: var(--radius-md);
-    }
-
-    .event-content-top {
-      display: flex;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 10px;
       align-items: flex-start;
     }
-    .event-icon-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
+    .event-card-left {
+      flex: 1;
+      min-width: 0;
     }
-    .event-details h3 {
+    .event-card-title {
       font-family: "Outfit", sans-serif;
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 2px;
+      line-height: 1.2;
     }
-    .event-details p {
-      font-size: 12px;
-      color: var(--text-muted);
+    .event-card-desc {
+      font-size: 11px;
+      color: #fecdd3;
       line-height: 1.35;
+      margin-bottom: 6px;
     }
-    .carb-reveal-tag {
+    .carb-badge-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      margin-top: 6px;
-      padding: 3px 9px;
-      border-radius: 8px;
+      gap: 4px;
+      background: rgba(245, 158, 11, 0.25);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fed7aa;
       font-family: "Outfit", sans-serif;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
+      padding: 2.5px 8px;
+      border-radius: 8px;
+      margin-bottom: 4px;
     }
-    .carb-tag-known {
-      background: rgba(16, 185, 129, 0.2);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.35);
+    .event-card-status {
+      font-size: 10.5px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
     }
-    .carb-tag-hidden {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fcd34d;
-      border: 1px dashed rgba(245, 158, 11, 0.5);
+    .event-button-row {
+      display: flex;
+      gap: 7px;
     }
-
-    .event-action-buttons {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .btn-action-primary {
+    .btn-eat-continue {
+      flex: 1.3;
       background: linear-gradient(135deg, #10b981, #059669);
       color: #ffffff;
       font-family: "Outfit", sans-serif;
-      font-size: 12.5px;
-      font-weight: 800;
-      padding: 10px;
-      border-radius: var(--radius-md);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-    }
-    .btn-action-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      font-family: "Outfit", sans-serif;
       font-size: 11.5px;
+      font-weight: 800;
+      padding: 8px 10px;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      border: none;
+    }
+    .btn-eat-continue:hover {
+      background: linear-gradient(135deg, #34d399, #059669);
+    }
+    .btn-skip-event {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #cbd5e1;
+      font-family: "Outfit", sans-serif;
+      font-size: 10px;
       font-weight: 700;
-      padding: 10px;
-      border-radius: var(--radius-md);
+      padding: 8px 6px;
+      border-radius: 999px;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
     }
 
-    .action-dock {
+    .event-card-right {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .food-plate-frame {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+    }
+    .countdown-circle-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.94);
+      border: 2px solid #f97316;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      font-weight: 900;
+      color: #ffffff;
+      z-index: 5;
+    }
+    .countdown-auto-label {
+      position: absolute;
+      top: -18px;
+      right: -6px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.6);
+      white-space: nowrap;
+    }
+
+    /* === 5. SCHALT-COCKPIT (GETEILT IN SENKEN & STEIGERN) === */
+    .sci-cockpit-dock {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       width: min(100%, 500px);
-      background: rgba(10, 15, 29, 0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 6px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+      background: rgba(11, 16, 29, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px 26px 0 0;
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
       z-index: 60;
-      box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.65);
+    }
+    .cockpit-dual-chamber {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      position: relative;
+    }
+    .cockpit-dual-chamber::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 50%;
+      width: 1px;
+      border-left: 1px dashed rgba(255, 255, 255, 0.16);
+      transform: translateX(-50%);
+      pointer-events: none;
     }
 
-    .dock-row-pen {
+    .cockpit-chamber {
+      position: relative;
       display: flex;
-      align-items: center;
-      gap: 6px;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
-    .insulin-pen-dial {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-md);
-      padding: 3px 5px;
-      min-width: 115px;
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
-    }
-    .dial-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      font-family: "Outfit", sans-serif;
-      font-size: 16px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .dial-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    .dial-value {
-      flex: 1;
+    .chamber-chevron-bg {
+      position: absolute;
+      top: 18px;
+      font-size: 64px;
+      font-weight: 900;
+      opacity: 0.05;
+      pointer-events: none;
+      line-height: 1;
+      width: 100%;
       text-align: center;
     }
-    .dial-value b {
-      display: block;
-      font-family: "Outfit", sans-serif;
-      font-size: 15px;
-      font-weight: 900;
-      color: #ffffff;
-      line-height: 1;
+    .chamber-lower .chamber-chevron-bg {
+      color: #00e5ff;
     }
-    .dial-value span {
-      display: block;
-      font-size: 8px;
-      font-weight: 700;
-      color: var(--text-dim);
+    .chamber-raise .chamber-chevron-bg {
+      color: #f59e0b;
     }
 
-    .btn-inject {
-      flex: 1;
-      height: 38px;
-      background: linear-gradient(135deg, #0ea5e9, #0284c7);
-      border-radius: var(--radius-md);
-      color: #ffffff;
-      font-family: "Outfit", sans-serif;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
+    .chamber-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 0 4px;
     }
-    .btn-inject:hover {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
+    .chamber-title {
+      font-family: "Outfit", sans-serif;
+      font-size: 11.5px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .cyan-title {
+      color: #00e5ff;
+    }
+    .warm-title {
+      color: #f59e0b;
     }
 
-    /* Rescue Tray */
-    .rescue-tray {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
-      margin-top: 6px;
+    .mascot-droplet-glow {
+      filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
     }
-    .rescue-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 9px;
-      padding: 5px 3px;
+    .mascot-toast-glow {
+      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+    }
+
+    /* Linke Seite: Spritzensteuerung */
+    .syringe-control-wrapper {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1px;
+      gap: 2px;
+      margin-top: 14px;
+      margin-bottom: 6px;
     }
-    .rescue-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
+    .syringe-dose-badge {
+      position: absolute;
+      top: -16px;
+      left: 77.5%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(0, 229, 255, 0.45);
+      color: #ffffff;
+      font-family: "Outfit", sans-serif;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 1.5px 7px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 3px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      transition: left 0.15s ease;
+      white-space: nowrap;
+      z-index: 5;
     }
-    .rescue-btn span.icon-text {
+    .syringe-dose-badge::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid rgba(0, 229, 255, 0.8);
+    }
+    .syringe-dose-badge .badge-sub {
+      font-size: 8px;
+      color: #38bdf8;
+      font-weight: 800;
+    }
+    .syringe-svg-container {
+      width: 100%;
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .chamber-actions-col {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .btn-sci-inject {
+      width: 100%;
+      height: 32px;
+      background: linear-gradient(135deg, #00e5ff, #0284c7);
+      border: 1px solid #38bdf8;
+      border-radius: 999px;
+      color: #082f49;
+      font-family: "Outfit", sans-serif;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+      cursor: pointer;
+    }
+    .btn-sci-inject:hover {
+      background: linear-gradient(135deg, #38bdf8, #00e5ff);
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.55);
+    }
+    .btn-sci-walk {
+      width: 100%;
+      height: 30px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: 1px solid #34d399;
+      border-radius: 999px;
+      color: #ffffff;
+      font-family: "Outfit", sans-serif;
       font-size: 10.5px;
       font-weight: 800;
-      color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 3px;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+      cursor: pointer;
     }
-    .rescue-btn span.speed-tag {
-      font-size: 8px;
-      font-weight: 700;
-      color: var(--text-dim);
+    .btn-sci-walk:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+    .btn-sci-walk.is-walking {
+      background: linear-gradient(135deg, #047857, #065f46);
+      border-color: #34d399;
+      animation: pulse-walking-btn 1.2s infinite alternate ease-in-out;
     }
 
-    /* Active Absorption Status Strip */
-    .active-metabolics {
+    /* Rechte Seite: 3 Kreis-Buttons für Steigern */
+    .rescue-orb-grid {
       display: flex;
+      flex-direction: column;
+      align-items: center;
       gap: 4px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-      min-height: 16px;
     }
-    .metabolic-tag {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      padding: 1.5px 6px;
+    .rescue-orb-top-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .rescue-orb-bottom-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .rescue-orb-btn {
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+    .rescue-orb-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .orb-purple .rescue-orb-circle {
+      background: radial-gradient(circle at 35% 35%, rgba(168, 85, 247, 0.3), rgba(88, 28, 135, 0.75));
+      border: 1.5px solid rgba(192, 132, 252, 0.65);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+    }
+    .orb-orange .rescue-orb-circle {
+      background: radial-gradient(circle at 35% 35%, rgba(249, 115, 22, 0.35), rgba(154, 52, 18, 0.75));
+      border: 1.5px solid rgba(251, 146, 60, 0.65);
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    }
+    .orb-yellow .rescue-orb-circle {
+      background: radial-gradient(circle at 35% 35%, rgba(245, 158, 11, 0.35), rgba(180, 83, 9, 0.75));
+      border: 1.5px solid rgba(251, 191, 36, 0.65);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    .rescue-orb-btn:hover .rescue-orb-circle {
+      transform: scale(1.08);
+    }
+    .orb-icon-art {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .rescue-orb-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+      line-height: 1.1;
+    }
+    .rescue-orb-grams {
+      font-family: "Outfit", sans-serif;
       font-size: 8.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      font-weight: 800;
+      color: #f59e0b;
+      line-height: 1;
     }
 
-    /* PWA Banner Styles */
+    /* Kids Promo Card & PWA Banner im Modal */
+    .kids-promo-card {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(236, 72, 153, 0.14));
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .kids-promo-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+      box-shadow: 0 4px 10px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #bae6fd;
+    }
+    .kids-promo-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .kids-promo-info {
+      flex: 1;
+    }
+    .kids-promo-info b {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: #7dd3fc;
+      margin-bottom: 2px;
+    }
+    .kids-promo-info p {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.35;
+      margin: 0;
+    }
+    .btn-kids-promo {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border: 1px solid #38bdf8;
+      color: #ffffff;
+      text-decoration: none;
+      font-family: "Outfit", sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35);
+      transition: all 0.18s;
+    }
+    .btn-kids-promo:hover {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      transform: translateY(-1px);
+    }
+
     .pwa-banner {
       background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.15));
       border: 1px solid rgba(6, 182, 212, 0.35);
@@ -974,149 +1219,6 @@
       box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
     }
 
-    /* RESPONSIVE MEDIA QUERIES FÜR KEIN-SCROLL-LAYOUT AUF SMARTPHONES */
-    @media (max-height: 750px) {
-      .app-shell {
-        gap: 6px;
-        padding-top: 4px;
-        padding-bottom: 124px;
-      }
-      .topbar {
-        padding: 5px 12px;
-        margin-bottom: 0;
-      }
-      .hud-bar {
-        gap: 4px;
-      }
-      .hud-stat {
-        padding: 4px 4px;
-      }
-      .hud-stat span.label {
-        font-size: 8px;
-      }
-      .hud-stat span.val {
-        font-size: 13px;
-      }
-      .cgm-card {
-        padding: 6px 10px 4px;
-      }
-      .chart-container {
-        height: 95px;
-        margin-top: 2px;
-      }
-      .glucose-number {
-        font-size: 32px;
-      }
-      .trend-arrow-box {
-        font-size: 20px;
-      }
-      .timeline-card {
-        padding: 6px 10px 6px;
-      }
-      .track-wrapper {
-        height: 42px;
-      }
-      .event-pin {
-        width: 25px;
-        height: 25px;
-        font-size: 11.5px;
-        top: 5px;
-      }
-      .event-pin-time {
-        top: 31px;
-        font-size: 8px;
-      }
-      .event-box {
-        padding: 8px 10px;
-      }
-      .event-content-top {
-        gap: 8px;
-      }
-      .event-icon-circle {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-      }
-      .event-details h3 {
-        font-size: 13px;
-      }
-      .event-details p {
-        font-size: 10.5px;
-      }
-      .event-action-buttons {
-        margin-top: 6px;
-        gap: 6px;
-      }
-      .btn-action-primary, .btn-action-secondary {
-        min-height: 34px;
-        padding: 6px;
-        font-size: 11px;
-      }
-      .action-dock {
-        padding: 4px 10px calc(6px + env(safe-area-inset-bottom, 0px));
-      }
-      .insulin-pen-dial {
-        padding: 2px 4px;
-        min-width: 108px;
-      }
-      .dial-btn {
-        width: 26px;
-        height: 26px;
-        font-size: 15px;
-      }
-      .dial-value b {
-        font-size: 14px;
-      }
-      .btn-inject {
-        height: 34px;
-        font-size: 11.5px;
-      }
-      .rescue-tray {
-        margin-top: 4px;
-        gap: 4px;
-      }
-      .rescue-btn {
-        padding: 4px 2px;
-      }
-      .rescue-btn span.icon-text {
-        font-size: 9.5px;
-      }
-      .rescue-btn span.speed-tag {
-        font-size: 7.5px;
-      }
-    }
-
-    @media (max-height: 650px) {
-      .chart-container {
-        height: 75px;
-      }
-      .glucose-number {
-        font-size: 26px;
-      }
-      .cgm-card {
-        padding: 4px 8px 2px;
-      }
-      .timeline-card {
-        padding: 4px 8px 4px;
-      }
-      .track-wrapper {
-        height: 36px;
-      }
-      .event-pin {
-        width: 22px;
-        height: 22px;
-        font-size: 10px;
-        top: 4px;
-      }
-      .event-pin-time {
-        top: 26px;
-        font-size: 7.5px;
-      }
-      .app-shell {
-        gap: 4px;
-        padding-bottom: 116px;
-      }
-    }
     .metabolic-tag.ins {
       border-left: 2px solid var(--cyan);
     }
@@ -1133,6 +1235,85 @@
       color: #fdba74;
     }
 
+    /* RESPONSIVE MEDIA QUERIES FÜR SMARTPHONES */
+    @media (max-height: 750px) {
+      .app-shell {
+        gap: 5px;
+        padding-top: 4px;
+        padding-bottom: 155px;
+      }
+      .topbar {
+        padding: 6px 12px;
+      }
+      .cgm-card {
+        padding: 8px 12px 8px;
+      }
+      .chart-container {
+        height: 140px;
+      }
+      .glucose-number {
+        font-size: 36px;
+      }
+      .trend-arrow-sci {
+        font-size: 22px;
+      }
+      .timeline-card {
+        padding: 7px 10px 8px;
+      }
+      .track-wrapper {
+        height: 44px;
+      }
+      .event-pin {
+        width: 25px;
+        height: 25px;
+        font-size: 11.5px;
+        top: 5px;
+      }
+      .event-pin-time {
+        top: 31px;
+        font-size: 8px;
+      }
+      .speech-bubble-event-card {
+        padding: 10px 12px 8px;
+      }
+      .food-plate-frame {
+        width: 66px;
+        height: 66px;
+      }
+      .event-card-right {
+        width: 72px;
+        height: 72px;
+      }
+      .countdown-circle-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+      }
+      .sci-cockpit-dock {
+        padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
+      }
+      .rescue-orb-circle {
+        width: 38px;
+        height: 38px;
+      }
+      .orb-icon-art {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-height: 650px) {
+      .chart-container {
+        height: 110px;
+      }
+      .glucose-number {
+        font-size: 28px;
+      }
+      .app-shell {
+        gap: 4px;
+        padding-bottom: 145px;
+      }
+    }
+    
     /* === TOAST NOTIFICATION === */
     .toast {
       position: fixed;
@@ -1195,6 +1376,131 @@
     @keyframes modalSlideUp {
       from { transform: translateY(20px) scale(0.97); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-box.modal-box-large {
+      max-width: 620px;
+      width: 96%;
+    }
+
+    /* === TAGES-ZUSAMMENFASSUNG IM ABSCHLUSS-OVERLAY === */
+    .day-summary-chart-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px 10px;
+      margin-bottom: 16px;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .day-summary-header {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .day-summary-title-group {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .day-summary-kicker {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .day-summary-clock-span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+    .day-summary-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+    }
+    .day-summary-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      font-size: 9.5px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .legend-chip {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .legend-chip.in-target {
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .legend-chip.iob {
+      border-color: rgba(6, 182, 212, 0.4);
+      color: #67e8f9;
+      background: rgba(6, 182, 212, 0.12);
+    }
+    .legend-chip.meal {
+      border-color: rgba(245, 158, 11, 0.35);
+      color: #fcd34d;
+      background: rgba(245, 158, 11, 0.1);
+    }
+    .legend-chip.walk {
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .day-summary-canvas-wrap {
+      width: 100%;
+      height: 230px;
+      position: relative;
+      background: #090e1a;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .day-summary-canvas-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .day-summary-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .summary-mini-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 6px 4px;
+      text-align: center;
+    }
+    .summary-mini-card span {
+      display: block;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .summary-mini-card b {
+      display: block;
+      font-family: "Outfit", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 1px;
     }
 
     .modal-kicker {
@@ -1459,172 +1765,337 @@
 
   <div class="app-shell">
     
-    <!-- TOP STATUSLEISTE -->
+    <!-- TOP STATUSLEISTE (SCHLANK & AUFGERÄUMT) -->
     <header class="topbar">
       <div class="brand-section">
-        <div class="app-icon-badge" aria-hidden="true">
-          <img src="./icon-192.png" alt="Zucker im Tank Logo">
+        <div class="brand-orb-logo" aria-hidden="true">
+          <div class="orb-inner-glow"></div>
         </div>
         <div class="brand-meta">
-          <h1>
-            Zucker im Tank
-            <span id="diffBadge" class="difficulty-badge diff-easy">Einsteiger</span>
-          </h1>
-          <div class="time-day-meta">
-            <span id="dayIndicator" class="day-pill">Tag 1/1</span>
-            <span id="currentTime" class="active-time">07:00</span>
+          <div class="brand-title-row">
+            <span class="brand-name">Zucker im Tank</span>
+            <span id="diffBadge" class="badge-einsteiger">
+              <span>EINSTEIGER</span>
+              <span class="badge-alien-icon">👾</span>
+            </span>
           </div>
         </div>
       </div>
 
-      <!-- Quick Controls: Pause, Speed, Fullscreen, PWA Install & Sound -->
+      <!-- Quick Controls: Speed Pill & Drei-Punkte-Menü -->
       <div class="top-controls">
-        <button id="btnFullscreen" class="ctrl-btn" type="button" title="Vollbild umschalten" onclick="toggleFullscreen()">
-          <span>⛶</span>
-        </button>
-        <button id="btnPwaInstall" class="ctrl-btn hidden" type="button" title="App installieren" onclick="installPwa()">
-          <span>📲</span>
-        </button>
-        <button id="btnPause" class="ctrl-btn" type="button" title="Pausieren (Leertaste)" onclick="togglePause()">
-          <span id="pauseIcon">⏸️</span>
-        </button>
-        <button id="btnSpeed" class="ctrl-btn active-speed" type="button" title="Geschwindigkeit anpassen" onclick="cycleSpeed()">
-          <span id="speedLabel">1x</span>
-        </button>
-        <button id="btnSound" class="ctrl-btn" type="button" title="Sound ein/aus" onclick="toggleSound()">
-          <span id="soundIcon">🔊</span>
-        </button>
+        <div class="speed-pill-capsule" title="Spielgeschwindigkeit &amp; Pause">
+          <span class="stopwatch-icon" aria-hidden="true">⏱️</span>
+          <button id="btnPausePlay" class="ctrl-btn-pause" type="button" title="Pausieren / Fortsetzen (Leertaste)" onclick="togglePause()">
+            <span id="topPauseIcon">⏸</span>
+          </button>
+          <div class="speed-controls-group">
+            <button class="speed-stepper-btn" type="button" onclick="cycleSpeed(-1)" title="Langsamer">◀</button>
+            <span id="topSpeedLabel" class="speed-label-text" onclick="cycleSpeed(1)" title="Klicken zum Umschalten">1x</span>
+            <button class="speed-stepper-btn" type="button" onclick="cycleSpeed(1)" title="Schneller">▶</button>
+          </div>
+        </div>
+
+        <div class="menu-dropdown-wrapper">
+          <button id="btnMenuToggle" class="menu-toggle-btn-glow" type="button" title="Menü &amp; Einstellungen" onclick="toggleTopMenu(event)">
+            <span>⋮</span>
+          </button>
+          <div id="topMenuDropdown" class="menu-dropdown-sheet hidden" onclick="event.stopPropagation()">
+            <div class="menu-dropdown-header">
+              <span>Einstellungen &amp; Steuerung</span>
+            </div>
+            <a href="kids.html" class="menu-item-btn" style="color: #38bdf8;">
+              <span>🧸</span>
+              <span>Kinder-Version (Drache Zucki)</span>
+            </a>
+            <button class="menu-item-btn" type="button" onclick="togglePause(); closeTopMenu();">
+              <span id="menuPauseIcon">⏸️</span>
+              <span id="menuPauseLabel">Pausieren (Leertaste)</span>
+            </button>
+            <button class="menu-item-btn" type="button" onclick="cycleSpeed(1);">
+              <span>⏩</span>
+              <span>Tempo: <b id="menuSpeedLabel">1x</b></span>
+            </button>
+            <button class="menu-item-btn" type="button" onclick="toggleSound();">
+              <span id="menuSoundIcon">🔊</span>
+              <span id="menuSoundLabel">Sound: An</span>
+            </button>
+            <button class="menu-item-btn" type="button" onclick="toggleFullscreen(); closeTopMenu();">
+              <span>⛶</span>
+              <span>Vollbild</span>
+            </button>
+            <button id="btnMenuPwaInstall" class="menu-item-btn hidden" type="button" onclick="installPwa(); closeTopMenu();">
+              <span>📲</span>
+              <span>App installieren</span>
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- STATS HUD -->
-    <section class="hud-bar" aria-label="Spielerwerte">
-      <div class="hud-stat">
-        <span class="label">Punkte</span>
-        <span id="hudScore" class="val">0</span>
-      </div>
-      <div class="hud-stat">
-        <span class="label">TiTR (Ziel)</span>
-        <span id="hudTitr" class="val" style="color: var(--emerald);">100%</span>
-      </div>
-      <div class="hud-stat">
-        <span class="label">Streak</span>
-        <span id="hudStreak" class="val" style="color: var(--cyan);">0h</span>
-      </div>
-      <div class="hud-stat">
-        <span class="label">Insulin (IOB)</span>
-        <span id="hudIob" class="val" style="color: #cbd5e1;">0.0 IE</span>
-      </div>
-    </section>
-
-    <!-- CGM HERO CARD -->
+    <!-- CGM HERO CARD (CONTINUOUS GLUCOSE MONITOR MIT SCI-FI GRAPH) -->
     <section class="cgm-card">
-      <div class="cgm-header">
-        <div>
-          <span class="cgm-heading-tag">Continuous Glucose Monitor</span>
-          <div class="glucose-display-row">
-            <div id="glucoseValue" class="glucose-number">110</div>
-            <div class="glucose-unit">mg/dl</div>
-            <div id="trendArrow" class="trend-arrow-box" style="color: var(--emerald);">→</div>
-          </div>
+      <div class="cgm-header-top">
+        <div class="glucose-main-stat">
+          <span id="glucoseValue" class="glucose-number">111</span>
+          <span class="glucose-unit">mg/dl</span>
+          <span id="trendArrow" class="trend-arrow-sci">→</span>
         </div>
-        <div class="cgm-badges">
-          <span id="statusBadge" class="status-badge status-in-target">Im Zielbereich</span>
+        <div class="cgm-badge-top-row">
+          <span id="statusBadge" class="pill-target">
+            <span class="pill-emoji">😊</span>
+            <span>Im Zielbereich</span>
+          </span>
           <div class="iob-cob-pills">
-            <span id="cobChip" class="meta-chip">🍞 0g aktiv</span>
+            <span id="iobChip" class="pill-iob">💉 0,0 IE</span>
+            <span id="cobChip" class="pill-cob">0g aktiv 🍞</span>
+            <span id="walkChip" class="pill-walk hidden">🚶 Spaziergang</span>
           </div>
         </div>
       </div>
 
-      <!-- CGM Chart -->
+      <!-- Sci-Fi Canvas Graph -->
       <div class="chart-container">
-        <span class="chart-axis-label" style="top: 15%;">240</span>
-        <span class="chart-axis-label" style="top: 36%;">180</span>
-        <span class="chart-axis-label" style="top: 52%;">140</span>
-        <span class="chart-axis-label" style="top: 76%;">70</span>
-        <span class="chart-axis-label" style="top: 92%;">40</span>
+        <span class="chart-axis-label" style="top: 10%;">240</span>
+        <span class="chart-axis-label" style="top: 34%;">180</span>
+        <span class="chart-axis-label" style="top: 51%;">140</span>
+        <span class="chart-axis-label" style="top: 68%;">100</span>
+        <span class="chart-axis-label" style="top: 82%;">70</span>
+        <span class="chart-axis-label" style="top: 95%;">40</span>
         <canvas id="cgmCanvas" width="460" height="180"></canvas>
       </div>
     </section>
 
-    <!-- TIMELINE SECTION -->
+    <!-- TIMELINE SECTION (TAGESVERLAUF MIT AKTIVEM KNOTEN-HALO) -->
     <section class="timeline-card">
       <div class="timeline-header">
-        <h3 id="timelineTitle">Tagesverlauf</h3>
-        <span id="timelineProgress">07:00 / 00:00 Uhr</span>
+        <div class="timeline-title-group">
+          <span class="timeline-title-label">Tagesverlauf</span>
+          <span id="dayIndicator" class="day-cyan-tag">Tag 1/1</span>
+        </div>
+        <div class="timeline-clock-display" id="currentTime">07:00</div>
       </div>
       <div class="track-wrapper" id="trackWrapper">
         <div class="track-rail-bg"></div>
         <div id="trackRailProgress" class="track-rail-progress"></div>
         <div id="trackCursor" class="track-cursor"></div>
         
-        <!-- Standard-Pins für 17h-Tag (07:00 bis 00:00 Uhr) -->
-        <!-- 07:30 (+30 Min) = 5% -->
+        <!-- Standard-Pins für den Tag (07:00 bis 00:00 Uhr) ohne Verzerrung -->
         <div class="event-pin" id="pin-breakfast" style="left: 5%;">🥣</div>
         <span class="event-pin-time" id="pinTime-breakfast" style="left: 5%;">07:30</span>
 
-        <!-- 12:30 (+330 Min) = 33% -->
         <div class="event-pin" id="pin-lunch" style="left: 33%;">🍝</div>
         <span class="event-pin-time" id="pinTime-lunch" style="left: 33%;">12:30</span>
 
-        <!-- 18:30 (+690 Min) = 67% -->
         <div class="event-pin" id="pin-dinner" style="left: 67%;">🥗</div>
         <span class="event-pin-time" id="pinTime-dinner" style="left: 67%;">18:30</span>
 
-        <!-- 00:00 (Ende / Bettruhe) = 98% -->
         <div class="event-pin" id="pin-bedtime" style="left: 98%;">🌙</div>
         <span class="event-pin-time" id="pinTime-bedtime" style="left: 98%;">00:00</span>
 
-        <!-- Container für dynamische Spontan-Pins (Eis, Sport, Kuchen) & Aktionen -->
+        <!-- Container für dynamische Spontan-Pins & Aktionen -->
         <div id="dynamicPinsContainer"></div>
         <div id="actionMarkersContainer"></div>
       </div>
     </section>
 
-    <!-- AKTUELLE SITUATION / EVENT KARTE -->
+    <!-- AKTUELLE SITUATION / MAHLZEITEN-CARD IM SPRECHBLASEN-LOOK (NUR WENN AKTIVITÄT ANSTEHT) -->
     <section>
-      <div id="eventBox" class="event-box empty">
-        Keine offene Mahlzeit oder Aktivität. Der Blutzucker läuft stabil.
+      <div id="eventBox" class="speech-bubble-event-card" style="display: none;">
+        <!-- Upward Arrow pointer to timeline node -->
+        <div id="bubbleArrow" class="speech-bubble-arrow" style="left: 5%;"></div>
+        
+        <div id="eventCardBody" class="event-card-layout">
+          <!-- Populated by renderEventArea() -->
+        </div>
       </div>
     </section>
 
   </div>
 
-  <!-- FIXED BOTTOM ACTION DOCK -->
-  <aside class="action-dock" aria-label="Aktionsleiste">
-    <!-- Insulin-Pen Dosis & Injizieren -->
-    <div class="dock-row-pen">
-      <div class="insulin-pen-dial" aria-label="Insulindosierung">
-        <button class="dial-btn" type="button" onclick="adjustDose(-1)">−</button>
-        <div class="dial-value">
-          <b id="dialDose">0</b>
-          <span>IE INSULIN</span>
+  <!-- FIXED BOTTOM SCHALT-COCKPIT (GETEILT IN SENKEN & STEIGERN) -->
+  <aside class="sci-cockpit-dock" id="actionDock" aria-label="Schalt-Cockpit">
+    <div class="cockpit-dual-chamber">
+      
+      <!-- LINKE SEITE: SENKEN (CYAN-THEMA) -->
+      <div class="cockpit-chamber chamber-lower">
+        <div class="chamber-chevron-bg">↓</div>
+        <div class="chamber-header">
+          <span class="chamber-title cyan-title">↓ SENKEN</span>
+          <!-- Niedliches Maskottchen: Tropfen -->
+          <div class="mascot-droplet-glow" title="Insulin-Tröpfchen">
+            <svg viewBox="0 0 32 32" width="22" height="22">
+              <path d="M16 3 C16 3 7 14 7 21 C7 26 11 30 16 30 C21 30 25 26 25 21 C25 14 16 3 16 3 Z" fill="url(#cyanDropGrad)"/>
+              <!-- Kawaii Gesicht -->
+              <circle cx="12.5" cy="20" r="1.6" fill="#062238"/>
+              <circle cx="19.5" cy="20" r="1.6" fill="#062238"/>
+              <path d="M14 23.5 Q16 26 18 23.5" stroke="#062238" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+              <ellipse cx="11.5" cy="22" rx="1.2" ry="0.7" fill="#ff70a6" opacity="0.6"/>
+              <ellipse cx="20.5" cy="22" rx="1.2" ry="0.7" fill="#ff70a6" opacity="0.6"/>
+              <defs>
+                <linearGradient id="cyanDropGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#a5f3fc"/>
+                  <stop offset="60%" stop-color="#00e5ff"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
-        <button class="dial-btn" type="button" onclick="adjustDose(1)">+</button>
+
+        <!-- Dosierungs-Badge & Stilisierte Insulin-Spritze (FÜLLT VON DER NADEL-SEITE RECHTS AUF) -->
+        <div class="syringe-control-wrapper">
+          <div class="syringe-dose-badge" id="syringeDoseBadge" onclick="cycleSyringeDose()" title="Klicken zum schnellen Durchschalten">
+            <span id="dialDose">0</span> IE
+            <span class="badge-sub">INSULIN</span>
+          </div>
+
+          <!-- Stilisierte Interaktive Spritze SVG (0-10 IE, Füllt von rechts nach links auf) -->
+          <div class="syringe-svg-container" id="syringeContainer" title="Klicke auf die Spritze, um die Dosis einzustellen">
+            <svg id="syringeSvg" viewBox="0 0 240 56" width="100%" height="48" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+                  <stop offset="40%" stop-color="rgba(148,163,184,0.15)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0.25)"/>
+                </linearGradient>
+                <linearGradient id="fluidGrad" x1="1" y1="0" x2="0" y2="0">
+                  <stop offset="0%" stop-color="#00e5ff"/>
+                  <stop offset="60%" stop-color="#00b4d8"/>
+                  <stop offset="100%" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Plunger Flansch links (Daumenauflage) -->
+              <rect x="4" y="16" width="6" height="24" rx="2" fill="#38bdf8"/>
+              <!-- Kolbenstange (bewegt sich mit dem Kolben) -->
+              <rect x="10" y="25" width="170" height="6" fill="#0284c7" id="syringePlungerRod"/>
+
+              <!-- Kolbendichtung (Gummistopfen) -->
+              <rect x="180" y="16" width="8" height="24" rx="2" fill="#0f172a" stroke="#0284c7" stroke-width="1.5" id="syringePlungerHead"/>
+
+              <!-- Flüssigkeitsfüllung: Sitzt an der Nadel rechts (x=190) und wächst nach links -->
+              <rect id="syringeFluid" x="190" y="17" width="0" height="22" fill="url(#fluidGrad)" opacity="0.9"/>
+
+              <!-- Spritzenkörper (Glashülse) -->
+              <rect x="48" y="16" width="144" height="24" rx="3" fill="url(#glassGrad)" stroke="#38bdf8" stroke-width="1.8"/>
+
+              <!-- Skala: 0 an der Nadel (rechts), 10 am Kolbenstopp (links) -->
+              <g id="syringeTicksGroup" font-family="Outfit, sans-serif" font-size="7.5" font-weight="700" fill="#cbd5e1" text-anchor="middle">
+                <!-- 10 (links) -->
+                <line x1="50" y1="16" x2="50" y2="24" stroke="#cbd5e1" stroke-width="1.4"/>
+                <text x="50" y="32">10</text>
+                <!-- 9 -->
+                <line x1="64" y1="16" x2="64" y2="21" stroke="#94a3b8" stroke-width="0.9"/>
+                <!-- 8 -->
+                <line x1="78" y1="16" x2="78" y2="22" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="78" y="32">8</text>
+                <!-- 7 -->
+                <line x1="92" y1="16" x2="92" y2="21" stroke="#94a3b8" stroke-width="0.9"/>
+                <!-- 6 -->
+                <line x1="106" y1="16" x2="106" y2="22" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="106" y="32">6</text>
+                <!-- 5 -->
+                <line x1="120" y1="16" x2="120" y2="23" stroke="#38bdf8" stroke-width="1.3"/>
+                <!-- 4 -->
+                <line x1="134" y1="16" x2="134" y2="22" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="134" y="32">4</text>
+                <!-- 3 -->
+                <line x1="148" y1="16" x2="148" y2="21" stroke="#94a3b8" stroke-width="0.9"/>
+                <!-- 2 -->
+                <line x1="162" y1="16" x2="162" y2="22" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="162" y="32">2</text>
+                <!-- 1 -->
+                <line x1="176" y1="16" x2="176" y2="21" stroke="#94a3b8" stroke-width="0.9"/>
+                <!-- 0 (rechts an der Nadel) -->
+                <line x1="190" y1="16" x2="190" y2="24" stroke="#38bdf8" stroke-width="1.5"/>
+                <text x="190" y="32">0</text>
+              </g>
+
+              <!-- Schiebe-Manschette / Markierungsring um den Kolben -->
+              <rect id="syringeCollarRing" x="182" y="14" width="6" height="28" rx="2" fill="#0284c7" stroke="#38bdf8" stroke-width="1.2"/>
+
+              <!-- Spritzen-Konus / Nadelansatz mit Kawaii-Gesicht rechts -->
+              <path d="M192 20 L210 23 L210 33 L192 36 Z" fill="#0284c7" stroke="#38bdf8" stroke-width="1.2"/>
+              <!-- Kawaii Gesicht auf Nadelkonus -->
+              <circle cx="201" cy="26" r="1.2" fill="#ffffff"/>
+              <circle cx="205" cy="26" r="1.2" fill="#ffffff"/>
+              <path d="M202 29 Q203 31 204 29" stroke="#ffffff" stroke-width="0.8" fill="none"/>
+              <!-- Mini-Kanüle -->
+              <line x1="210" y1="28" x2="226" y2="28" stroke="#cbd5e1" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Buttons: INJIZIEREN! und SPAZIEREN! -->
+        <div class="chamber-actions-col">
+          <button id="btnInject" class="btn-sci-inject" type="button" onclick="executeInjection()">
+            <span class="btn-icon">💉</span>
+            <span>INJIZIEREN!</span>
+          </button>
+          <button id="btnWalk" class="btn-sci-walk" type="button" title="Eine Runde spazieren gehen (Noch 2 Joker heute)" onclick="goForAWalk()">
+            <span class="btn-icon">👨‍🚀</span>
+            <span id="btnWalkLabel">SPAZIEREN! (2x)</span>
+          </button>
+        </div>
       </div>
-      <button id="btnInject" class="btn-inject" type="button" onclick="executeInjection()">
-        💉 JETZT INJIZIEREN
-      </button>
-    </div>
 
-    <!-- Schnelle Traubenzucker / Rettungs-KH -->
-    <div class="rescue-tray">
-      <button class="rescue-btn" type="button" onclick="takeRescueCarbs(6, 'Traubenzucker', '🍬', 4)">
-        <span class="icon-text">🍬 +6g Traubenzucker</span>
-        <span class="speed-tag">⚡ Express-Wirkung</span>
-      </button>
-      <button class="rescue-btn" type="button" onclick="takeRescueCarbs(15, 'Apfelsaft', '🧃', 7)">
-        <span class="icon-text">🧃 +15g Apfelsaft</span>
-        <span class="speed-tag">🚀 Schneller Anstieg</span>
-      </button>
-      <button class="rescue-btn" type="button" onclick="takeRescueCarbs(22, 'Banane', '🍌', 14)">
-        <span class="icon-text">🍌 +22g Banane</span>
-        <span class="speed-tag">⏳ Mittlere Dauer</span>
-      </button>
-    </div>
+      <!-- RECHTE SEITE: STEIGERN (WARMTON-THEMA) -->
+      <div class="cockpit-chamber chamber-raise">
+        <div class="chamber-chevron-bg">↑</div>
+        <div class="chamber-header">
+          <div class="mascot-toast-glow" title="Toast-Maskottchen">
+            <svg viewBox="0 0 32 32" width="22" height="22">
+              <path d="M6 10 C6 6 10 4 16 4 C22 4 26 6 26 10 C27 12 28 24 26 27 C24 29 8 29 6 27 C4 24 5 12 6 10 Z" fill="#d97706"/>
+              <path d="M8 11 C8 8 11 6 16 6 C21 6 24 8 24 11 C25 13 26 23 24 25 C23 27 9 27 8 25 C7 23 7 13 8 11 Z" fill="#fde68a"/>
+              <!-- Kawaii Gesicht -->
+              <circle cx="12.5" cy="16" r="1.5" fill="#78350f"/>
+              <circle cx="19.5" cy="16" r="1.5" fill="#78350f"/>
+              <path d="M14 19 Q16 21.5 18 19" stroke="#78350f" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <ellipse cx="11.5" cy="18" rx="1.3" ry="0.8" fill="#f87171" opacity="0.6"/>
+              <ellipse cx="20.5" cy="18" rx="1.3" ry="0.8" fill="#f87171" opacity="0.6"/>
+            </svg>
+          </div>
+          <span class="chamber-title warm-title">↑ STEIGERN</span>
+        </div>
 
-    <!-- Aktive Resorptions-Chips -->
-    <div id="activeMetabolicsList" class="active-metabolics"></div>
+        <!-- 3 Kreisförmige Symbol-Buttons (Traubenzucker, Apfelsaft, Banane) -->
+        <div class="rescue-orb-grid">
+          <div class="rescue-orb-top-row">
+            <!-- Traubenzucker +6g -->
+            <button class="rescue-orb-btn orb-purple" type="button" onclick="takeRescueCarbs(6, 'Traubenzucker', '🍇', 4)" title="Traubenzucker (+6g)">
+              <div class="rescue-orb-circle">
+                <span class="orb-icon-art">🍇</span>
+              </div>
+              <span class="rescue-orb-label">Traubenzucker</span>
+              <span class="rescue-orb-grams">+6g</span>
+            </button>
+
+            <!-- Apfelsaft +15g -->
+            <button class="rescue-orb-btn orb-orange" type="button" onclick="takeRescueCarbs(15, 'Apfelsaft', '🧃', 7)" title="Apfelsaft (+15g)">
+              <div class="rescue-orb-circle">
+                <span class="orb-icon-art">🧃</span>
+              </div>
+              <span class="rescue-orb-label">Apfelsaft</span>
+              <span class="rescue-orb-grams">+15g</span>
+            </button>
+          </div>
+
+          <!-- Banane +22g -->
+          <div class="rescue-orb-bottom-row">
+            <button class="rescue-orb-btn orb-yellow" type="button" onclick="takeRescueCarbs(22, 'Banane', '🍌', 14)" title="Banane (+22g)">
+              <div class="rescue-orb-circle">
+                <span class="orb-icon-art">🍌</span>
+              </div>
+              <span class="rescue-orb-label">Banane</span>
+              <span class="rescue-orb-grams">+22g</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
   </aside>
 
   <!-- TOAST POPUP -->
@@ -1643,6 +2114,18 @@
       <div id="modalInstallBanner" class="pwa-banner hidden">
         <span>📲 Als Vollbild-App auf dem Smartphone installieren?</span>
         <button class="btn-install-quick" type="button" onclick="installPwa()">Jetzt installieren</button>
+      </div>
+
+      <!-- Neu: Banner zur Kinder-Edition -->
+      <div class="kids-promo-card">
+        <div class="kids-promo-avatar">
+          <img src="zucki.png" alt="Zucki Maskottchen">
+        </div>
+        <div class="kids-promo-info">
+          <b>🧸 Neu: Kinder-Version mit Drache Zucki!</b>
+          <p>Einfachere Ampel-UI, kinderleichte Erklärungen &amp; spielerische Begleitung.</p>
+        </div>
+        <a href="kids.html" class="btn-kids-promo">Zu Zucki →</a>
       </div>
 
       <div class="config-segment-label">Spieldauer / Modus:</div>
@@ -1708,10 +2191,31 @@
 
   <!-- TAGESABSCHLUSS MODAL (FÜR 7-TAGE-MODUS) -->
   <div id="dayReportSheet" class="sheet-backdrop hidden">
-    <div class="modal-box">
+    <div class="modal-box modal-box-large">
       <p class="modal-kicker">Tagesabschluss</p>
       <h2 id="dayReportTitle" class="modal-title">Tag 1 gemeistert!</h2>
       <p id="dayReportSub" class="modal-desc">Hier ist deine Auswertung für den heutigen Tag:</p>
+
+      <!-- TAGESZUSAMMENFASSUNG DES GLUKOSEGRAPHEN (7-TAGE MODUS) -->
+      <div class="day-summary-chart-card">
+        <div class="day-summary-header">
+          <div class="day-summary-title-group">
+            <span class="day-summary-kicker">📊 AGP-Tageszusammenfassung</span>
+            <span class="day-summary-clock-span">07:00 – 00:00 Uhr</span>
+          </div>
+          <h3 class="day-summary-title">Glukosekurve, Mahlzeiten, Insulin &amp; IOB</h3>
+          <div class="day-summary-legend">
+            <span class="legend-chip in-target">🟢 Zielbereich (70–140)</span>
+            <span class="legend-chip iob">💉 IOB (Aktives Insulin)</span>
+            <span class="legend-chip meal">🍞 Mahlzeit / KH</span>
+            <span class="legend-chip walk">🚶 Spaziergang</span>
+          </div>
+        </div>
+        <div class="day-summary-canvas-wrap">
+          <canvas id="dayReportCanvas" width="580" height="230"></canvas>
+        </div>
+        <div id="dayReportStatsRow" class="day-summary-stats-row"></div>
+      </div>
 
       <div class="summary-grid">
         <div class="summary-card">
@@ -1744,10 +2248,31 @@
 
   <!-- END SHEET (GAME OVER ODER WOCHENENDE) -->
   <div id="endSheet" class="sheet-backdrop hidden">
-    <div class="modal-box">
+    <div class="modal-box modal-box-large">
       <p id="endKicker" class="modal-kicker">Abschlussbericht</p>
       <h2 id="endTitle" class="modal-title">Runde beendet</h2>
       <p id="endDesc" class="modal-desc"></p>
+
+      <!-- TAGESZUSAMMENFASSUNG DES GLUKOSEGRAPHEN (ABSCHLUSS-OVERLAY) -->
+      <div class="day-summary-chart-card">
+        <div class="day-summary-header">
+          <div class="day-summary-title-group">
+            <span class="day-summary-kicker">📊 AGP-Tageszusammenfassung</span>
+            <span class="day-summary-clock-span">07:00 – 00:00 Uhr</span>
+          </div>
+          <h3 class="day-summary-title">Glukosekurve, Mahlzeiten, Insulin &amp; IOB</h3>
+          <div class="day-summary-legend">
+            <span class="legend-chip in-target">🟢 Zielbereich (70–140)</span>
+            <span class="legend-chip iob">💉 IOB (Aktives Insulin)</span>
+            <span class="legend-chip meal">🍞 Mahlzeit / KH</span>
+            <span class="legend-chip walk">🚶 Spaziergang</span>
+          </div>
+        </div>
+        <div class="day-summary-canvas-wrap">
+          <canvas id="daySummaryCanvas" width="580" height="230"></canvas>
+        </div>
+        <div id="daySummaryStatsRow" class="day-summary-stats-row"></div>
+      </div>
 
       <div class="summary-grid">
         <div class="summary-card">
@@ -2025,7 +2550,12 @@
       noiseTimer: 0,
 
       // Dawn-Phänomen (Morgendlicher Glukoseanstieg im Profi-Modus)
-      dawnEffect: null
+      dawnEffect: null,
+
+      // Spaziergang Joker (max. 2x am Tag) & Tages-Aufzeichnung für Abschluss-Overlay
+      walkJokersLeft: 2,
+      dayLog: [],
+      dayActionEvents: []
     };
 
     let simInterval = null;
@@ -2103,9 +2633,10 @@
 
     function renderDynamicPins() {
       const container = document.getElementById("dynamicPinsContainer");
+      if (!container) return;
       container.innerHTML = "";
 
-      // Icons der 3 Hauptmahlzeiten dynamisch auf der Timeline anpassen
+      // 1. Icons der 3 Hauptmahlzeiten dynamisch auf den Standard-Pins anpassen
       const bMeal = game.dayEvents.find(e => e.mealType === "breakfast");
       const lMeal = game.dayEvents.find(e => e.mealType === "lunch");
       const dMeal = game.dayEvents.find(e => e.mealType === "dinner");
@@ -2132,6 +2663,7 @@
         }
       }
 
+      // 2. Spontane Zwischen-Events (Snack, Sport) an ihrer exakten Position einblenden
       game.dayEvents.forEach(ev => {
         if (!ev.isSpontaneous) return;
         const progress = Math.max(0, Math.min(1, (ev.minute - DAY_START_MIN) / DAY_LENGTH_MIN));
@@ -2154,6 +2686,7 @@
       });
     }
 
+
     function addActionMarker(icon) {
       const progress = Math.max(0, Math.min(1, (game.simMinute - DAY_START_MIN) / DAY_LENGTH_MIN));
       const leftPercent = (2 + progress * 96).toFixed(1);
@@ -2162,7 +2695,8 @@
       marker.className = "action-marker-dot";
       marker.style.left = leftPercent + "%";
       marker.textContent = icon;
-      document.getElementById("actionMarkersContainer").appendChild(marker);
+      const container = document.getElementById("actionMarkersContainer");
+      if (container) container.appendChild(marker);
     }
 
     /* =========================================================================
@@ -2288,22 +2822,22 @@
     function updateSensoryAlarms() {
       const vignette = document.getElementById("vignetteOverlay");
       if (!game.settings.vignette) {
-        vignette.className = "vignette-overlay";
+        if (vignette) vignette.className = "vignette-overlay";
         return;
       }
 
       const now = Date.now();
       if (game.glucose < 45) {
         // Schwerste Unterzuckerung -> Schneller Strobe-Notfall-Alarm
-        vignette.className = "vignette-overlay hypo-severe";
+        if (vignette) vignette.className = "vignette-overlay hypo-severe";
         if (now - lastAlarmTime > 1800) {
           audio.playCgmAlarm(true);
           lastAlarmTime = now;
         }
         if (navigator.vibrate) navigator.vibrate([250, 100, 250]);
       } else if (game.glucose < 70) {
-        // Hypoglykämie: Aufleuchtender roter unscharfer Rand (Nutzerwunsch)
-        vignette.className = "vignette-overlay hypo-active";
+        // Hypoglykämie: Aufleuchtender roter unscharfer Rand
+        if (vignette) vignette.className = "vignette-overlay hypo-active";
         if (now - lastAlarmTime > 3200) {
           audio.playCgmAlarm(true);
           lastAlarmTime = now;
@@ -2311,16 +2845,16 @@
         if (navigator.vibrate) navigator.vibrate(120);
       } else if (game.glucose > 180) {
         // Hyperglykämie: Bernsteinfarbener Glanz
-        vignette.className = "vignette-overlay hyper-active";
+        if (vignette) vignette.className = "vignette-overlay hyper-active";
         if (game.glucose > 240 && now - lastAlarmTime > 5000) {
           audio.playCgmAlarm(false);
           lastAlarmTime = now;
         }
       } else if (game.activeExercise && game.activeExercise.remainingSeconds > 0) {
         // Sport-Aktivität
-        vignette.className = "vignette-overlay sport-active";
+        if (vignette) vignette.className = "vignette-overlay sport-active";
       } else {
-        vignette.className = "vignette-overlay";
+        if (vignette) vignette.className = "vignette-overlay";
       }
 
       // Notarzt / Crash bei kritischen Werten (<36 mg/dl)
@@ -2339,6 +2873,21 @@
       game.dayTickCount++;
       // Zeitschritt: ~4.5 Minuten Simulationszeit pro Tick
       game.simMinute += 4.5;
+
+      // Tages-Verlauf für Abschluss-Graphen protokollieren
+      const currentIob = game.activeInsulin.reduce((s, i) => s + (i.units * (i.remainingSeconds / i.initialDuration)), 0);
+      const currentCob = game.activeCarbs.reduce((s, c) => s + (c.totalGrams * (c.remainingSeconds / c.initialDuration)), 0);
+      const isWalkingNow = !!(game.activeExercise && game.activeExercise.isWalk && game.activeExercise.remainingSeconds > 0);
+      const isSportNow = !!(game.activeExercise && !game.activeExercise.isWalk && game.activeExercise.remainingSeconds > 0);
+
+      game.dayLog.push({
+        simMinute: game.simMinute,
+        glucose: game.glucose,
+        iob: currentIob,
+        cob: currentCob,
+        isWalking: isWalkingNow,
+        isSport: isSportNow
+      });
 
       updatePhysiology();
       updateSensoryAlarms();
@@ -2365,8 +2914,12 @@
         game.currentActiveEvent = upcoming;
         if (game.settings.autoPause) {
           game.isPaused = true;
-          document.getElementById("btnPause").classList.add("is-paused");
-          document.getElementById("pauseIcon").textContent = "▶️";
+          const menuBtn = document.getElementById("btnMenuToggle");
+          if (menuBtn) menuBtn.classList.add("is-paused");
+          const menuIcon = document.getElementById("menuPauseIcon");
+          if (menuIcon) menuIcon.textContent = "▶️";
+          const menuLabel = document.getElementById("menuPauseLabel");
+          if (menuLabel) menuLabel.textContent = "Fortsetzen (Leertaste)";
         }
         audio.playSnackChime();
         showToast(upcoming.isSport ? `🏃 Zeit für Sport: ${upcoming.title}!` : `🍽️ Mahlzeit bereit: ${upcoming.title}!`);
@@ -2423,42 +2976,81 @@
       const trend = getTrendSymbol();
 
       // Header Meta
-      document.getElementById("currentTime").textContent = formatClock(game.simMinute);
-      document.getElementById("dayIndicator").textContent = `Tag ${game.currentDay}/${game.totalDays}`;
+      const timeEl = document.getElementById("currentTime");
+      if (timeEl) timeEl.textContent = formatClock(game.simMinute);
+      const dayEl = document.getElementById("dayIndicator");
+      if (dayEl) dayEl.textContent = `Tag ${game.currentDay}/${game.totalDays}`;
 
       // Glucose & Trend
       const valEl = document.getElementById("glucoseValue");
-      valEl.textContent = Math.round(game.glucose);
-      valEl.style.color = status.color;
+      if (valEl) {
+        valEl.textContent = Math.round(game.glucose);
+        valEl.style.color = status.color;
+      }
 
       const arrowEl = document.getElementById("trendArrow");
-      arrowEl.textContent = trend.arrow;
-      arrowEl.style.color = status.color;
+      if (arrowEl) {
+        arrowEl.textContent = trend.arrow;
+        arrowEl.style.color = status.color;
+      }
 
       const badgeEl = document.getElementById("statusBadge");
-      badgeEl.textContent = status.label;
-      badgeEl.className = "status-badge " + status.cls;
+      if (badgeEl) {
+        badgeEl.textContent = status.label;
+        badgeEl.className = "status-badge " + status.cls;
+      }
 
-      // IOB & COB
+      // IOB & COB zusammen in der CGM-Karte
       const totalIob = game.activeInsulin.reduce((s, i) => s + (i.units * (i.remainingSeconds / i.initialDuration)), 0);
       const totalCob = game.activeCarbs.reduce((s, c) => s + (c.totalGrams * (c.remainingSeconds / c.initialDuration)), 0);
-      document.getElementById("hudIob").textContent = totalIob.toFixed(1).replace(".", ",") + " IE";
-      document.getElementById("cobChip").textContent = `🍞 ${Math.round(totalCob)}g aktiv`;
 
-      // HUD Stats
-      document.getElementById("hudScore").textContent = Math.round(game.score);
-      const titr = game.totalSeconds ? Math.round((game.inRangeSeconds / game.totalSeconds) * 100) : 100;
-      document.getElementById("hudTitr").textContent = titr + "%";
-      
-      const streakHours = (game.inRangeSeconds * 4.5 / 60).toFixed(1);
-      document.getElementById("hudStreak").textContent = streakHours + "h";
+      const iobChip = document.getElementById("iobChip");
+      if (iobChip) iobChip.textContent = `💉 ${totalIob.toFixed(1).replace(".", ",")} IE`;
+
+      const cobChip = document.getElementById("cobChip");
+      if (cobChip) cobChip.textContent = `🍞 ${Math.round(totalCob)}g aktiv`;
+
+      // Spaziergang / Aktivitätsstatus mit Joker-Anzeige & Pause/Stop Funktion
+      const isWalking = game.activeExercise && game.activeExercise.isWalk && game.activeExercise.remainingSeconds > 0;
+      const walkChip = document.getElementById("walkChip");
+      const btnWalk = document.getElementById("btnWalk");
+
+      if (walkChip) {
+        if (isWalking) {
+          walkChip.classList.remove("hidden");
+          walkChip.textContent = `🚶 Spaziergang (${game.activeExercise.remainingSeconds}s)`;
+        } else {
+          walkChip.classList.add("hidden");
+        }
+      }
+
+      if (btnWalk) {
+        if (isWalking) {
+          btnWalk.classList.add("is-walking");
+          btnWalk.disabled = false;
+          btnWalk.innerHTML = `<span>⏹️</span><span>BEENDEN</span>`;
+          btnWalk.title = "Klicken, um den Spaziergang vorzeitig zu beenden";
+        } else {
+          btnWalk.classList.remove("is-walking");
+          if (game.walkJokersLeft > 0) {
+            btnWalk.disabled = false;
+            btnWalk.innerHTML = `<span>🚶</span><span>SPAZIEREN (${game.walkJokersLeft}x)</span>`;
+            btnWalk.title = `Eine Runde spazieren gehen (Noch ${game.walkJokersLeft} Joker heute)`;
+          } else {
+            btnWalk.disabled = true;
+            btnWalk.innerHTML = `<span>🚶</span><span>SPAZIEREN (0x)</span>`;
+            btnWalk.title = "Keine Spaziergang-Joker mehr für heute übrig (max. 2x pro Tag)";
+          }
+        }
+      }
 
       // Timeline Progress
       const progress = Math.max(0, Math.min(1, (game.simMinute - DAY_START_MIN) / DAY_LENGTH_MIN));
       const leftPercent = (2 + progress * 96).toFixed(1);
-      document.getElementById("trackRailProgress").style.width = leftPercent + "%";
-      document.getElementById("trackCursor").style.left = leftPercent + "%";
-      document.getElementById("timelineProgress").textContent = `${formatClock(game.simMinute)} / 00:00 Uhr`;
+      const trackRailProgress = document.getElementById("trackRailProgress");
+      if (trackRailProgress) trackRailProgress.style.width = leftPercent + "%";
+      const trackCursor = document.getElementById("trackCursor");
+      if (trackCursor) trackCursor.style.left = leftPercent + "%";
 
       // Event Pins Highlight
       game.dayEvents.forEach(ev => {
@@ -2470,99 +3062,113 @@
         }
       });
 
-      renderActiveMetabolics();
       renderEventArea();
       drawCgmChart(status.color);
     }
 
-    function renderActiveMetabolics() {
-      const container = document.getElementById("activeMetabolicsList");
-      container.innerHTML = "";
-
-      const chips = [];
-      const totalIob = game.activeInsulin.reduce((s, i) => s + (i.units * (i.remainingSeconds / i.initialDuration)), 0);
-      if (totalIob > 0.08) {
-        chips.push({ text: `💉 Insulin: ${totalIob.toFixed(1)} IE`, type: "ins" });
-      }
-
-      game.activeCarbs.forEach(c => {
-        const remaining = Math.round(c.totalGrams * (c.remainingSeconds / c.initialDuration));
-        chips.push({ text: `${c.label}: +${remaining}g`, type: "carb" });
-      });
-
-      if (game.activeExercise && game.activeExercise.remainingSeconds > 0) {
-        chips.push({ text: `🏃 ${game.activeExercise.title} aktiv`, type: "sport" });
-      }
-
-      if (game.dawnEffect && game.dawnEffect.active) {
-        chips.push({ text: "🌅 Dawn-Effekt aktiv", type: "dawn" });
-      }
-
-      if (!chips.length) {
-        container.innerHTML = '<span class="metabolic-tag">Keine aktiven Absorptionsprozesse</span>';
-        return;
-      }
-
-      chips.slice(0, 4).forEach(c => {
-        const span = document.createElement("span");
-        span.className = `metabolic-tag ${c.type}`;
-        span.textContent = c.text;
-        container.appendChild(span);
-      });
-    }
-
     function renderEventArea() {
       const box = document.getElementById("eventBox");
+      const arrow = document.getElementById("bubbleArrow");
+      const body = document.getElementById("eventCardBody");
       const ev = game.currentActiveEvent;
 
+      // Wenn keine Aktivität ansteht, Sprechblase komplett ausblenden!
       if (!ev) {
-        box.className = "event-box empty";
-        box.innerHTML = `Keine offene Mahlzeit oder Aktivität. Behalte den CGM-Verlauf im Blick.`;
+        if (box) box.style.display = "none";
         return;
       }
 
-      const isPro = game.difficulty === "PRO";
-      box.className = "event-box has-event" + (ev.isSport ? " is-sport" : "");
+      if (box) box.style.display = "block";
 
-      // Kohlenhydrat-Tag je nach Schwierigkeitsgrad (Nutzerfeedback: Stufe 2 ohne KH)
+      // Pfeil exakt auf den aktiven Timeline-Knoten richten
+      const progress = Math.max(0.04, Math.min(0.96, (ev.minute - DAY_START_MIN) / DAY_LENGTH_MIN));
+      if (arrow) arrow.style.left = (progress * 100).toFixed(1) + "%";
+
+      const isPro = game.difficulty === "PRO";
       let carbTagHtml = "";
       if (ev.isSport) {
-        carbTagHtml = `<span class="carb-reveal-tag carb-tag-known">⚡ Sport-Event: Verbrennt Glukose (-${ev.dropBG} mg/dl)</span>`;
+        carbTagHtml = `<div class="carb-badge-pill" style="border-color:rgba(16,185,129,0.5);color:#6ee7b7;background:rgba(16,185,129,0.2);">⚡ Sport-Event (-${ev.dropBG} mg/dl)</div>`;
       } else if (isPro) {
-        carbTagHtml = `<span class="carb-reveal-tag carb-tag-hidden">❓ Profi-Modus: Schätze die Kohlenhydrate selbst!</span>`;
+        carbTagHtml = `<div class="carb-badge-pill" style="border-color:rgba(245,158,11,0.5);color:#fcd34d;">❓ Profi-Modus: Kohlenhydrate schätzen</div>`;
       } else {
         const khe = (ev.carbs / 10).toFixed(1).replace(".", ",");
-        carbTagHtml = `<span class="carb-reveal-tag carb-tag-known">🍞 ${ev.carbs}g Kohlenhydrate (~${khe} KHE)</span>`;
+        carbTagHtml = `<div class="carb-badge-pill">🍞 ${ev.carbs}g Kohlenhydrate (~${khe} KHE)</div>`;
       }
 
-      box.innerHTML = `
-        <div class="event-content-top">
-          <div class="event-icon-circle">${ev.icon}</div>
-          <div class="event-details">
-            <h3>${ev.title}</h3>
-            <p>${ev.desc}</p>
+      // Tellergrafik mit Rührei, Avocado & Toast
+      let plateSvgHtml = "";
+      if (ev.isSport) {
+        plateSvgHtml = `
+          <svg viewBox="0 0 100 100" class="food-plate-frame">
+            <circle cx="50" cy="50" r="46" fill="#14532d" stroke="#22c55e" stroke-width="3"/>
+            <text x="50" y="58" font-size="40" text-anchor="middle">🏃</text>
+          </svg>
+        `;
+      } else {
+        plateSvgHtml = `
+          <svg viewBox="0 0 120 120" class="food-plate-frame">
+            <circle cx="60" cy="60" r="56" fill="#f8fafc" stroke="#e2e8f0" stroke-width="3"/>
+            <circle cx="60" cy="60" r="46" fill="#e2e8f0" opacity="0.6"/>
+            
+            <rect x="62" y="24" width="34" height="34" rx="6" fill="#b45309" stroke="#78350f" stroke-width="1.5" transform="rotate(12 79 41)"/>
+            <rect x="65" y="27" width="28" height="28" rx="4" fill="#d97706" transform="rotate(12 79 41)"/>
+            
+            <path d="M30 28 C35 22 46 25 50 34 C44 40 34 38 30 28 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+            <path d="M32 30 C35 25 43 27 47 34 C42 38 35 37 32 30 Z" fill="#86efac"/>
+            <path d="M22 36 C28 30 38 34 41 42 C35 48 26 45 22 36 Z" fill="#15803d" stroke="#14532d" stroke-width="1.2"/>
+            <path d="M24 38 C28 33 36 36 39 42 C34 46 27 44 24 38 Z" fill="#86efac"/>
+
+            <path d="M34 52 C26 58 28 76 38 84 C48 92 72 92 82 82 C92 72 88 56 76 50 C66 44 44 46 34 52 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+            <path d="M42 62 Q52 56 64 64 Q74 60 80 68" stroke="#ca8a04" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M40 74 Q56 80 72 74" stroke="#ca8a04" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+            <circle cx="52" cy="70" r="2.2" fill="#713f12"/>
+            <circle cx="66" cy="70" r="2.2" fill="#713f12"/>
+            <path d="M57 74 Q59 77 61 74" stroke="#713f12" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <ellipse cx="49" cy="72" rx="1.6" ry="1" fill="#f87171" opacity="0.6"/>
+            <ellipse cx="69" cy="72" rx="1.6" ry="1" fill="#f87171" opacity="0.6"/>
+
+            <circle cx="48" cy="58" r="1.2" fill="#15803d"/>
+            <circle cx="60" cy="54" r="1.3" fill="#15803d"/>
+            <circle cx="70" cy="62" r="1.2" fill="#15803d"/>
+            <circle cx="44" cy="80" r="1.2" fill="#15803d"/>
+          </svg>
+        `;
+      }
+
+      if (body) {
+        body.innerHTML = `
+          <div class="event-card-left">
+            <h3 class="event-card-title">${ev.title}</h3>
+            <p class="event-card-desc">${ev.desc}</p>
             ${carbTagHtml}
+            <div class="event-card-status">
+              ${game.isPaused ? '⏸️ Spiel pausiert.' : '⏱️ Zeit läuft...'}
+            </div>
+            <div class="event-button-row">
+              <button class="btn-eat-continue" type="button" onclick="resolveCurrentEvent(true)">
+                ${ev.isSport ? 'Loslaufen & weiter!' : 'Essen & weiter!'}
+              </button>
+              <button class="btn-skip-event" type="button" onclick="resolveCurrentEvent(false)">
+                ${ev.isSport ? 'Auslassen' : 'Ausfallen lassen (-180 Pkt)'}
+              </button>
+            </div>
           </div>
-        </div>
-        <p style="font-size: 10.5px; margin-top: 8px; color: #94a3b8;">
-          ${game.isPaused ? '⏸️ <b>Spiel pausiert.</b> Wähle unten Dosis oder Traubenzucker und fahre fort.' : '⏱️ Schnell reagieren, die Zeit läuft!'}
-        </p>
-        <div class="event-action-buttons">
-          <button class="btn-action-primary" type="button" onclick="resolveCurrentEvent(true)">
-            ${ev.isSport ? 'Loslaufen & weiter' : 'Essen & weiter'}
-          </button>
-          <button class="btn-action-secondary" type="button" onclick="resolveCurrentEvent(false)">
-            ${ev.isSport ? 'Auslassen' : 'Ausfallen lassen (-180 Pkt)'}
-          </button>
-        </div>
-      `;
+          <div class="event-card-right">
+            <span class="countdown-auto-label">Automatischer Start...</span>
+            <div class="countdown-circle-badge">5s</div>
+            ${plateSvgHtml}
+          </div>
+        `;
+      }
     }
 
     /* =========================================================================
-       CANVAS CGM DRAWING (HIGH RES MIT TARGET BAND)
+       CANVAS CGM DRAWING (SAUBERER, UNVERZERRTER SCI-FI GRAPH MIT RAKETEN-TRACKER)
        ========================================================================= */
     function drawCgmChart(accentColor) {
       const canvas = document.getElementById("cgmCanvas");
+      if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
 
@@ -2576,32 +3182,62 @@
       const h = rect.height;
       const minBG = 35;
       const maxBG = 250;
-      const padTop = 12;
-      const padBottom = h - 12;
+      const padTop = 10;
+      const padBottom = h - 10;
       const plotH = padBottom - padTop;
 
       const getY = bg => padBottom - ((Math.max(minBG, Math.min(maxBG, bg)) - minBG) / (maxBG - minBG)) * plotH;
 
-      // 1. Zielbereich-Fläche (70 - 140 mg/dl grün gefüllt)
+      // 1. Tiefer Weltraum-Hintergrund
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+      bgGrad.addColorStop(0, "#080c18");
+      bgGrad.addColorStop(0.5, "#0b1122");
+      bgGrad.addColorStop(1, "#0a0e1c");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Sterne (Dezente funkelnde Punkte)
+      ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+      const starSeeds = [
+        [0.06, 0.22, 1], [0.14, 0.42, 1.2], [0.24, 0.16, 0.8], [0.36, 0.38, 1.1],
+        [0.46, 0.20, 0.9], [0.58, 0.45, 1.3], [0.66, 0.28, 0.8], [0.76, 0.14, 1],
+        [0.84, 0.36, 1.2], [0.91, 0.26, 0.9], [0.12, 0.70, 0.8], [0.88, 0.75, 1]
+      ];
+      starSeeds.forEach(([sx, sy, sr]) => {
+        ctx.beginPath();
+        ctx.arc(sx * w, sy * h, sr, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 2. Zielbereich (70 - 140 mg/dl grün schimmernd)
+      const y180 = getY(180);
       const y140 = getY(140);
       const y70 = getY(70);
-      ctx.fillStyle = "rgba(16, 185, 129, 0.09)";
-      ctx.fillRect(0, y140, w, y70 - y140);
+      const y40 = getY(40);
 
-      // 2. Akzeptabler Bereich (140 - 180)
-      const y180 = getY(180);
-      ctx.fillStyle = "rgba(245, 158, 11, 0.04)";
-      ctx.fillRect(0, y180, w, y140 - y180);
+      // Grünes Zielbereichs-Band
+      ctx.fillStyle = "rgba(16, 185, 129, 0.08)";
+      ctx.fillRect(0, y140, w - 28, y70 - y140);
 
-      // 3. Grid-Linien
+      // Obere Warnzone (>180) sanft bernsteinfarben
+      ctx.fillStyle = "rgba(245, 158, 11, 0.05)";
+      ctx.fillRect(0, 0, w - 28, y180);
+
+      // Untere Gefahrenzone (<70) sanft rötlich
+      ctx.fillStyle = "rgba(239, 68, 68, 0.07)";
+      ctx.fillRect(0, y70, w - 28, h - y70);
+
+      // 3. Feine Rasterlinien (Dotted Grid)
       ctx.lineWidth = 1;
-      [70, 140, 180].forEach(level => {
+      [240, 180, 140, 100, 70, 40].forEach(level => {
         const y = getY(level);
         ctx.beginPath();
-        ctx.setLineDash([3, 5]);
-        ctx.strokeStyle = level === 180 ? "rgba(245, 158, 11, 0.25)" : "rgba(16, 185, 129, 0.25)";
+        ctx.setLineDash([2, 5]);
+        ctx.strokeStyle = (level === 140 || level === 70) 
+          ? "rgba(16, 185, 129, 0.3)" 
+          : "rgba(255, 255, 255, 0.12)";
         ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
+        ctx.lineTo(w - 28, y);
         ctx.stroke();
       });
       ctx.setLineDash([]);
@@ -2610,70 +3246,222 @@
       const vals = game.history.slice(-36);
       if (vals.length < 2) return;
 
-      // Gradient unter der Kurve
+      const plotW = w - 32;
+
+      // Sanfter Farbverlauf unter der Kurve
       const grad = ctx.createLinearGradient(0, padTop, 0, padBottom);
-      grad.addColorStop(0, accentColor + "33");
+      grad.addColorStop(0, accentColor + "40");
       grad.addColorStop(1, accentColor + "00");
 
       ctx.beginPath();
       vals.forEach((v, idx) => {
-        const x = (idx / (vals.length - 1)) * w;
+        const x = (idx / (vals.length - 1)) * plotW;
         const y = getY(v);
         idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       });
 
-      // Linie füllen
-      ctx.lineTo(w, padBottom);
+      ctx.lineTo(plotW, padBottom);
       ctx.lineTo(0, padBottom);
       ctx.closePath();
       ctx.fillStyle = grad;
       ctx.fill();
 
-      // Haupt-Linie
+      // Neon-Laser Glukose-Kurve
+      ctx.save();
       ctx.beginPath();
       vals.forEach((v, idx) => {
-        const x = (idx / (vals.length - 1)) * w;
+        const x = (idx / (vals.length - 1)) * plotW;
         const y = getY(v);
         idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       });
       ctx.strokeStyle = accentColor;
       ctx.lineWidth = 3;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 8;
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       ctx.stroke();
+      ctx.restore();
 
-      // 5. Neuesten Punkt mit pulsierendem Ring zeichnen
-      const lastX = w;
+      // 5. RAKETEN-TRACKER AM AKTUELLEN MESSWERT
+      const lastX = plotW;
       const lastY = getY(vals[vals.length - 1]);
+      const prevX = vals.length > 1 ? ((vals.length - 2) / (vals.length - 1)) * plotW : lastX - 10;
+      const prevY = vals.length > 1 ? getY(vals[vals.length - 2]) : lastY;
+      const angle = Math.atan2(lastY - prevY, lastX - prevX);
+
+      ctx.save();
+      ctx.translate(lastX, lastY);
+      ctx.rotate(angle);
+
+      // Raketenflamme hinten
+      ctx.fillStyle = "#f97316";
+      ctx.beginPath();
+      ctx.moveTo(-8, -2.5);
+      ctx.lineTo(-16 + (Math.random() * 3), 0);
+      ctx.lineTo(-8, 2.5);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#fde047";
+      ctx.beginPath();
+      ctx.moveTo(-8, -1.5);
+      ctx.lineTo(-13 + (Math.random() * 2), 0);
+      ctx.lineTo(-8, 1.5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Flossen
+      ctx.fillStyle = "#0284c7";
+      ctx.beginPath();
+      ctx.moveTo(-5, -2.5);
+      ctx.lineTo(-9, -7);
+      ctx.lineTo(-1, -2.5);
+      ctx.closePath();
+      ctx.fill();
 
       ctx.beginPath();
-      ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
-      ctx.fillStyle = accentColor;
+      ctx.moveTo(-5, 2.5);
+      ctx.lineTo(-9, 7);
+      ctx.lineTo(-1, 2.5);
+      ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
 
-    /* =========================================================================
-       USER ACTIONS: INSULIN, RESCUE CARBS & EVENT HANDLING
+      // Weißer Raketenkörper
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 8, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rote Bugspitze
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.moveTo(4, -3.2);
+      ctx.quadraticCurveTo(10, 0, 11, 0);
+      ctx.quadraticCurveTo(10, 0, 4, 3.2);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cockpit-Fenster
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(1, 0, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#0369a1";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+/* =========================================================================
+       USER ACTIONS: INSULIN-SPRITZE, RESCUE CARBS & EVENT HANDLING
        ========================================================================= */
     function adjustDose(delta) {
-      game.selectedDose = Math.max(0, Math.min(18, game.selectedDose + delta));
-      document.getElementById("dialDose").textContent = game.selectedDose;
+      game.selectedDose = Math.max(0, Math.min(10, (game.selectedDose || 0) + delta));
+      updateSyringeVisuals();
       audio.playDialClick();
+    }
+
+    function cycleSyringeDose() {
+      // 0 -> 2 -> 4 -> 6 -> 8 -> 10 -> 0
+      const steps = [0, 2, 4, 6, 8, 10];
+      const curIdx = steps.indexOf(game.selectedDose);
+      game.selectedDose = steps[(curIdx + 1) % steps.length];
+      updateSyringeVisuals();
+      audio.playDialClick();
+    }
+
+    function updateSyringeVisuals() {
+      const dose = Math.max(0, Math.min(10, game.selectedDose || 0));
+      const dialDose = document.getElementById("dialDose");
+      if (dialDose) dialDose.textContent = dose;
+
+      // Spritze füllt von der Nadel (rechts bei x=190) nach links auf:
+      // Bei 0 IE: Kolben ganz rechts (x=186), Fluid = 0px
+      // Bei 10 IE: Kolben ganz links (x=46), Fluid = 140px
+      const maxBarrelW = 140;
+      const fluidWidth = (dose / 10) * maxBarrelW;
+      const collarX = 186 - fluidWidth;
+
+      const fluidEl = document.getElementById("syringeFluid");
+      if (fluidEl) {
+        fluidEl.setAttribute("x", collarX + 4);
+        fluidEl.setAttribute("width", Math.max(0, 190 - (collarX + 4)));
+      }
+
+      const plungerHead = document.getElementById("syringePlungerHead");
+      const plungerRod = document.getElementById("syringePlungerRod");
+      const collarRing = document.getElementById("syringeCollarRing");
+
+      if (plungerHead) plungerHead.setAttribute("x", collarX);
+      if (plungerRod) plungerRod.setAttribute("width", Math.max(4, collarX - 10));
+      if (collarRing) collarRing.setAttribute("x", collarX);
+
+      // Schiebe das Dosis-Badge horizontal direkt über den Kolben / Manschette
+      const doseBadge = document.getElementById("syringeDoseBadge");
+      if (doseBadge) {
+        const percent = ((collarX + 3) / 240) * 100;
+        doseBadge.style.left = percent + "%";
+      }
+    }
+
+    function initSyringeControls() {
+      const syringe = document.getElementById("syringeSvg");
+      if (!syringe) return;
+
+      const setDoseFromX = (clientX) => {
+        const rect = syringe.getBoundingClientRect();
+        const relX = clientX - rect.left;
+        const normX = relX / rect.width;
+        // Skala im SVG (240px Breite):
+        // x=50 ist links (10 IE), x=190 ist rechts an der Nadel (0 IE)
+        const leftBound = 50 / 240;
+        const rightBound = 190 / 240;
+        
+        // Von rechts nach links: Rechts geklickt = 0 IE, links geklickt = 10 IE
+        const fraction = Math.max(0, Math.min(1, (rightBound - normX) / (rightBound - leftBound)));
+        const dose = Math.round(fraction * 10);
+        game.selectedDose = dose;
+        updateSyringeVisuals();
+        audio.playDialClick();
+      };
+
+      syringe.addEventListener("click", (e) => {
+        setDoseFromX(e.clientX);
+      });
+
+      syringe.addEventListener("touchstart", (e) => {
+        if (e.touches && e.touches[0]) {
+          setDoseFromX(e.touches[0].clientX);
+        }
+      }, { passive: true });
+
+      syringe.addEventListener("touchmove", (e) => {
+        if (e.touches && e.touches[0]) {
+          setDoseFromX(e.touches[0].clientX);
+        }
+      }, { passive: true });
     }
 
     function executeInjection() {
       if (game.selectedDose <= 0) {
-        showToast("⚠️ Bitte mindestens 1 IE am Pen einstellen");
+        showToast("⚠️ Bitte mindestens 1 IE an der Spritze einstellen");
         return;
       }
 
       game.activeInsulin.push({
         units: game.selectedDose,
-        initialDuration: 28, // ~28 Ticks
+        initialDuration: 28,
         remainingSeconds: 28
+      });
+
+      game.dayActionEvents.push({
+        type: "insulin",
+        minute: game.simMinute,
+        label: `${game.selectedDose} IE`,
+        amount: game.selectedDose,
+        icon: "💉",
+        bg: Math.round(game.glucose)
       });
 
       addActionMarker("💉");
@@ -2681,7 +3469,7 @@
       showToast(`💉 ${game.selectedDose} IE Insulin erfolgreich injiziert!`);
 
       game.selectedDose = 0;
-      document.getElementById("dialDose").textContent = 0;
+      updateSyringeVisuals();
       updateUI();
     }
 
@@ -2692,6 +3480,15 @@
         delaySeconds: 1,
         initialDuration: speedSec,
         remainingSeconds: speedSec
+      });
+
+      game.dayActionEvents.push({
+        type: "rescue",
+        minute: game.simMinute,
+        label: `${name} (+${grams}g)`,
+        amount: grams,
+        icon: icon,
+        bg: Math.round(game.glucose)
       });
 
       addActionMarker(icon);
@@ -2706,18 +3503,26 @@
 
       if (accepted) {
         if (ev.isSport) {
-          // Sport starten
           game.activeExercise = {
             title: ev.title,
             totalDrop: ev.dropBG,
             initialDuration: 22,
             remainingSeconds: 22
           };
+
+          game.dayActionEvents.push({
+            type: "sport",
+            minute: game.simMinute,
+            label: ev.title,
+            amount: ev.dropBG,
+            icon: "🏃",
+            bg: Math.round(game.glucose)
+          });
+
           addActionMarker("🏃");
           audio.playSnackChime();
           showToast(`🏃 Los geht's! ${ev.title} verbrennt Glukose.`);
         } else {
-          // Essen verzehren
           game.activeCarbs.push({
             label: ev.title,
             totalGrams: ev.carbs,
@@ -2725,6 +3530,16 @@
             initialDuration: 18,
             remainingSeconds: 18
           });
+
+          game.dayActionEvents.push({
+            type: "meal",
+            minute: game.simMinute,
+            label: ev.title,
+            amount: ev.carbs,
+            icon: ev.icon,
+            bg: Math.round(game.glucose)
+          });
+
           audio.playSnackChime();
           if (game.difficulty === "PRO") {
             showToast(`🍽️ Gegessen! (Echtes Maß: ${ev.carbs}g KH)`);
@@ -2733,7 +3548,6 @@
           }
         }
       } else {
-        // Ablehnen / Ausfallen lassen
         if (!ev.isSport) {
           game.score = Math.max(0, game.score - 180);
           showToast("Mahlzeit ausgelassen (-180 Hunger-Punkte)");
@@ -2745,44 +3559,115 @@
       ev.done = true;
       game.currentActiveEvent = null;
 
-      // Wenn das Spiel durch Auto-Pause pausiert war, wieder starten
       if (game.settings.autoPause && game.isPaused) {
-        game.isPaused = false;
-        document.getElementById("btnPause").classList.remove("is-paused");
-        document.getElementById("pauseIcon").textContent = "⏸️";
+        togglePause();
       }
 
       updateUI();
     }
 
-    /* =========================================================================
-       GAME CONTROLS: PAUSE, SPEED, SOUND & SETTINGS
-       ========================================================================= */
+    function goForAWalk() {
+      if (game.activeExercise && game.activeExercise.isWalk) {
+        game.activeExercise = null;
+        audio.playDialClick();
+        showToast("🚶 Spaziergang beendet / pausiert.");
+        updateUI();
+        return;
+      }
+
+      if (game.activeExercise && !game.activeExercise.isWalk) {
+        showToast(`🏃 Du machst bereits Sport (${game.activeExercise.title})!`);
+        return;
+      }
+
+      if (game.walkJokersLeft <= 0) {
+        audio.playCgmAlarm(false);
+        showToast("⚠️ Keine Spaziergang-Joker mehr für heute übrig (max. 2x pro Tag)!");
+        return;
+      }
+
+      game.walkJokersLeft--;
+      game.activeExercise = {
+        title: "Spaziergang",
+        isWalk: true,
+        totalDrop: 26,
+        initialDuration: 20,
+        remainingSeconds: 20
+      };
+
+      game.dayActionEvents.push({
+        type: "walk",
+        minute: game.simMinute,
+        label: "Spaziergang",
+        amount: 26,
+        icon: "🚶",
+        bg: Math.round(game.glucose)
+      });
+
+      addActionMarker("🚶");
+      audio.playSnackChime();
+      const jokerInfo = game.walkJokersLeft === 1 ? "Noch 1 Joker heute" : "Letzter Joker für heute verbraucht";
+      showToast(`🚶 Spaziergang gestartet! (${jokerInfo}) – Klick zum Beenden.`);
+      updateUI();
+    }
+
+    function toggleTopMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById("topMenuDropdown");
+      if (menu) menu.classList.toggle("hidden");
+    }
+
+    function closeTopMenu() {
+      const menu = document.getElementById("topMenuDropdown");
+      if (menu) menu.classList.add("hidden");
+    }
+
+    window.addEventListener("click", () => {
+      closeTopMenu();
+    });
+
     function togglePause() {
       game.isPaused = !game.isPaused;
-      const btn = document.getElementById("btnPause");
-      const icon = document.getElementById("pauseIcon");
+      const btn = document.getElementById("btnMenuToggle");
+      const topBtn = document.getElementById("btnPausePlay");
+      const topIcon = document.getElementById("topPauseIcon");
+      const menuIcon = document.getElementById("menuPauseIcon");
+      const menuLabel = document.getElementById("menuPauseLabel");
 
       if (game.isPaused) {
-        btn.classList.add("is-paused");
-        icon.textContent = "▶️";
+        if (btn) btn.classList.add("is-paused");
+        if (topBtn) topBtn.classList.add("is-paused");
+        if (topIcon) topIcon.textContent = "▶";
+        if (menuIcon) menuIcon.textContent = "▶️";
+        if (menuLabel) menuLabel.textContent = "Fortsetzen (Leertaste)";
         showToast("⏸️ Spiel pausiert");
       } else {
-        btn.classList.remove("is-paused");
-        icon.textContent = "⏸️";
+        if (btn) btn.classList.remove("is-paused");
+        if (topBtn) topBtn.classList.remove("is-paused");
+        if (topIcon) topIcon.textContent = "⏸";
+        if (menuIcon) menuIcon.textContent = "⏸️";
+        if (menuLabel) menuLabel.textContent = "Pausieren (Leertaste)";
         showToast("▶️ Weiter");
       }
     }
 
-    function cycleSpeed() {
+    function cycleSpeed(direction) {
       const speeds = [1, 2, 4];
-      const curIdx = speeds.indexOf(game.speed);
-      game.speed = speeds[(curIdx + 1) % speeds.length];
+      let curIdx = speeds.indexOf(game.speed);
+      if (curIdx === -1) curIdx = 0;
+      if (typeof direction === 'number') {
+        curIdx = (curIdx + direction + speeds.length) % speeds.length;
+      } else {
+        curIdx = (curIdx + 1) % speeds.length;
+      }
+      game.speed = speeds[curIdx];
 
-      document.getElementById("speedLabel").textContent = game.speed + "x";
+      const topSpeedLabel = document.getElementById("topSpeedLabel");
+      if (topSpeedLabel) topSpeedLabel.textContent = game.speed + "x";
+      const menuSpeed = document.getElementById("menuSpeedLabel");
+      if (menuSpeed) menuSpeed.textContent = game.speed + "x";
       showToast(`⏩ Geschwindigkeit: ${game.speed}x`);
 
-      // Timer neu ausrichten
       if (game.running) {
         clearInterval(simInterval);
         simInterval = setInterval(gameTick, 1000 / game.speed);
@@ -2791,7 +3676,10 @@
 
     function toggleSound() {
       audio.enabled = !audio.enabled;
-      document.getElementById("soundIcon").textContent = audio.enabled ? "🔊" : "🔇";
+      const soundIcon = document.getElementById("menuSoundIcon");
+      const soundLabel = document.getElementById("menuSoundLabel");
+      if (soundIcon) soundIcon.textContent = audio.enabled ? "🔊" : "🔇";
+      if (soundLabel) soundLabel.textContent = audio.enabled ? "Sound: An" : "Sound: Aus";
       showToast(audio.enabled ? "🔊 Sound aktiviert" : "🔇 Sound stumm");
     }
 
@@ -2921,6 +3809,18 @@
       game.activeExercise = null;
       game.currentActiveEvent = null;
 
+      // Spaziergang Joker & Protokollierung zurücksetzen
+      game.walkJokersLeft = 2;
+      game.dayActionEvents = [];
+      game.dayLog = [{
+        simMinute: DAY_START_MIN,
+        glucose: game.glucose,
+        iob: 0,
+        cob: 0,
+        isWalking: false,
+        isSport: false
+      }];
+
       // Diff Badge im Header aktualisieren
       const badge = document.getElementById("diffBadge");
       if (game.difficulty === "PRO") {
@@ -2938,8 +3838,12 @@
 
       game.running = true;
       game.isPaused = false;
-      document.getElementById("btnPause").classList.remove("is-paused");
-      document.getElementById("pauseIcon").textContent = "⏸️";
+      const menuBtn = document.getElementById("btnMenuToggle");
+      if (menuBtn) menuBtn.classList.remove("is-paused");
+      const menuIcon = document.getElementById("menuPauseIcon");
+      if (menuIcon) menuIcon.textContent = "⏸️";
+      const menuLabel = document.getElementById("menuPauseLabel");
+      if (menuLabel) menuLabel.textContent = "Pausieren (Leertaste)";
 
       clearInterval(simInterval);
       simInterval = setInterval(gameTick, 1000 / game.speed);
@@ -2969,6 +3873,9 @@
       document.getElementById("dayBadgeDesc").textContent = `${titr}% der Zeit im Zielbereich (70-180 mg/dl).`;
 
       document.getElementById("dayReportSheet").classList.remove("hidden");
+      setTimeout(() => {
+        drawDaySummaryChart("dayReportCanvas", "dayReportStatsRow");
+      }, 50);
     }
 
     function proceedToNextDay() {
@@ -2979,6 +3886,18 @@
       game.dayEvents = buildDayEvents(game.currentDay);
       renderDynamicPins();
       document.getElementById("actionMarkersContainer").innerHTML = "";
+
+      // Neuer Tag: 2 neue Spaziergang-Joker & neues Tagesprotokoll
+      game.walkJokersLeft = 2;
+      game.dayActionEvents = [];
+      game.dayLog = [{
+        simMinute: DAY_START_MIN,
+        glucose: game.glucose,
+        iob: 0,
+        cob: 0,
+        isWalking: false,
+        isSport: false
+      }];
 
       game.running = true;
       game.isPaused = false;
@@ -3021,6 +3940,280 @@
       renderLeaderboards();
 
       document.getElementById("endSheet").classList.remove("hidden");
+      setTimeout(() => {
+        drawDaySummaryChart("daySummaryCanvas", "daySummaryStatsRow");
+      }, 50);
+    }
+
+    /* =========================================================================
+       CANVAS: TAGESZUSAMMENFASSUNG DES GLUKOSEGRAPHEN (AGP-PROFIL)
+       ========================================================================= */
+    function drawDaySummaryChart(canvasId, statsId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const wrap = canvas.parentElement;
+      const rect = wrap ? wrap.getBoundingClientRect() : canvas.getBoundingClientRect();
+      if (!rect.width) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const w = rect.width;
+      const h = rect.height || 230;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const logs = game.dayLog || [];
+      if (logs.length === 0) {
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Keine Messwerte für diesen Tag aufgezeichnet.", w / 2, h / 2);
+        return;
+      }
+
+      const padLeft = 36;
+      const padRight = 44;
+      const padTop = 28;
+      const padBottom = 26;
+      const plotW = w - padLeft - padRight;
+      const plotH = h - padTop - padBottom;
+
+      const tMin = DAY_START_MIN; // 420 (07:00)
+      const lastMinute = logs[logs.length - 1].simMinute;
+      const tMax = Math.max(tMin + 60, Math.min(DAY_END_MIN, Math.max(DAY_END_MIN, lastMinute)));
+
+      const bgMin = 35;
+      const bgMax = 260;
+
+      const getX = min => padLeft + ((Math.max(tMin, Math.min(tMax, min)) - tMin) / (tMax - tMin)) * plotW;
+      const getY = bg => padTop + plotH - ((Math.max(bgMin, Math.min(bgMax, bg)) - bgMin) / (bgMax - bgMin)) * plotH;
+
+      // 1. Zielbereich (70 - 140 mg/dl grün hinterlegt)
+      const y140 = getY(140);
+      const y70 = getY(70);
+      ctx.fillStyle = "rgba(16, 185, 129, 0.12)";
+      ctx.fillRect(padLeft, y140, plotW, y70 - y140);
+
+      // 2. Akzeptabler Bereich (140 - 180 mg/dl bernstein)
+      const y180 = getY(180);
+      ctx.fillStyle = "rgba(245, 158, 11, 0.05)";
+      ctx.fillRect(padLeft, y180, plotW, y140 - y180);
+
+      // 3. Unterzucker-Zone (<70 mg/dl sanft rot)
+      const yFloor = getY(bgMin);
+      ctx.fillStyle = "rgba(239, 68, 68, 0.08)";
+      ctx.fillRect(padLeft, y70, plotW, yFloor - y70);
+
+      // 4. Spaziergang & Sport Highlight-Spalten
+      logs.forEach(log => {
+        if (log.isWalking || log.isSport) {
+          const x = getX(log.simMinute);
+          ctx.fillStyle = log.isWalking ? "rgba(16, 185, 129, 0.22)" : "rgba(56, 189, 248, 0.22)";
+          ctx.fillRect(x - 2, padTop, 4, plotH);
+        }
+      });
+
+      // 5. Horizontale Gitterlinien & Glukose-Achsenbeschriftung
+      ctx.lineWidth = 1;
+      [40, 70, 140, 180, 240].forEach(level => {
+        const y = getY(level);
+        ctx.beginPath();
+        ctx.setLineDash([3, 4]);
+        ctx.strokeStyle = level === 70 ? "rgba(239, 68, 68, 0.45)" : (level === 140 ? "rgba(16, 185, 129, 0.45)" : (level === 180 ? "rgba(245, 158, 11, 0.35)" : "rgba(255, 255, 255, 0.08)"));
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(padLeft + plotW, y);
+        ctx.stroke();
+
+        ctx.fillStyle = level === 70 ? "#f87171" : (level === 140 ? "#34d399" : (level === 180 ? "#fbbf24" : "#94a3b8"));
+        ctx.font = "bold 9px sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(level, padLeft - 6, y);
+      });
+      ctx.setLineDash([]);
+
+      // 6. Vertikale Zeit-Meilensteine (07:00, 10:00, 13:00, 16:00, 19:00, 22:00, 00:00)
+      const timeMilestones = [420, 600, 780, 960, 1140, 1320, 1440];
+      timeMilestones.forEach(min => {
+        if (min >= tMin && min <= tMax) {
+          const x = getX(min);
+          ctx.beginPath();
+          ctx.setLineDash([2, 5]);
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+          ctx.moveTo(x, padTop);
+          ctx.lineTo(x, padTop + plotH);
+          ctx.stroke();
+
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "8.5px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(formatClock(min), x, padTop + plotH + 6);
+        }
+      });
+      ctx.setLineDash([]);
+
+      // 7. Aktives Insulin (IOB) als Schattierung am unteren Rand
+      // Zeigt direkt, wann und wie stark Insulin im Körper wirkte
+      const maxIobObserved = Math.max(3, ...logs.map(l => l.iob || 0));
+      const iobMaxYScale = Math.ceil(maxIobObserved);
+      const iobHeight = plotH * 0.35; // Bis zu 35% der Höhe
+
+      ctx.beginPath();
+      let first = true;
+      logs.forEach(l => {
+        const x = getX(l.simMinute);
+        const iobVal = Math.max(0, l.iob || 0);
+        const y = (padTop + plotH) - (iobVal / iobMaxYScale) * iobHeight;
+        if (first) {
+          ctx.moveTo(x, padTop + plotH);
+          ctx.lineTo(x, y);
+          first = false;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.lineTo(getX(logs[logs.length - 1].simMinute), padTop + plotH);
+      ctx.closePath();
+
+      const iobGrad = ctx.createLinearGradient(0, padTop + plotH - iobHeight, 0, padTop + plotH);
+      iobGrad.addColorStop(0, "rgba(6, 182, 212, 0.32)");
+      iobGrad.addColorStop(1, "rgba(6, 182, 212, 0.02)");
+      ctx.fillStyle = iobGrad;
+      ctx.fill();
+
+      // IOB Randlinie
+      ctx.beginPath();
+      logs.forEach((l, idx) => {
+        const x = getX(l.simMinute);
+        const iobVal = Math.max(0, l.iob || 0);
+        const y = (padTop + plotH) - (iobVal / iobMaxYScale) * iobHeight;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = "rgba(6, 182, 212, 0.75)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // IOB Achse rechts
+      ctx.fillStyle = "#67e8f9";
+      ctx.font = "bold 8.5px sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`${iobMaxYScale} IE`, padLeft + plotW + 4, padTop + plotH - iobHeight);
+      ctx.fillStyle = "#64748b";
+      ctx.fillText("0 IE", padLeft + plotW + 4, padTop + plotH - 3);
+
+      // 8. Komplette Glukose-Kurve zeichnen (Farbe pro Abschnitt)
+      for (let i = 0; i < logs.length - 1; i++) {
+        const p1 = logs[i];
+        const p2 = logs[i + 1];
+        const x1 = getX(p1.simMinute);
+        const y1 = getY(p1.glucose);
+        const x2 = getX(p2.simMinute);
+        const y2 = getY(p2.glucose);
+
+        const avgBg = (p1.glucose + p2.glucose) / 2;
+        let segColor = "#10b981";
+        if (avgBg < 70) segColor = "#ef4444";
+        else if (avgBg > 180) segColor = "#f59e0b";
+        else if (avgBg > 140) segColor = "#fbbf24";
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = segColor;
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+      }
+
+      // 9. Aktions-Pins (Mahlzeiten, Insulin, Notfall-KH, Spaziergänge)
+      const events = game.dayActionEvents || [];
+      events.forEach((ev, idx) => {
+        const x = getX(ev.minute);
+        const yBg = getY(ev.bg);
+
+        // Höhen leicht versetzen gegen Überlagerung
+        const isOdd = idx % 2 === 1;
+        const pinY = padTop + (isOdd ? 18 : 6);
+
+        // Verbindungslinie zur Kurve
+        ctx.beginPath();
+        ctx.setLineDash([2, 2]);
+        ctx.strokeStyle = ev.type === "insulin" ? "rgba(6, 182, 212, 0.75)" : (ev.type === "walk" ? "rgba(16, 185, 129, 0.75)" : "rgba(245, 158, 11, 0.75)");
+        ctx.lineWidth = 1;
+        ctx.moveTo(x, pinY + 7);
+        ctx.lineTo(x, yBg);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Treffpunkt-Punkt auf der Kurve
+        ctx.beginPath();
+        ctx.arc(x, yBg, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = ev.type === "insulin" ? "#06b6d4" : (ev.type === "walk" ? "#10b981" : "#f59e0b");
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Pin-Bubble
+        const labelText = ev.type === "insulin" ? `💉 ${ev.amount}IE` : (ev.type === "walk" ? `🚶` : (ev.type === "rescue" ? `🍬 ${ev.amount}g` : `🍞 ${ev.amount}g`));
+        ctx.font = "bold 9px sans-serif";
+        const textWidth = ctx.measureText(labelText).width;
+        const bubbleW = textWidth + 8;
+        const bubbleH = 14;
+        const bubbleX = Math.max(padLeft, Math.min(padLeft + plotW - bubbleW, x - bubbleW / 2));
+
+        ctx.fillStyle = ev.type === "insulin" ? "rgba(6, 182, 212, 0.95)" : (ev.type === "walk" ? "rgba(16, 185, 129, 0.95)" : "rgba(245, 158, 11, 0.95)");
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(bubbleX, pinY - bubbleH / 2, bubbleW, bubbleH, 4);
+        } else {
+          ctx.rect(bubbleX, pinY - bubbleH / 2, bubbleW, bubbleH);
+        }
+        ctx.fill();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(labelText, bubbleX + bubbleW / 2, pinY);
+      });
+
+      // 10. Mini-Statistiken unter dem Canvas
+      const statsEl = document.getElementById(statsId);
+      if (statsEl) {
+        const totalInsulin = events.filter(e => e.type === "insulin").reduce((s, e) => s + e.amount, 0);
+        const totalCarbs = events.filter(e => e.type === "meal" || e.type === "rescue").reduce((s, e) => s + e.amount, 0);
+        const walksCount = events.filter(e => e.type === "walk").length;
+
+        const bgValues = logs.map(l => l.glucose);
+        const minBg = Math.round(Math.min(...bgValues));
+        const maxBg = Math.round(Math.max(...bgValues));
+        const avgBg = Math.round(bgValues.reduce((a, b) => a + b, 0) / bgValues.length);
+
+        statsEl.innerHTML = `
+          <div class="summary-mini-card">
+            <span>Glukose (Min/Max)</span>
+            <b>${minBg} – ${maxBg} mg/dl</b>
+          </div>
+          <div class="summary-mini-card">
+            <span>Ø Glukose</span>
+            <b style="color: ${avgBg >= 70 && avgBg <= 140 ? 'var(--emerald)' : (avgBg <= 180 ? 'var(--amber)' : 'var(--danger)')};">${avgBg} mg/dl</b>
+          </div>
+          <div class="summary-mini-card">
+            <span>Insulin / KH</span>
+            <b>💉 ${totalInsulin} IE · 🍞 ${totalCarbs}g</b>
+          </div>
+          <div class="summary-mini-card">
+            <span>Spaziergänge</span>
+            <b>🚶 ${walksCount}x genutzt</b>
+          </div>
+        `;
+      }
     }
 
     function restartSession() {
@@ -3075,11 +4268,20 @@
        ========================================================================= */
     window.addEventListener("resize", () => {
       drawCgmChart(getGlucoseStatus().color);
+      const endSheet = document.getElementById("endSheet");
+      if (endSheet && !endSheet.classList.contains("hidden")) {
+        drawDaySummaryChart("daySummaryCanvas", "daySummaryStatsRow");
+      }
+      const dayReportSheet = document.getElementById("dayReportSheet");
+      if (dayReportSheet && !dayReportSheet.classList.contains("hidden")) {
+        drawDaySummaryChart("dayReportCanvas", "dayReportStatsRow");
+      }
     });
 
     document.addEventListener("DOMContentLoaded", () => {
       handleDisclaimerChange();
       renderLeaderboards();
+      initSyringeControls();
       updateUI();
     });
 

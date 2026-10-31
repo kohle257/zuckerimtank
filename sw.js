@@ -1,7 +1,9 @@
-const CACHE_NAME = 'zucker-im-tank-v3';
+const CACHE_NAME = 'zucker-im-tank-v8';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './kids.html',
+  './zucki.png',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
